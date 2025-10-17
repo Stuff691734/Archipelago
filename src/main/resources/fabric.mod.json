@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "archipelago",
+  "version": "${version}",
+  "name": "Archipelago",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "unlicense",
+  "icon": "assets/archipelago/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.stuff691734.archipelago.client.ArchipelagoClient"
+    ],
+    "main": [
+      "net.stuff691734.archipelago.Archipelago"
+    ]
+  },
+  "mixins": [
+    "archipelago.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
