@@ -4,9 +4,11 @@
   "package": "net.stuff691734.archipelago.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AdvancementMixin"
   ],
   "client": [
+  ],
+  "server": [
+    "AdvancementMixin"
   ],
   "injectors": {
     "defaultRequire": 1
