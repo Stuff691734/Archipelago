@@ -55,7 +55,7 @@ public class Archipelago implements ModInitializer {
             if (serverLastCheck != playerLastCheck) {
                 ChecksState.getServerState(server).playerLastCheck.put(player.getUuidAsString(), serverLastCheck);
 
-                for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck + 1, serverLastCheck + 1)) {
+                for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                     if (Utils.isRootAdvancementId(item.itemName)) {
                         ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                     }
