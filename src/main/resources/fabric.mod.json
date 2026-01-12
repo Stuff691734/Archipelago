@@ -10,9 +10,6 @@
   "icon": "assets/archipelago/icon.png",
   "environment": "server",
   "entrypoints": {
-    "client": [
-      "net.stuff691734.archipelago.client.ArchipelagoClient"
-    ],
     "main": [
       "net.stuff691734.archipelago.Archipelago"
     ]

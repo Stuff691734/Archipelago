@@ -29,7 +29,6 @@ public class Archipelago implements ModInitializer {
             client = new ArchipelagoClient();
 
             client.setGame("Modded Minecraft");
-//            client.getSlotInfo()
 
             client.addTag("Modded Minecraft");
             client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
@@ -51,9 +50,6 @@ public class Archipelago implements ModInitializer {
         }));
 
         ServerPlayerEvents.JOIN.register((player) -> {
-            // when player joins world/server
-            // get index of last received item saved in player data + last received item index from server, if not match give checks, etc.
-
             int serverLastCheck = client.getItemManager().getIndex();
             int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(player.getUuidAsString(), 0);
             if (serverLastCheck != playerLastCheck) {
@@ -64,14 +60,7 @@ public class Archipelago implements ModInitializer {
                         ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                     }
                     else {
-                        String[] strings = item.itemName.split(" ");
-                        int amount = Integer.parseInt(strings[0]);
-                        ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(strings[1])), amount);
-                        if (!player.giveItemStack(itemStack)) {
-                            Archipelago.LOGGER.info("Dropped Item");
-
-                            player.dropStack(itemStack);
-                        }
+                        Utils.giveItem(player, item.itemName);
                     }
                 }
             }

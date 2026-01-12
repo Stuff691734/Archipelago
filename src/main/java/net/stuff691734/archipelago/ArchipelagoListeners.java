@@ -49,15 +49,8 @@ public class ArchipelagoListeners {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);
             }
             else {
-                ChecksState checksState = ChecksState.getServerState(Archipelago.server);
-                String[] strings = event.getItemName().split(" ");
-                int amount = Integer.parseInt(strings[0]);
-                ItemStack item = new ItemStack(Registries.ITEM.get(Identifier.of(strings[1])), amount);
                 for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
-                    if (!player.giveItemStack(item)) {
-                        player.dropStack(item);
-                    }
-                    checksState.playerLastCheck.put(player.getUuidAsString(), (int)event.getIndex());
+                    Utils.giveItem(player, event.getItemName());
                 }
             }
         }

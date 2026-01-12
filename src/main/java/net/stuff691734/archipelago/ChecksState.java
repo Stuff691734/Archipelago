@@ -9,6 +9,7 @@ import net.minecraft.world.PersistentStateManager;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ChecksState extends PersistentState {
     public Map<String, Boolean> checks = new HashMap<>();
     public Map<String, String> slotData = new HashMap<>();

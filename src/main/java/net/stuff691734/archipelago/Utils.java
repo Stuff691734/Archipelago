@@ -4,6 +4,9 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.advancement.PlacedAdvancement;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class Utils {
@@ -24,5 +27,16 @@ public class Utils {
             return advancement != null;
         }
         return false;
+    }
+
+    public static void giveItem(ServerPlayerEntity player, String item) {
+        String[] strings = item.split(" ");
+        int amount = Integer.parseInt(strings[0]);
+        ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(strings[1])), amount);
+        if (!player.giveItemStack(itemStack)) {
+            Archipelago.LOGGER.info("Dropped Item");
+
+            player.dropStack(itemStack);
+        }
     }
 }
