@@ -2,11 +2,8 @@ package net.stuff691734.archipelago;
 
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class ArchipelagoListeners {
     @ArchipelagoEventListener
