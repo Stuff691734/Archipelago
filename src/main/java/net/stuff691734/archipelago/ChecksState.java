@@ -61,14 +61,16 @@ public class ChecksState extends PersistentState {
         return state;
     }
 
+    private static final Type<ChecksState> type = new Type<>(
+            ChecksState::createNew,
+            ChecksState::createFromNbt,
+            null
+    );
+
     public static ChecksState getServerState(MinecraftServer server) {
         PersistentStateManager persistentStateManager = server.getOverworld().getPersistentStateManager();
 
-        ChecksState state = persistentStateManager.getOrCreate(
-            ChecksState::createFromNbt,
-            ChecksState::createNew,
-            Archipelago.MOD_ID
-        );
+        ChecksState state = persistentStateManager.getOrCreate(type, Archipelago.MOD_ID);
 
         state.markDirty();
 

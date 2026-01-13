@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementDisplay;
+import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.advancement.PlacedAdvancement;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.stuff691734.archipelago.archipelagoData.Check;
@@ -56,21 +56,23 @@ public class Commands {
 
                         Map<String, Check> checks = new HashMap<>();
 
-                        for (Advancement advancement : Archipelago.server.getAdvancementLoader().getAdvancements()) {
+                        for (AdvancementEntry advancement : Archipelago.server.getAdvancementLoader().getAdvancements()) {
 
-                            AdvancementDisplay display = advancement.getDisplay();
-                            if (display != null) {
-                                Advancement parent = advancement.getParent();
+                            advancement.value().display().ifPresent(display -> {
+                                PlacedAdvancement placedAdvancement = Archipelago.server.getAdvancementLoader().getManager().get(advancement);
+                                assert placedAdvancement != null;
+
+                                PlacedAdvancement parent = placedAdvancement.getParent();
                                 String parent_id = null;
                                 if (parent != null) {
-                                    parent_id = parent.getId().toString();
+                                    parent_id = parent.getAdvancementEntry().id().toString();
                                 }
 
-                                checks.put(advancement.getId().toString(),new Check(
+                                checks.put(advancement.id().toString(),new Check(
                                         display.getFrame().getId(),
                                         parent_id
                                 ));
-                            }
+                            });
                         }
                         try {
                             new File("output").mkdir();
