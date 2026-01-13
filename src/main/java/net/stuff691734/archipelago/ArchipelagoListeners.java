@@ -5,6 +5,8 @@ import io.github.archipelagomw.events.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
+import java.util.UUID;
+
 public class ArchipelagoListeners {
     @ArchipelagoEventListener
     public void onConnection(ConnectionResultEvent event) {
@@ -28,19 +30,19 @@ public class ArchipelagoListeners {
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendMessage(Text.literal(event.apPrint.getPlainText()));
+            Archipelago.server.sendSystemMessage(Text.of(event.apPrint.getPlainText()), UUID.fromString(Archipelago.MOD_ID));
         }
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendMessage(Text.literal(String.format(
+            Archipelago.server.sendSystemMessage(Text.of(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
                     event.getLocationName()
-            )));
+            )), UUID.fromString(Archipelago.MOD_ID));
 
             if (Utils.isRootAdvancementId(event.getItemName())) {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);

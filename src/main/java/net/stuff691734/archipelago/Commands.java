@@ -3,7 +3,7 @@ package net.stuff691734.archipelago;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +23,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class Commands {
     public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             dispatcher.register(literal("archipelago")
                 .then(literal("connect")
                     .then(argument("Name", StringArgumentType.word())
@@ -35,10 +35,10 @@ public class Commands {
                                 try {
                                     Archipelago.client.connect(WebSocketAddress);
                                 } catch (URISyntaxException e) {
-                                    context.getSource().sendFeedback(Text.literal("Invalid server address"), false);
+                                    context.getSource().sendFeedback(Text.of("Invalid server address"), false);
                                     return 1;
                                 }
-                                context.getSource().sendFeedback(Text.literal("Connected"), false);
+                                context.getSource().sendFeedback(Text.of("Connected"), false);
                                 return 0;
                             })
                         )
@@ -52,7 +52,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                     .executes(context -> {
-                        context.getSource().sendFeedback(Text.literal("Started writing to file."), false);
+                        context.getSource().sendFeedback(Text.of("Started writing to file."), false);
 
                         Map<String, Check> checks = new HashMap<>();
 
@@ -85,10 +85,10 @@ public class Commands {
                             writer.close();
 
                         } catch (IOException e) {
-                            context.getSource().sendFeedback(Text.literal(e.getMessage()), false);
+                            context.getSource().sendFeedback(Text.of(e.getMessage()), false);
                             return 1;
                         }
-                        context.getSource().sendFeedback(Text.literal("Finished writing to file."), false);
+                        context.getSource().sendFeedback(Text.of("Finished writing to file."), false);
                         return 0;
                     })
                 )
@@ -96,8 +96,8 @@ public class Commands {
                     .executes(context -> {
                         MinecraftServer server = context.getSource().getServer();
                         ChecksState checkState = ChecksState.getServerState(server);
-                        context.getSource().sendFeedback(Text.literal(checkState.checks.toString()), false);
-                        context.getSource().sendFeedback(Text.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                        context.getSource().sendFeedback(Text.of(checkState.checks.toString()), false);
+                        context.getSource().sendFeedback(Text.of(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                         return 0;
                     })
                     .then(argument("check", StringArgumentType.greedyString())
@@ -105,7 +105,7 @@ public class Commands {
                             final String checkName = StringArgumentType.getString(context, "check");
                             MinecraftServer server = context.getSource().getServer();
                             ChecksState checkState = ChecksState.getServerState(server);
-                            context.getSource().sendFeedback(Text.literal(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                            context.getSource().sendFeedback(Text.of(checkState.checks.getOrDefault(checkName, false).toString()), false);
                             return 0;
                         })
                     )
