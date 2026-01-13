@@ -69,7 +69,7 @@ public class Commands {
                                 }
 
                                 checks.put(advancement.id().toString(),new Check(
-                                        display.getFrame().asString(),
+                                        display.getFrame().getId(),
                                         parent_id
                                 ));
                             });

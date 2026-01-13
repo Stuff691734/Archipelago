@@ -45,7 +45,7 @@ public class Archipelago implements ModInitializer {
 
                     Archipelago.client.sendDeathlink(
                             Archipelago.client.getMyName(),
-                            damageSource.getDeathMessage(entity).getLiteralString()
+                            damageSource.getDeathMessage(entity).getString()
                     );
                 }
             }
