@@ -3,13 +3,13 @@ package net.stuff691734.archipelago;
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.stuff691734.archipelago.events.OnDeathEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +34,7 @@ public class Archipelago implements ModInitializer {
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
 
-
-        ServerPlayerEvents.ALLOW_DEATH.register((player,damageSource,amount) -> {
+        OnDeathEvent.EVENT.register((player, damageSource) -> {
             if (damageSource == DamageSource.OUT_OF_WORLD) {
                 // no looping hopefully
 
@@ -44,8 +43,6 @@ public class Archipelago implements ModInitializer {
                         damageSource.getDeathMessage(player).getString()
                 );
             }
-            // still want them dead
-            return true;
         });
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {

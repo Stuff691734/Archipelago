@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class ChecksState extends PersistentState {
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
-        PersistentStateManager persistentStateManager = server.getOverworld().getPersistentStateManager();
+        PersistentStateManager persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getPersistentStateManager();
 
         ChecksState state = persistentStateManager.getOrCreate(
             ChecksState::createNew,
