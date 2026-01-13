@@ -6,7 +6,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
@@ -94,8 +93,7 @@ public class Commands {
                 )
                 .then(literal("get")
                     .executes(context -> {
-                        MinecraftServer server = context.getSource().getServer();
-                        ChecksState checkState = ChecksState.getServerState(server);
+                        ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                         context.getSource().sendFeedback(Text.of(checkState.checks.toString()), false);
                         context.getSource().sendFeedback(Text.of(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                         return 0;
@@ -103,8 +101,7 @@ public class Commands {
                     .then(argument("check", StringArgumentType.greedyString())
                         .executes(context -> {
                             final String checkName = StringArgumentType.getString(context, "check");
-                            MinecraftServer server = context.getSource().getServer();
-                            ChecksState checkState = ChecksState.getServerState(server);
+                            ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                             context.getSource().sendFeedback(Text.of(checkState.checks.getOrDefault(checkName, false).toString()), false);
                             return 0;
                         })
@@ -115,8 +112,7 @@ public class Commands {
                     .then(argument("check", StringArgumentType.greedyString())
                         .executes(context -> {
                             final String checkName = StringArgumentType.getString(context, "check");
-                            MinecraftServer server = context.getSource().getServer();
-                            ChecksState checkState = ChecksState.getServerState(server);
+                            ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                             checkState.checks.put(checkName, true);
                             return 0;
                         })
