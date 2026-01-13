@@ -3,7 +3,7 @@ package net.stuff691734.archipelago;
 import com.mojang.serialization.DataResult;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -36,7 +36,7 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(namespace, path)), amount);
+        ItemStack itemStack = new ItemStack(Registry.ITEM.get(Identifier.of(namespace, path)), amount);
         if (!player.giveItemStack(itemStack)) {
             Archipelago.LOGGER.info("Dropped Item");
 
