@@ -30,7 +30,7 @@ public class ArchipelagoListeners {
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendSystemMessage(Text.of(event.apPrint.getPlainText()), UUID.fromString(Archipelago.MOD_ID));
+            Archipelago.server.sendSystemMessage(Text.of(event.apPrint.getPlainText()), UUID.randomUUID());
         }
     }
 
@@ -42,7 +42,7 @@ public class ArchipelagoListeners {
                     event.getItemName(),
                     event.getPlayerName(),
                     event.getLocationName()
-            )), UUID.fromString(Archipelago.MOD_ID));
+            )), UUID.randomUUID());
 
             if (Utils.isRootAdvancementId(event.getItemName())) {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);

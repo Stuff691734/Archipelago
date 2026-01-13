@@ -14,6 +14,9 @@ public class ChecksState extends PersistentState {
     public Map<String, String> slotData = new HashMap<>();
     public Map<String, Integer> playerLastCheck = new HashMap<>();
 
+    public ChecksState(String key) {
+        super(key);
+    }
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
@@ -37,8 +40,9 @@ public class ChecksState extends PersistentState {
         return nbt;
     }
 
-    public static ChecksState createFromNbt(NbtCompound tag) {
-        ChecksState state = new ChecksState();
+    @Override
+    public void fromTag(NbtCompound tag) {
+        ChecksState state = new ChecksState(Archipelago.MOD_ID);
         NbtCompound archipelagoNbt = tag.getCompound("archipelago");
 
         NbtCompound checksNbt = archipelagoNbt.getCompound("checks");
@@ -49,12 +53,10 @@ public class ChecksState extends PersistentState {
 
         NbtCompound playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
         playerLastCheckDataNbt.getKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
-
-        return state;
     }
 
     public static ChecksState createNew() {
-        ChecksState state = new ChecksState();
+        ChecksState state = new ChecksState(Archipelago.MOD_ID);
         state.checks = new HashMap<>();
         state.slotData = new HashMap<>();
         state.playerLastCheck = new HashMap<>();
@@ -65,7 +67,6 @@ public class ChecksState extends PersistentState {
         PersistentStateManager persistentStateManager = server.getOverworld().getPersistentStateManager();
 
         ChecksState state = persistentStateManager.getOrCreate(
-            ChecksState::createFromNbt,
             ChecksState::createNew,
             Archipelago.MOD_ID
         );
