@@ -3,11 +3,8 @@ package net.stuff691734.archipelago;
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,19 +34,6 @@ public class Archipelago implements ModInitializer {
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
 
-
-        ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
-            if (entity instanceof ServerPlayerEntity) {
-                if (damageSource == entity.getDamageSources().genericKill()) {
-                    // no looping hopefully
-
-                    Archipelago.client.sendDeathlink(
-                            Archipelago.client.getMyName(),
-                            damageSource.getDeathMessage(entity).getLiteralString()
-                    );
-                }
-            }
-        }));
         ServerEntityEvents.ENTITY_LOAD.register((entity,serverWorld) -> {
             if (entity instanceof PlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
