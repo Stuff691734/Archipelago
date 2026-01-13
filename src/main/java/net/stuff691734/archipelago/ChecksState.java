@@ -1,7 +1,6 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
@@ -17,7 +16,7 @@ public class ChecksState extends PersistentState {
 
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    public NbtCompound writeNbt(NbtCompound nbt) {
         NbtCompound archipelagoNbt = new NbtCompound();
 
         NbtCompound checksNbt = new NbtCompound();
@@ -38,7 +37,7 @@ public class ChecksState extends PersistentState {
         return nbt;
     }
 
-    public static ChecksState createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
+    public static ChecksState createFromNbt(NbtCompound tag) {
         ChecksState state = new ChecksState();
         NbtCompound archipelagoNbt = tag.getCompound("archipelago");
 

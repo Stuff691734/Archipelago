@@ -9,6 +9,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Utils {
     public static boolean isRootAdvancementId(String advancementId) {
         if (isAdvancementId(advancementId)) {
@@ -23,12 +25,13 @@ public class Utils {
 
     public static boolean isAdvancementId(String advancementId) {
         DataResult<Identifier> id = Identifier.validate(advancementId);
-        if (id.isSuccess()) {
+        AtomicBoolean result = new AtomicBoolean(false);
+        id.result().ifPresent((identifier -> {
             AdvancementManager advancementManager = Archipelago.server.getAdvancementLoader().getManager();
-            PlacedAdvancement advancement = advancementManager.get(id.getOrThrow());
-            return advancement != null;
-        }
-        return false;
+            PlacedAdvancement advancement = advancementManager.get(identifier);
+            result.set(advancement != null);
+        }));
+        return result.get();
     }
 
     public static void giveItem(ServerPlayerEntity player, String item) {
