@@ -5,11 +5,9 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.stuff691734.archipelago.events.OnDeathEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,17 +30,6 @@ public class Archipelago implements ModInitializer {
             client.addTag("Modded Minecraft");
             client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
             client.getEventManager().registerListener(new ArchipelagoListeners());
-        });
-
-        OnDeathEvent.EVENT.register((player, damageSource) -> {
-            if (damageSource == DamageSource.OUT_OF_WORLD) {
-                // no looping hopefully
-
-                Archipelago.client.sendDeathlink(
-                        Archipelago.client.getMyName(),
-                        damageSource.getDeathMessage(player).getString()
-                );
-            }
         });
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
