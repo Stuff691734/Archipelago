@@ -3,6 +3,7 @@ package net.stuff691734.archipelago;
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
@@ -30,14 +31,14 @@ public class ArchipelagoListeners {
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendSystemMessage(Text.of(event.apPrint.getPlainText()), UUID.randomUUID());
+            Archipelago.server.sendSystemMessage(new LiteralText(event.apPrint.getPlainText()), UUID.randomUUID());
         }
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendSystemMessage(Text.of(String.format(
+            Archipelago.server.sendSystemMessage(new LiteralText(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
