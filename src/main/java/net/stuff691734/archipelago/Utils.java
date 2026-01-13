@@ -1,9 +1,7 @@
 package net.stuff691734.archipelago;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.advancement.AdvancementManager;
-import net.minecraft.advancement.PlacedAdvancement;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,9 +14,9 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            AdvancementEntry advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(namespace, path));
             assert advancement != null;
-            return advancement.value().isRoot();
+            return advancement == advancement.getRoot();
         }
         return false;
     }
@@ -27,8 +25,7 @@ public class Utils {
         DataResult<Identifier> id = Identifier.validate(advancementId);
         AtomicBoolean result = new AtomicBoolean(false);
         id.result().ifPresent((identifier -> {
-            AdvancementManager advancementManager = Archipelago.server.getAdvancementLoader().getManager();
-            PlacedAdvancement advancement = advancementManager.get(identifier);
+            Advancement advancement = Archipelago.server.getAdvancementLoader().get(identifier);
             result.set(advancement != null);
         }));
         return result.get();
