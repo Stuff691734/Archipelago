@@ -12,7 +12,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancementLoader().get(new Identifier(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancementManager().get(new Identifier(namespace, path));
             assert advancement != null;
             return advancement == getRoot(advancement);
         }
@@ -26,7 +26,7 @@ public class Utils {
         } catch (InvalidIdentifierException exception) {
             return false;
         }
-        Advancement advancement = Archipelago.server.getAdvancementLoader().get(id);
+        Advancement advancement = Archipelago.server.getAdvancementManager().get(id);
         return advancement != null;
     }
 

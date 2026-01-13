@@ -55,7 +55,7 @@ public class Commands {
 
                         Map<String, Check> checks = new HashMap<>();
 
-                        for (Advancement advancement : Archipelago.server.getAdvancementLoader().getAdvancements()) {
+                        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAdvancements()) {
 
                             AdvancementDisplay display = advancement.getDisplay();
                             if (display != null) {
