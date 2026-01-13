@@ -36,7 +36,7 @@ public class Utils {
         if (!player.giveItemStack(itemStack)) {
             Archipelago.LOGGER.info("Dropped Item");
 
-            player.dropStack(player.getServerWorld(), itemStack);
+            player.dropStack(player.getWorld(), itemStack);
         }
     }
 }
