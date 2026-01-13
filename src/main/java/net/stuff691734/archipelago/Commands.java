@@ -35,10 +35,10 @@ public class Commands {
                                 try {
                                     Archipelago.client.connect(WebSocketAddress);
                                 } catch (URISyntaxException e) {
-                                    context.getSource().sendFeedback(() -> Text.literal("Invalid server address"), false);
+                                    context.getSource().sendFeedback(Text.literal("Invalid server address"), false);
                                     return 1;
                                 }
-                                context.getSource().sendFeedback(() -> Text.literal("Connected"), false);
+                                context.getSource().sendFeedback(Text.literal("Connected"), false);
                                 return 0;
                             })
                         )
@@ -52,7 +52,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                     .executes(context -> {
-                        context.getSource().sendFeedback(() -> Text.literal("Started writing to file."), false);
+                        context.getSource().sendFeedback(Text.literal("Started writing to file."), false);
 
                         Map<String, Check> checks = new HashMap<>();
 
@@ -85,10 +85,10 @@ public class Commands {
                             writer.close();
 
                         } catch (IOException e) {
-                            context.getSource().sendFeedback(() -> Text.literal(e.getMessage()), false);
+                            context.getSource().sendFeedback(Text.literal(e.getMessage()), false);
                             return 1;
                         }
-                        context.getSource().sendFeedback(() -> Text.literal("Finished writing to file."), false);
+                        context.getSource().sendFeedback(Text.literal("Finished writing to file."), false);
                         return 0;
                     })
                 )
@@ -96,8 +96,8 @@ public class Commands {
                     .executes(context -> {
                         MinecraftServer server = context.getSource().getServer();
                         ChecksState checkState = ChecksState.getServerState(server);
-                        context.getSource().sendFeedback(() -> Text.literal(checkState.checks.toString()), false);
-                        context.getSource().sendFeedback(() -> Text.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                        context.getSource().sendFeedback(Text.literal(checkState.checks.toString()), false);
+                        context.getSource().sendFeedback(Text.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                         return 0;
                     })
                     .then(argument("check", StringArgumentType.greedyString())
@@ -105,7 +105,7 @@ public class Commands {
                             final String checkName = StringArgumentType.getString(context, "check");
                             MinecraftServer server = context.getSource().getServer();
                             ChecksState checkState = ChecksState.getServerState(server);
-                            context.getSource().sendFeedback(() -> Text.literal(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                            context.getSource().sendFeedback(Text.literal(checkState.checks.getOrDefault(checkName, false).toString()), false);
                             return 0;
                         })
                     )

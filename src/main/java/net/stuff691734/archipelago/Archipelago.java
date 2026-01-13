@@ -40,7 +40,7 @@ public class Archipelago implements ModInitializer {
 
         ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
             if (entity instanceof ServerPlayerEntity) {
-                if (damageSource == entity.getDamageSources().genericKill()) {
+                if (damageSource == entity.getDamageSources().outOfWorld()) {
                     // no looping hopefully
 
                     Archipelago.client.sendDeathlink(
