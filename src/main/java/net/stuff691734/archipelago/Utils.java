@@ -16,7 +16,7 @@ public class Utils {
             String path = advancementId.split(":")[1];
             Advancement advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(namespace, path));
             assert advancement != null;
-            return advancement == advancement.getRoot();
+            return advancement == getRoot(advancement);
         }
         return false;
     }
@@ -41,6 +41,17 @@ public class Utils {
             Archipelago.LOGGER.info("Dropped Item");
 
             player.dropStack(itemStack);
+        }
+    }
+
+    public static Advancement getRoot(Advancement advancement) {
+        Advancement advancement1 = advancement;
+        while (true) {
+            Advancement advancement2 = advancement1.getParent();
+            if (advancement2 == null) {
+                return advancement1;
+            }
+            advancement1 = advancement2;
         }
     }
 }

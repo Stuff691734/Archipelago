@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -40,7 +41,7 @@ public class Archipelago implements ModInitializer {
 
         ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
             if (entity instanceof ServerPlayerEntity) {
-                if (damageSource == entity.getDamageSources().outOfWorld()) {
+                if (damageSource == DamageSource.OUT_OF_WORLD) {
                     // no looping hopefully
 
                     Archipelago.client.sendDeathlink(

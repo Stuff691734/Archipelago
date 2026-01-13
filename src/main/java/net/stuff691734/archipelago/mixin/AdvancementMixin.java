@@ -8,6 +8,7 @@ import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ChecksState;
+import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -53,7 +54,7 @@ public abstract class AdvancementMixin {
             Advancement checkAdvancement = advancement;
             // root advancement
             if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
-                checkAdvancement = advancement.getRoot();
+                checkAdvancement = Utils.getRoot(advancement);
             }
             // parent advancement
             else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
