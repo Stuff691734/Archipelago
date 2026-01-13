@@ -12,7 +12,9 @@ import net.minecraft.util.Identifier;
 public class Utils {
     public static boolean isRootAdvancementId(String advancementId) {
         if (isAdvancementId(advancementId)) {
-            AdvancementEntry advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(advancementId));
+            String namespace = advancementId.split(":")[0];
+            String path = advancementId.split(":")[1];
+            AdvancementEntry advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(namespace, path));
             assert advancement != null;
             return advancement.value().isRoot();
         }
@@ -32,7 +34,9 @@ public class Utils {
     public static void giveItem(ServerPlayerEntity player, String item) {
         String[] strings = item.split(" ");
         int amount = Integer.parseInt(strings[0]);
-        ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(strings[1])), amount);
+        String namespace = strings[1].split(":")[0];
+        String path = strings[1].split(":")[1];
+        ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(namespace, path)), amount);
         if (!player.giveItemStack(itemStack)) {
             Archipelago.LOGGER.info("Dropped Item");
 
