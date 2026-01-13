@@ -94,8 +94,7 @@ public class Commands {
                 )
                 .then(literal("get")
                     .executes(context -> {
-                        MinecraftServer server = context.getSource().getServer();
-                        ChecksState checkState = ChecksState.getServerState(server);
+                        ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                         context.getSource().sendFeedback(() -> Text.literal(checkState.checks.toString()), false);
                         context.getSource().sendFeedback(() -> Text.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                         return 0;
@@ -103,8 +102,7 @@ public class Commands {
                     .then(argument("check", StringArgumentType.greedyString())
                         .executes(context -> {
                             final String checkName = StringArgumentType.getString(context, "check");
-                            MinecraftServer server = context.getSource().getServer();
-                            ChecksState checkState = ChecksState.getServerState(server);
+                            ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                             context.getSource().sendFeedback(() -> Text.literal(checkState.checks.getOrDefault(checkName, false).toString()), false);
                             return 0;
                         })
@@ -115,8 +113,7 @@ public class Commands {
                     .then(argument("check", StringArgumentType.greedyString())
                         .executes(context -> {
                             final String checkName = StringArgumentType.getString(context, "check");
-                            MinecraftServer server = context.getSource().getServer();
-                            ChecksState checkState = ChecksState.getServerState(server);
+                            ChecksState checkState = ChecksState.getServerState(Archipelago.server);
                             checkState.checks.put(checkName, true);
                             return 0;
                         })
