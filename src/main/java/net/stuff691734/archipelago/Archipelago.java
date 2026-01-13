@@ -33,20 +33,6 @@ public class Archipelago implements ModInitializer {
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
 
-
-        ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
-            if (entity instanceof ServerPlayerEntity) {
-                if (damageSource == entity.getDamageSources().outOfWorld()) {
-                    // no looping hopefully
-
-                    Archipelago.client.sendDeathlink(
-                            Archipelago.client.getMyName(),
-                            damageSource.getDeathMessage(entity).getString()
-                    );
-                }
-            }
-        }));
-
         ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
             if (entity instanceof PlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
