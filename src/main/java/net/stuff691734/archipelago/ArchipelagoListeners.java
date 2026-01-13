@@ -20,7 +20,7 @@ public class ArchipelagoListeners {
     public void onDeathLink(DeathLinkEvent event) {
         if (Archipelago.server != null) {
             for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
-                player.kill(player.getWorld());
+                player.kill(player.getEntityWorld());
             }
         }
     }
