@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
@@ -19,16 +19,16 @@ public class ChecksState extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
-        NbtCompound archipelagoNbt = new NbtCompound();
+    public CompoundTag toTag(CompoundTag nbt) {
+        CompoundTag archipelagoNbt = new CompoundTag();
 
-        NbtCompound checksNbt = new NbtCompound();
+        CompoundTag checksNbt = new CompoundTag();
         checks.forEach(checksNbt::putBoolean);
 
-        NbtCompound slotDataNbt = new NbtCompound();
+        CompoundTag slotDataNbt = new CompoundTag();
         slotData.forEach(slotDataNbt::putString);
 
-        NbtCompound playerLastCheckDataNbt = new NbtCompound();
+        CompoundTag playerLastCheckDataNbt = new CompoundTag();
         playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
 
         archipelagoNbt.put("checks", checksNbt);
@@ -41,17 +41,17 @@ public class ChecksState extends PersistentState {
     }
 
     @Override
-    public void fromTag(NbtCompound tag) {
+    public void fromTag(CompoundTag tag) {
         ChecksState state = new ChecksState(Archipelago.MOD_ID);
-        NbtCompound archipelagoNbt = tag.getCompound("archipelago");
+        CompoundTag archipelagoNbt = tag.getCompound("archipelago");
 
-        NbtCompound checksNbt = archipelagoNbt.getCompound("checks");
+        CompoundTag checksNbt = archipelagoNbt.getCompound("checks");
         checksNbt.getKeys().forEach(key -> state.checks.put(key, checksNbt.getBoolean(key)));
 
-        NbtCompound slotDataNbt = archipelagoNbt.getCompound("slot_data");
+        CompoundTag slotDataNbt = archipelagoNbt.getCompound("slot_data");
         slotDataNbt.getKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
 
-        NbtCompound playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
+        CompoundTag playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
         playerLastCheckDataNbt.getKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
     }
 
