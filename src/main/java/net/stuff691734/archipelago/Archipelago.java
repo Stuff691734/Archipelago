@@ -5,7 +5,9 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
@@ -49,22 +51,24 @@ public class Archipelago implements ModInitializer {
             }
         }));
 
-        ServerPlayerEvents.JOIN.register((player) -> {
-            int serverLastCheck = client.getItemManager().getIndex();
-            int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(player.getUuidAsString(), 0);
-            if (serverLastCheck != playerLastCheck) {
-                ChecksState.getServerState(server).playerLastCheck.put(player.getUuidAsString(), serverLastCheck);
+        ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
+            if (entity instanceof PlayerEntity) {
+                ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                int serverLastCheck = client.getItemManager().getIndex();
+                int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(player.getUuidAsString(), 0);
+                if (serverLastCheck != playerLastCheck) {
+                    ChecksState.getServerState(server).playerLastCheck.put(player.getUuidAsString(), serverLastCheck);
 
-                for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
-                    if (Utils.isRootAdvancementId(item.itemName)) {
-                        ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
-                    }
-                    else {
-                        Utils.giveItem(player, item.itemName);
+                    for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
+                        if (Utils.isRootAdvancementId(item.itemName)) {
+                            ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
+                        }
+                        else {
+                            Utils.giveItem(player, item.itemName);
+                        }
                     }
                 }
             }
-
         });
 
         // close websocket when leaving
