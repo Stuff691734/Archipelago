@@ -42,8 +42,6 @@ public class Utils {
         String path = strings[1].split(":")[1];
         ItemStack itemStack = new ItemStack(Registries.ITEM.get(Identifier.of(namespace, path)), amount);
         if (!player.giveItemStack(itemStack)) {
-            Archipelago.LOGGER.info("Dropped Item");
-
             player.dropStack(itemStack);
         }
     }
