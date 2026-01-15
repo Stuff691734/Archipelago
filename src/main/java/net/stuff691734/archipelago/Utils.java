@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class Utils {
@@ -51,6 +52,14 @@ public class Utils {
                 return advancement1;
             }
             advancement1 = advancement2;
+        }
+    }
+
+    public static void sendMessage(Text message) {
+        Archipelago.server.sendMessage(message);
+
+        for(ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
+            player.sendMessage(message);
         }
     }
 }
