@@ -7,6 +7,7 @@ import net.minecraft.advancement.PlacedAdvancement;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class Utils {
@@ -41,6 +42,14 @@ public class Utils {
             Archipelago.LOGGER.info("Dropped Item");
 
             player.dropStack(player.getServerWorld(), itemStack);
+        }
+    }
+
+    public static void sendMessage(Text message) {
+        Archipelago.server.sendMessage(message);
+
+        for(ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
+            player.sendMessage(message);
         }
     }
 }
