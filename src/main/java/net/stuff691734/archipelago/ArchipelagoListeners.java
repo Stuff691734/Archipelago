@@ -13,7 +13,7 @@ public class ArchipelagoListeners {
         ChecksState checksState = ChecksState.getServerState(Archipelago.server);
 
         slotData.asMap().forEach((key, value) -> checksState.slotData.put(key, value.getAsString()));
-        if (checksState.slotData.get("death_link").equals("1")) {
+        if (checksState.slotData.getOrDefault("death_link", "0").equals("1")) {
             Archipelago.LOGGER.info("DeathLink activated");
             Archipelago.client.setDeathLinkEnabled(true);
             Archipelago.client.addTag("DeathLink");
