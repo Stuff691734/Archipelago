@@ -2,11 +2,10 @@ package net.stuff691734.archipelago;
 
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-
-import java.util.UUID;
 
 public class ArchipelagoListeners {
     @ArchipelagoEventListener
@@ -30,20 +29,18 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
-        if (Archipelago.server != null) {
-            Archipelago.server.sendSystemMessage(new LiteralText(event.apPrint.getPlainText()), UUID.randomUUID());
-        }
+        Utils.sendMessage(new LiteralText(event.apPrint.getPlainText()));
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendSystemMessage(new LiteralText(String.format(
+            Utils.sendMessage(new LiteralText(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
                     event.getLocationName()
-            )), UUID.randomUUID());
+            )));
 
             if (Utils.isRootAdvancementId(event.getItemName())) {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);
