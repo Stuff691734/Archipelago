@@ -29,7 +29,8 @@ public class Archipelago implements ModInitializer {
 
             client.setGame("Modded Minecraft");
 
-            client.addTag("Modded Minecraft");
+            client.addTag("DeathLink");
+            client.setDeathLinkEnabled(true);
             client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
