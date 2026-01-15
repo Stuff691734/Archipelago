@@ -2,6 +2,9 @@ package net.stuff691734.archipelago;
 
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
@@ -27,15 +30,13 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
-        if (Archipelago.server != null) {
-            Archipelago.server.sendMessage(Text.literal(event.apPrint.getPlainText()));
-        }
+        Utils.sendMessage(Text.literal(event.apPrint.getPlainText()));
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Archipelago.server.sendMessage(Text.literal(String.format(
+            Utils.sendMessage(Text.literal(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
