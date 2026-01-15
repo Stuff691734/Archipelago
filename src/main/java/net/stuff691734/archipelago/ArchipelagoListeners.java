@@ -21,10 +21,8 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onDeathLink(DeathLinkEvent event) {
-        if (Archipelago.server != null) {
-            for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
-                player.kill(player.getServerWorld());
-            }
+        for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
+            player.kill(player.getServerWorld());
         }
     }
 
