@@ -28,8 +28,6 @@ public class Archipelago implements ModInitializer {
 
             client.setGame("Modded Minecraft");
 
-            client.addTag("DeathLink");
-            client.setDeathLinkEnabled(true);
             client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
@@ -39,7 +37,7 @@ public class Archipelago implements ModInitializer {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 int serverLastCheck = client.getItemManager().getIndex();
                 int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(player.getUuidAsString(), 0);
-                if (serverLastCheck != playerLastCheck) {
+                if (serverLastCheck > playerLastCheck) {
                     ChecksState.getServerState(server).playerLastCheck.put(player.getUuidAsString(), serverLastCheck);
 
                     for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
