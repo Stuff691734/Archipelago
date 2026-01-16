@@ -8,7 +8,7 @@
   "contact": {},
   "license": "unlicense",
   "icon": "assets/archipelago/icon.png",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "net.stuff691734.archipelago.Archipelago"
