@@ -8,6 +8,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.UUID;
+
 public class Utils {
     public static boolean isRootAdvancementId(String advancementId) {
         if (isAdvancementId(advancementId)) {
@@ -54,10 +56,10 @@ public class Utils {
     }
 
     public static void sendMessage(Text message) {
-        Archipelago.server.sendMessage(message);
+        Archipelago.server.sendSystemMessage(message, UUID.randomUUID());
 
         for(ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
-            player.sendMessage(message);
+            player.sendMessage(message, false);
         }
     }
 }
