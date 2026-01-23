@@ -19,9 +19,12 @@ public class Archipelago implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        Archipelago.LOGGER.info("Running onInitialize");
         Commands.register();
+        Archipelago.LOGGER.info("Running onInitialize: Post command register");
 
         ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
+            Archipelago.LOGGER.info("Running onInitialize: server starting event");
             server = minecraftServer;
             client = new ArchipelagoClient();
 
