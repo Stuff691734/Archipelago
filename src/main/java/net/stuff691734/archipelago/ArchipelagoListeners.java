@@ -24,7 +24,7 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onDeathLink(DeathLinkEvent event) {
-        Utils.sendMessage(Text.of(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
+        Utils.sendMessage(new LiteralText(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
         for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
             player.kill();
         }
