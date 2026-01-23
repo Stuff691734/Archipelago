@@ -3,12 +3,12 @@ package net.stuff691734.archipelago;
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.entity.damage.DamageSource;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
+import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.stuff691734.archipelago.fabricEvents.OnLoad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class Archipelago implements ModInitializer {
         Commands.register();
         Archipelago.LOGGER.info("Running onInitialize: Post command register");
 
-        ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
+        ServerStartCallback.EVENT.register(minecraftServer -> {
             Archipelago.LOGGER.info("Running onInitialize: server starting event");
             server = minecraftServer;
             client = new ArchipelagoClient();
@@ -35,7 +35,7 @@ public class Archipelago implements ModInitializer {
             client.getEventManager().registerListener(new ArchipelagoListeners());
         });
 
-        ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
+        OnLoad.ENTITY_LOAD.register((entity, serverWorld) -> {
             if (entity instanceof PlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) entity;
                 int serverLastCheck = client.getItemManager().getIndex();
@@ -56,7 +56,7 @@ public class Archipelago implements ModInitializer {
         });
 
         // close websocket when leaving
-        ServerLifecycleEvents.SERVER_STOPPING.register((minecraftServer) -> {
+        ServerStopCallback.EVENT.register((minecraftServer) -> {
             server = null;
             client.close();
             client = null;
