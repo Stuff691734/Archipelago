@@ -3,7 +3,6 @@ package net.stuff691734.archipelago;
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.damage.DamageSource;
