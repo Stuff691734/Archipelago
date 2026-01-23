@@ -8,6 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
@@ -15,7 +16,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancementLoader().get(Identifier.of(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancementLoader().get(new Identifier(namespace, path));
             assert advancement != null;
             return advancement == getRoot(advancement);
         }
@@ -37,7 +38,7 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(Registry.ITEM.get(Identifier.of(namespace, path)), amount);
+        ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier(namespace, path)), amount);
         if (!player.giveItemStack(itemStack)) {
             player.dropStack(itemStack);
         }
@@ -55,10 +56,10 @@ public class Utils {
     }
 
     public static void sendMessage(Text message) {
-        Archipelago.server.sendMessage(message);
+        Archipelago.server.sendSystemMessage(message, UUID.randomUUID());
 
         for(ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
-            player.sendMessage(message);
+            player.sendMessage(message, false);
         }
     }
 }
