@@ -42,17 +42,16 @@ public class ChecksState extends PersistentState {
 
     @Override
     public void fromTag(CompoundTag tag) {
-        ChecksState state = new ChecksState(Archipelago.MOD_ID);
         CompoundTag archipelagoNbt = tag.getCompound("archipelago");
 
         CompoundTag checksNbt = archipelagoNbt.getCompound("checks");
-        checksNbt.getKeys().forEach(key -> state.checks.put(key, checksNbt.getBoolean(key)));
+        checksNbt.getKeys().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
         CompoundTag slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.getKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
+        slotDataNbt.getKeys().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
         CompoundTag playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.getKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        playerLastCheckDataNbt.getKeys().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
     }
 
     public static ChecksState createNew() {
