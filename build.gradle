@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -27,8 +27,8 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    implementation include('org.java-websocket:Java-WebSocket:1.5.6')
-    implementation 'io.github.archipelagomw:Java-Client:0.2.1'
+//    implementation include('org.java-websocket:Java-WebSocket:1.5.6')
+    implementation include('io.github.archipelagomw:Java-Client:0.2.1')
 }
 
 processResources {
@@ -44,7 +44,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
