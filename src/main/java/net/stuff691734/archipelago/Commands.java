@@ -2,11 +2,12 @@ package net.stuff691734.archipelago;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
-import net.minecraft.text.LiteralText;
+import net.minecraft.network.chat.Components;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
 import java.io.File;
@@ -34,10 +35,10 @@ public class Commands {
                                 try {
                                     Archipelago.client.connect(WebSocketAddress);
                                 } catch (URISyntaxException e) {
-                                    context.getSource().sendFeedback(new LiteralText("Invalid server address"), false);
+                                    context.getSource().sendFeedback(Components.message(new LiteralMessage("Invalid server address")), false);
                                     return 1;
                                 }
-                                context.getSource().sendFeedback(new LiteralText("Connected"), false);
+                                context.getSource().sendFeedback(Components.message(new LiteralMessage("Connected")), false);
                                 return 0;
                             })
                         )
@@ -51,7 +52,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                     .executes(context -> {
-                        context.getSource().sendFeedback(new LiteralText("Started writing to file."), false);
+                        context.getSource().sendFeedback(Components.message(new LiteralMessage("Started writing to file.")), false);
 
                         Map<String, Check> checks = new HashMap<>();
 
@@ -84,25 +85,25 @@ public class Commands {
                             writer.close();
 
                         } catch (IOException e) {
-                            context.getSource().sendFeedback(new LiteralText(e.getMessage()), false);
+                            context.getSource().sendFeedback(Components.message(new LiteralMessage(e.getMessage())), false);
                             return 1;
                         }
-                        context.getSource().sendFeedback(new LiteralText("Finished writing to file."), false);
+                        context.getSource().sendFeedback(Components.message(new LiteralMessage("Finished writing to file.")), false);
                         return 0;
                     })
                 )
                 .then(literal("get")
                     .executes(context -> {
                         ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                        context.getSource().sendFeedback(new LiteralText(checkState.checks.toString()), false);
-                        context.getSource().sendFeedback(new LiteralText(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                        context.getSource().sendFeedback(Components.message(new LiteralMessage(checkState.checks.toString())), false);
+                        context.getSource().sendFeedback(Components.message(new LiteralMessage(Archipelago.client.getItemManager().getReceivedItemIDs().toString())), false);
                         return 0;
                     })
                     .then(argument("check", StringArgumentType.greedyString())
                         .executes(context -> {
                             final String checkName = StringArgumentType.getString(context, "check");
                             ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                            context.getSource().sendFeedback(new LiteralText(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                            context.getSource().sendFeedback(Components.message(new LiteralMessage(checkState.checks.getOrDefault(checkName, false).toString())), false);
                             return 0;
                         })
                     )

@@ -1,9 +1,10 @@
 package net.stuff691734.archipelago;
 
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.LiteralMessage;
 import io.github.archipelagomw.events.*;
+import net.minecraft.network.chat.Components;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 
 public class ArchipelagoListeners {
     @ArchipelagoEventListener
@@ -24,7 +25,7 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onDeathLink(DeathLinkEvent event) {
-        Utils.sendMessage(new LiteralText(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
+        Utils.sendMessage(Components.message(new LiteralMessage(String.format("[DeathLink] %s died: %s",event.source, event.cause))));
         for (ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
             player.kill();
         }
@@ -32,18 +33,18 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
-        Utils.sendMessage(new LiteralText(event.apPrint.getPlainText()));
+        Utils.sendMessage(Components.message(new LiteralMessage((event.apPrint.getPlainText()))));
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(new LiteralText(String.format(
+            Utils.sendMessage(Components.message(new LiteralMessage(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
                     event.getLocationName()
-            )));
+            ))));
 
             if (Utils.isRootAdvancementId(event.getItemName())) {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);

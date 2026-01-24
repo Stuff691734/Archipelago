@@ -2,10 +2,10 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.advancement.Advancement;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class Utils {
@@ -53,7 +53,7 @@ public class Utils {
         }
     }
 
-    public static void sendMessage(Text message) {
+    public static void sendMessage(Component message) {
         Archipelago.server.sendMessage(message);
 
         for(ServerPlayerEntity player : Archipelago.server.getPlayerManager().getPlayerList()) {
