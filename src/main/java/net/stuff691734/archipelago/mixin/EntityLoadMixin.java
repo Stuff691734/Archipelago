@@ -14,12 +14,12 @@ import java.util.function.BooleanSupplier;
 @Mixin(ServerWorld.class)
 public abstract class EntityLoadMixin {
     @Shadow
-    boolean inEntityTick;
+    boolean ticking;
 
     // Call our load event after vanilla has loaded the entity
     @Inject(method = "loadEntityUnchecked", at = @At("TAIL"))
     private void onLoadEntity(Entity entity, CallbackInfo ci) {
-        if (!this.inEntityTick) { // Copy vanilla logic, we cannot load entities while the game is ticking entities
+        if (!this.ticking) { // Copy vanilla logic, we cannot load entities while the game is ticking entities
             OnLoad.ENTITY_LOAD.invoker().onLoad(entity, (ServerWorld) (Object) this);
         }
     }

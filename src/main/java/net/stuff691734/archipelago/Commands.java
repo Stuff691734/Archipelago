@@ -3,7 +3,7 @@ package net.stuff691734.archipelago;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementDisplay;
 import net.minecraft.text.LiteralText;
@@ -22,7 +22,7 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class Commands {
     public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistry.INSTANCE.register(false, (dispatcher) -> {
             dispatcher.register(literal("archipelago")
                 .then(literal("connect")
                     .then(argument("Name", StringArgumentType.word())
