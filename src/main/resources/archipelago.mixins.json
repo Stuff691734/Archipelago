@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.stuff691734.archipelago.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AdvancementMixin",
     "PlayerDeathMixin"
