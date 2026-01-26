@@ -7,8 +7,6 @@
     "AdvancementMixin",
     "PlayerDeathMixin"
   ],
-  "server": [
-  ],
   "injectors": {
     "defaultRequire": 1
   },
