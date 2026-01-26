@@ -8,8 +8,6 @@
     "PlayerDeathMixin",
     "EntityLoadMixin"
   ],
-  "server": [
-  ],
   "injectors": {
     "defaultRequire": 1
   },
