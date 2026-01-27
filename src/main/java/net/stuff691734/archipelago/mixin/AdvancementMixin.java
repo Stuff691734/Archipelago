@@ -29,12 +29,13 @@ public abstract class AdvancementMixin {
     private void sendArchipelagoAdvancement(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         if (advancement.value().display().isPresent() && this.getProgress(advancement).isDone()) {
             if (Archipelago.client.isConnected()) {
-                // this does not collect the right ids
                 Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(advancement.id().toString());
-                Archipelago.client.getLocationManager().checkLocation(advancement_id);
-                ChecksState checksState = ChecksState.getServerState(Archipelago.server);
-                if (advancement.id().toString().equals(checksState.slotData.get("final_goal"))) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                if (advancement_id != null) {
+                    Archipelago.client.getLocationManager().checkLocation(advancement_id);
+                    ChecksState checksState = ChecksState.getServerState(Archipelago.server);
+                    if (advancement.id().toString().equals(checksState.slotData.get("final_goal"))) {
+                        Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                    }
                 }
             }
         }
