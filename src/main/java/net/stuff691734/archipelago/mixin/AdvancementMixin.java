@@ -49,29 +49,30 @@ public abstract class AdvancementMixin {
         advancement.value().display().ifPresent(display -> {
             ChecksState checksState = ChecksState.getServerState(Archipelago.server);
             PlacedAdvancement placedAdvancement = this.advancementManager.get(advancement);
-            assert placedAdvancement != null;
 
-            AdvancementEntry checkAdvancement = placedAdvancement.getAdvancementEntry();
-            // root advancement
-            if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
-                checkAdvancement = placedAdvancement.getRoot().getAdvancementEntry();
-            }
-            // parent advancement
-            else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
-                PlacedAdvancement parent = placedAdvancement.getParent();
-                if (parent == null) {
-                    parent = placedAdvancement;
+            if (placedAdvancement != null) {
+                AdvancementEntry checkAdvancement = placedAdvancement.getAdvancementEntry();
+                // root advancement
+                if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
+                    checkAdvancement = placedAdvancement.getRoot().getAdvancementEntry();
                 }
-                checkAdvancement = parent.getAdvancementEntry();
-            }
+                // parent advancement
+                else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
+                    PlacedAdvancement parent = placedAdvancement.getParent();
+                    if (parent == null) {
+                        parent = placedAdvancement;
+                    }
+                    checkAdvancement = parent.getAdvancementEntry();
+                }
 
-            String checkAdvancementName = checkAdvancement.id().toString();
-            checkAdvancement.value().display().ifPresent(rootDisplay -> {
-                if (!checksState.checks.getOrDefault(checkAdvancementName, false)) {
-                    // if player hasn't received necessary check prevent them from getting the advancement
-                    cir.setReturnValue(false);
-                }
-            });
+                String checkAdvancementName = checkAdvancement.id().toString();
+                checkAdvancement.value().display().ifPresent(rootDisplay -> {
+                    if (!checksState.checks.getOrDefault(checkAdvancementName, false)) {
+                        // if player hasn't received necessary check prevent them from getting the advancement
+                        cir.setReturnValue(false);
+                    }
+                });
+            }
         });
     }
 }
