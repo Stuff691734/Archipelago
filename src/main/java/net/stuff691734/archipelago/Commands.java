@@ -59,18 +59,18 @@ public class Commands {
 
                             advancement.value().display().ifPresent(display -> {
                                 PlacedAdvancement placedAdvancement = Archipelago.server.getAdvancementLoader().getManager().get(advancement);
-                                assert placedAdvancement != null;
+                                if (placedAdvancement != null) {
+                                    PlacedAdvancement parent = placedAdvancement.getParent();
+                                    String parent_id = null;
+                                    if (parent != null) {
+                                        parent_id = parent.getAdvancementEntry().id().toString();
+                                    }
 
-                                PlacedAdvancement parent = placedAdvancement.getParent();
-                                String parent_id = null;
-                                if (parent != null) {
-                                    parent_id = parent.getAdvancementEntry().id().toString();
+                                    checks.put(advancement.id().toString(), new Check(
+                                            display.getFrame().getId(),
+                                            parent_id
+                                    ));
                                 }
-
-                                checks.put(advancement.id().toString(),new Check(
-                                        display.getFrame().getId(),
-                                        parent_id
-                                ));
                             });
                         }
                         try {
