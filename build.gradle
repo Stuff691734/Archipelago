@@ -27,8 +27,10 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-//    implementation include('org.java-websocket:Java-WebSocket:1.5.6')
+    implementation include('org.java-websocket:Java-WebSocket:1.5.6')
     implementation include('io.github.archipelagomw:Java-Client:0.2.1')
+    // This adds a lot of bloat, *sigh*
+    implementation include('org.apache.httpcomponents.core5:httpcore5:5.4')
 }
 
 processResources {
