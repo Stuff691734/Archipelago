@@ -46,7 +46,7 @@ public class ArchipelagoListeners {
                     event.getLocationName()
             ))));
 
-            if (Utils.isRootAdvancementId(event.getItemName())) {
+            if (Utils.isAdvancementId(event.getItemName())) {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);
             }
             else {
