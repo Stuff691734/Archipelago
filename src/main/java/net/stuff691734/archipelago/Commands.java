@@ -64,6 +64,9 @@ public class Commands {
                                 if (parent != null) {
                                     parent_id = parent.getId().toString();
                                 }
+                                if (parent_id != null && parent_id.equals("minecraft:recipes/root")) {
+                                    continue;
+                                }
 
                                 checks.put(advancement.getId().toString(),new Check(
                                         display.getFrame().getId(),
