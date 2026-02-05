@@ -35,18 +35,11 @@ public class Archipelago {
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Archipelago(IEventBus modEventBus) {
-        // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Test) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
-    }
-
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -82,7 +75,7 @@ public class Archipelago {
             ChecksState.getServerState(server).playerLastCheck.put(event.getEntity().getStringUUID(), serverLastCheck);
 
             for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
-                if (Utils.isRootAdvancementId(item.itemName)) {
+                if (Utils.isAdvancementId(item.itemName)) {
                     ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                 }
                 else {

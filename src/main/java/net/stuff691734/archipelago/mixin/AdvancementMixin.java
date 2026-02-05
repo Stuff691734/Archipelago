@@ -53,30 +53,47 @@ public abstract class AdvancementMixin {
     private void preventAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         advancement.value().display().ifPresent(display -> {
             ChecksState checksState = ChecksState.getServerState(Archipelago.server);
+
             AdvancementNode placedAdvancement = this.tree.get(advancement);
 
             if (placedAdvancement != null) {
-                AdvancementHolder checkAdvancement = placedAdvancement.holder();
-                // root advancement
                 if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
-                    checkAdvancement = AdvancementNode.getRoot(placedAdvancement).holder();
+                    AdvancementNode rootAdvancement = AdvancementNode.getRoot(placedAdvancement);
+                    String rootAdvancementName = rootAdvancement.holder().id().toString();
+
+                    if (!checksState.checks.getOrDefault(rootAdvancementName, false)) {
+                        // if player hasn't received root check prevent them from getting the advancement
+                        cir.setReturnValue(false);
+                    }
                 }
                 // parent advancement
                 else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
-                    AdvancementNode parent = placedAdvancement.parent();
-                    if (parent == null) {
-                        parent = placedAdvancement;
-                    }
-                    checkAdvancement = parent.holder();
-                }
+                    if (AdvancementNode.getRoot(placedAdvancement) == placedAdvancement) {
+                        // if root check against self
+                        if (!checksState.checks.getOrDefault(placedAdvancement.holder().id().toString(), false)) {
+                            cir.setReturnValue(false);
+                        }
+                    } else {
+                        // otherwise check against values up tree not including self
+                        AdvancementNode checkAdvancement = placedAdvancement;
+                        // exits when all advancements up the tree have been checked
+                        while (checkAdvancement != null) {
+                            checkAdvancement = checkAdvancement.parent();
 
-                String checkAdvancementName = checkAdvancement.id().toString();
-                checkAdvancement.value().display().ifPresent(rootDisplay -> {
-                    if (!checksState.checks.getOrDefault(checkAdvancementName, false)) {
-                        // if player hasn't received necessary check prevent them from getting the advancement
-                        cir.setReturnValue(false);
+                            if (checkAdvancement != null) {
+                                String checkAdvancementName = checkAdvancement.holder().id().toString();
+                                if (!checksState.checks.getOrDefault(checkAdvancementName, false)) {
+                                    cir.setReturnValue(false);
+                                }
+                            }
+                        }
                     }
-                });
+                }
+                // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
+                // to do an advancement insanity thing
+                else {
+                    cir.setReturnValue(checksState.checks.getOrDefault(placedAdvancement.holder().id().toString(), false));
+                }
             }
         });
     }
