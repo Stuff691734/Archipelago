@@ -65,14 +65,12 @@ public class Commands {
                                     if (parent != null) {
                                         parent_id = parent.getAdvancementEntry().id().toString();
                                     }
-                                    if (parent_id != null && parent_id.equals("minecraft:recipes/root")) {
-                                        continue;
+                                    if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
+                                        checks.put(advancement.id().toString(), new Check(
+                                                display.getFrame().asString(),
+                                                parent_id
+                                        ));
                                     }
-
-                                    checks.put(advancement.id().toString(),new Check(
-                                            display.getFrame().asString(),
-                                            parent_id
-                                    ));
                                 }
                             });
                         }
