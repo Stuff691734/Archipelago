@@ -63,7 +63,7 @@ public abstract class AdvancementMixin {
             }
             // parent advancement
             else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
-                if (advancement.getRoot() == advancement) {
+                if (Utils.getRoot(advancement) == advancement) {
                     // if root check against self
                     if (!checksState.checks.getOrDefault(advancement.getId().toString(), false)) {
                         cir.setReturnValue(false);
