@@ -15,7 +15,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(new ResourceLocation(namespace, path));
             assert advancement != null;
             return advancement.value().isRoot();
         }
@@ -37,7 +37,7 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, path)), amount);
+        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(namespace, path)), amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
         }
