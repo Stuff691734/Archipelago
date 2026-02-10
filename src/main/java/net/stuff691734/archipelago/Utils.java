@@ -6,7 +6,7 @@ import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -15,7 +15,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(Identifier.fromNamespaceAndPath(namespace, path));
             assert advancement != null;
             return advancement.value().isRoot();
         }
@@ -23,7 +23,7 @@ public class Utils {
     }
 
     public static boolean isAdvancementId(String advancementId) {
-        DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
+        DataResult<Identifier> id = Identifier.read(advancementId);
         if (id.isSuccess()) {
             AdvancementTree advancementManager = Archipelago.server.getAdvancements().tree();
             AdvancementNode advancement = advancementManager.get(id.getOrThrow());
@@ -37,7 +37,7 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.fromNamespaceAndPath(namespace, path)), amount);
+        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(namespace, path)), amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(Archipelago.server.overworld(), itemStack);
         }
