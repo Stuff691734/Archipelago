@@ -119,10 +119,11 @@ dependencies {
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.6'
     implementation ('io.github.archipelagomw:Java-Client:0.2.1')
-
-    additionalRuntimeClasspath('io.github.archipelagomw:Java-Client:0.2.1')
     // This adds a lot of bloat, *sigh*, neogforge includes this
 //    implementation 'org.apache.httpcomponents.core5:httpcore5:5.4'
+    jarJar(implementation ('io.github.archipelagomw:Java-Client:0.2.1'))
+    jarJar(implementation ('org.java-websocket:Java-WebSocket:1.5.6'))
+    jarJar(implementation ('org.apache.httpcomponents.core5:httpcore5:5.4'))
 }
 
 configurations.configureEach {
