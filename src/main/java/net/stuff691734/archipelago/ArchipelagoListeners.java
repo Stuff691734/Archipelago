@@ -3,6 +3,7 @@ package net.stuff691734.archipelago;
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ArchipelagoListeners {
@@ -24,7 +25,7 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onDeathLink(DeathLinkEvent event) {
-        Utils.sendMessage(Component.literal(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
+        Utils.sendMessage(new TextComponent(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
         for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
             player.kill();
         }
@@ -32,13 +33,13 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
-        Utils.sendMessage(Component.literal(event.apPrint.getPlainText()));
+        Utils.sendMessage(new TextComponent(event.apPrint.getPlainText()));
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(Component.literal(String.format(
+            Utils.sendMessage(new TextComponent(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),

@@ -8,6 +8,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
 import java.io.File;
@@ -35,10 +36,11 @@ public class Commands {
                                             try {
                                                 Archipelago.client.connect(WebSocketAddress);
                                             } catch (URISyntaxException e) {
-                                                context.getSource().sendSuccess(Component.literal("Invalid server address"), false);
+
+                                                context.getSource().sendSuccess(new TextComponent("Invalid server address"), false);
                                                 return 1;
                                             }
-                                            context.getSource().sendSuccess(Component.literal("Connected"), false);
+                                            context.getSource().sendSuccess(new TextComponent("Connected"), false);
                                             return 0;
                                         })
                                 )
@@ -52,7 +54,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                         .executes(context -> {
-                            context.getSource().sendSuccess(Component.literal("Started writing to file."), false);
+                            context.getSource().sendSuccess(new TextComponent("Started writing to file."), false);
 
                             Map<String, Check> checks = new HashMap<>();
 
@@ -86,25 +88,25 @@ public class Commands {
                                 writer.close();
 
                             } catch (IOException e) {
-                                context.getSource().sendSuccess(Component.literal(e.getMessage()), false);
+                                context.getSource().sendSuccess(new TextComponent(e.getMessage()), false);
                                 return 1;
                             }
-                            context.getSource().sendSuccess(Component.literal("Finished writing to file."), false);
+                            context.getSource().sendSuccess(new TextComponent("Finished writing to file."), false);
                             return 0;
                         })
                 )
                 .then(literal("get")
                         .executes(context -> {
                             ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                            context.getSource().sendSuccess(Component.literal(checkState.checks.toString()), false);
-                            context.getSource().sendSuccess(Component.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                            context.getSource().sendSuccess(new TextComponent(checkState.checks.toString()), false);
+                            context.getSource().sendSuccess(new TextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                             return 0;
                         })
                         .then(argument("check", StringArgumentType.greedyString())
                                 .executes(context -> {
                                     final String checkName = StringArgumentType.getString(context, "check");
                                     ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                                    context.getSource().sendSuccess(Component.literal(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                                    context.getSource().sendSuccess(new TextComponent(checkState.checks.getOrDefault(checkName, false).toString()), false);
                                     return 0;
                                 })
                         )
