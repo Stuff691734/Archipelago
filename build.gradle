@@ -167,6 +167,12 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
+    // I spent around 3-4 HOURS trying to get these to show up in game, jar had them it worked fine.
+    // tried all the solutions, implementation, minecraftLibrary, fancy jarJar stuff.
+    // but no it was me needing to not run runClient and instead run runClient
+    // the version of the runClient that came with the default project did not function with non minecraft dependencies
+    // do I think to check that? no. why wouldn't it work. anyways default runClient is a trap
+    // use forgegradle runs runClient instead. I hate this.
     minecraftLibrary 'org.java-websocket:Java-WebSocket:1.5.6'
     minecraftLibrary 'io.github.archipelagomw:Java-Client:0.2.1'
 
