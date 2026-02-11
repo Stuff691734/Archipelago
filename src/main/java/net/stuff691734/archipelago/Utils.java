@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Utils {
     public static boolean isRootAdvancementId(String advancementId) {
         if (isAdvancementId(advancementId)) {
@@ -24,12 +26,13 @@ public class Utils {
 
     public static boolean isAdvancementId(String advancementId) {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
-        if (id.isSuccess()) {
+        AtomicBoolean result = new AtomicBoolean(false);
+        id.result().ifPresent(identifier -> {
             AdvancementTree advancementManager = Archipelago.server.getAdvancements().tree();
-            AdvancementNode advancement = advancementManager.get(id.getOrThrow());
-            return advancement != null;
-        }
-        return false;
+            AdvancementNode advancement = advancementManager.get(identifier);
+            result.set(true);
+        });
+        return result.get();
     }
 
     public static void giveItem(ServerPlayer player, String item) {

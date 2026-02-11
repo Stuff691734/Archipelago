@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -17,7 +16,7 @@ public class ChecksState extends SavedData {
 
 
     @Override
-    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+    public CompoundTag save(CompoundTag nbt) {
         CompoundTag archipelagoNbt = new CompoundTag();
 
         CompoundTag checksNbt = new CompoundTag();
@@ -38,7 +37,7 @@ public class ChecksState extends SavedData {
         return nbt;
     }
 
-    public static ChecksState createFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+    public static ChecksState createFromNbt(CompoundTag tag) {
         ChecksState state = new ChecksState();
         CompoundTag archipelagoNbt = tag.getCompound("archipelago");
 
