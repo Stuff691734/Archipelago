@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago;
 
-import com.mojang.serialization.DataResult;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(namespace, path));
             assert advancement != null;
             return advancement == getRoot(advancement);
         }
@@ -25,13 +25,14 @@ public class Utils {
     }
 
     public static boolean isAdvancementId(String advancementId) {
-        DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
-        AtomicBoolean result = new AtomicBoolean(false);
-        id.result().ifPresent(identifier -> {
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(identifier);
-            result.set(advancement != null);
-        });
-        return result.get();
+        ResourceLocation id;
+        try {
+            id = new ResourceLocation(advancementId);
+        } catch (ResourceLocationException exception) {
+            return false;
+        }
+        Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(id);
+        return advancement != null;
     }
 
     public static void giveItem(ServerPlayer player, String item) {
@@ -39,7 +40,7 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath(namespace, path));
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, path));
         if (itemValue != null) {
             ItemStack itemStack = new ItemStack(itemValue, amount);
             if (!player.addItem(itemStack)) {

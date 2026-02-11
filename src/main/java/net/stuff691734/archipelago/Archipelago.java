@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago;
 
-import com.mojang.logging.LogUtils;
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
 import net.minecraft.server.MinecraftServer;
@@ -12,8 +11,10 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Archipelago.MODID)
@@ -21,7 +22,7 @@ public class Archipelago {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "archipelago";
     // Directly reference a slf4j logger
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static ArchipelagoClient client;
     public static MinecraftServer server;
 
