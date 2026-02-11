@@ -68,7 +68,7 @@ public class Commands {
                                 }
                                 if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
                                     checks.put(advancement.id().toString(), new Check(
-                                            display.getType().getSerializedName(),
+                                            display.getFrame().getName(),
                                             parent_id
                                     ));
                                 }
