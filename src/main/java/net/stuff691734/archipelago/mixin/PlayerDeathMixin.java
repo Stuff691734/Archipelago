@@ -2,7 +2,6 @@ package net.stuff691734.archipelago.mixin;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.stuff691734.archipelago.Archipelago;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +13,7 @@ public class PlayerDeathMixin {
 
     @Inject(at = @At(value = "TAIL"), method = "die")
     private void onDeath(DamageSource source, CallbackInfo ci) {
-        if (!source.is(DamageTypes.OUT_OF_WORLD)) {
+        if (!source.isBypassInvul()) {
             // no looping hopefully
             Archipelago.client.sendDeathlink(
                     Archipelago.client.getMyName(),

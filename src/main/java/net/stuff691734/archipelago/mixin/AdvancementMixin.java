@@ -8,6 +8,7 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.server.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ChecksState;
+import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,7 +53,7 @@ public abstract class AdvancementMixin {
             ChecksState checksState = ChecksState.getServerState(Archipelago.server);
 
             if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
-                Advancement rootAdvancement = Advancement.getRoot(advancement);
+                Advancement rootAdvancement = Utils.getRoot(advancement);
                 String rootAdvancementName = rootAdvancement.getId().toString();
 
                 if (!checksState.checks.getOrDefault(rootAdvancementName, false)) {
@@ -62,7 +63,7 @@ public abstract class AdvancementMixin {
             }
             // parent advancement
             else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
-                if (Advancement.getRoot(advancement) == advancement) {
+                if (Utils.getRoot(advancement) == advancement) {
                     // if root check against self
                     if (!checksState.checks.getOrDefault(advancement.getId().toString(), false)) {
                         cir.setReturnValue(false);

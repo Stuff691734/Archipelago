@@ -16,9 +16,9 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(namespace, path));
             assert advancement != null;
-            return advancement == advancement.getRoot();
+            return advancement == getRoot(advancement);
         }
         return false;
     }
@@ -38,12 +38,23 @@ public class Utils {
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
         String path = strings[1].split(":")[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath(namespace, path));
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, path));
         if (itemValue != null) {
             ItemStack itemStack = new ItemStack(itemValue, amount);
             if (!player.addItem(itemStack)) {
                 player.spawnAtLocation(itemStack);
             }
+        }
+    }
+
+    public static Advancement getRoot(Advancement advancement) {
+        Advancement advancement1 = advancement;
+        while (true) {
+            Advancement advancement2 = advancement1.getParent();
+            if (advancement2 == null) {
+                return advancement1;
+            }
+            advancement1 = advancement2;
         }
     }
 
