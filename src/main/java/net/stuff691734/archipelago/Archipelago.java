@@ -2,15 +2,15 @@ package net.stuff691734.archipelago;
 
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class Archipelago {
                     ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                 }
                 else {
-                    Utils.giveItem((ServerPlayer) event.getEntity(), item.itemName);
+                    Utils.giveItem((ServerPlayerEntity) event.getEntity(), item.itemName);
                 }
             }
         }

@@ -1,16 +1,15 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static boolean isRootAdvancementId(String advancementId) {
@@ -35,7 +34,7 @@ public class Utils {
         return advancement != null;
     }
 
-    public static void giveItem(ServerPlayer player, String item) {
+    public static void giveItem(ServerPlayerEntity player, String item) {
         String[] strings = item.split(" ");
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
@@ -60,10 +59,10 @@ public class Utils {
         }
     }
 
-    public static void sendMessage(Component message) {
+    public static void sendMessage(StringTextComponent message) {
         Archipelago.server.sendMessage(message, UUID.randomUUID());
 
-        for(ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+        for(ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
             player.sendMessage(message, UUID.randomUUID());
         }
     }

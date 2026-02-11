@@ -6,9 +6,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.StringTextComponent;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
 import java.io.File;
@@ -19,12 +18,12 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
+import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
 
 
 public class Commands {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(literal("archipelago")
                 .then(literal("connect")
                         .then(argument("Name", StringArgumentType.word())
@@ -37,10 +36,10 @@ public class Commands {
                                                 Archipelago.client.connect(WebSocketAddress);
                                             } catch (URISyntaxException e) {
 
-                                                context.getSource().sendSuccess(new TextComponent("Invalid server address"), false);
+                                                context.getSource().sendSuccess(new StringTextComponent("Invalid server address"), false);
                                                 return 1;
                                             }
-                                            context.getSource().sendSuccess(new TextComponent("Connected"), false);
+                                            context.getSource().sendSuccess(new StringTextComponent("Connected"), false);
                                             return 0;
                                         })
                                 )
@@ -54,7 +53,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                         .executes(context -> {
-                            context.getSource().sendSuccess(new TextComponent("Started writing to file."), false);
+                            context.getSource().sendSuccess(new StringTextComponent("Started writing to file."), false);
 
                             Map<String, Check> checks = new HashMap<>();
 
@@ -88,25 +87,25 @@ public class Commands {
                                 writer.close();
 
                             } catch (IOException e) {
-                                context.getSource().sendSuccess(new TextComponent(e.getMessage()), false);
+                                context.getSource().sendSuccess(new StringTextComponent(e.getMessage()), false);
                                 return 1;
                             }
-                            context.getSource().sendSuccess(new TextComponent("Finished writing to file."), false);
+                            context.getSource().sendSuccess(new StringTextComponent("Finished writing to file."), false);
                             return 0;
                         })
                 )
                 .then(literal("get")
                         .executes(context -> {
                             ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                            context.getSource().sendSuccess(new TextComponent(checkState.checks.toString()), false);
-                            context.getSource().sendSuccess(new TextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                            context.getSource().sendSuccess(new StringTextComponent(checkState.checks.toString()), false);
+                            context.getSource().sendSuccess(new StringTextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                             return 0;
                         })
                         .then(argument("check", StringArgumentType.greedyString())
                                 .executes(context -> {
                                     final String checkName = StringArgumentType.getString(context, "check");
                                     ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                                    context.getSource().sendSuccess(new TextComponent(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                                    context.getSource().sendSuccess(new StringTextComponent(checkState.checks.getOrDefault(checkName, false).toString()), false);
                                     return 0;
                                 })
                         )

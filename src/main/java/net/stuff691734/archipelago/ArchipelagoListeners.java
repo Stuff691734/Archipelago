@@ -2,9 +2,8 @@ package net.stuff691734.archipelago;
 
 import com.google.gson.JsonObject;
 import io.github.archipelagomw.events.*;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
 
 public class ArchipelagoListeners {
     @ArchipelagoEventListener
@@ -25,21 +24,21 @@ public class ArchipelagoListeners {
 
     @ArchipelagoEventListener
     public void onDeathLink(DeathLinkEvent event) {
-        Utils.sendMessage(new TextComponent(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
-        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+        Utils.sendMessage(new StringTextComponent(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
+        for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
             player.kill();
         }
     }
 
     @ArchipelagoEventListener
     public void onArchipelagoMessage(PrintJSONEvent event) {
-        Utils.sendMessage(new TextComponent(event.apPrint.getPlainText()));
+        Utils.sendMessage(new StringTextComponent(event.apPrint.getPlainText()));
     }
 
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(new TextComponent(String.format(
+            Utils.sendMessage(new StringTextComponent(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
@@ -50,7 +49,7 @@ public class ArchipelagoListeners {
                 ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);
             }
             else {
-                for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+                for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
                     int playerLastCheck = ChecksState.getServerState(Archipelago.server).playerLastCheck.getOrDefault(player.getStringUUID(), 0);
                     if (event.getIndex() > playerLastCheck) {
 

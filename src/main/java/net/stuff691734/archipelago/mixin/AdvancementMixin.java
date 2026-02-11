@@ -5,7 +5,7 @@ import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.advancements.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ChecksState;
 import net.stuff691734.archipelago.Utils;
