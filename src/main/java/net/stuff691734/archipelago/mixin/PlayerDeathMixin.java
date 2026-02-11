@@ -14,7 +14,7 @@ public class PlayerDeathMixin {
 
     @Inject(at = @At(value = "TAIL"), method = "die")
     private void onDeath(DamageSource source, CallbackInfo ci) {
-        if (!source.is(DamageTypes.GENERIC_KILL)) {
+        if (!source.is(DamageTypes.OUT_OF_WORLD)) {
             // no looping hopefully
             Archipelago.client.sendDeathlink(
                     Archipelago.client.getMyName(),
