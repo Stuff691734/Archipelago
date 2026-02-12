@@ -62,9 +62,9 @@ public class Archipelago {
     @SubscribeEvent
     public void onEntityLoad(PlayerEvent.PlayerLoggedInEvent event) {
         int serverLastCheck = client.getItemManager().getIndex();
-        int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(event.getEntity().getStringUUID(), 0);
+        int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(event.getEntity().getCachedUniqueIdString(), 0);
         if (serverLastCheck > playerLastCheck) {
-            ChecksState.getServerState(server).playerLastCheck.put(event.getEntity().getStringUUID(), serverLastCheck);
+            ChecksState.getServerState(server).playerLastCheck.put(event.getEntity().getCachedUniqueIdString(), serverLastCheck);
 
             for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                 if (Utils.isAdvancementId(item.itemName)) {

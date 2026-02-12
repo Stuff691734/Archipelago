@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.advancements.Advancement;
+import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,6 +10,7 @@ import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+
 import java.util.UUID;
 
 public class Utils {
@@ -16,7 +18,7 @@ public class Utils {
         if (isAdvancementId(advancementId)) {
             String namespace = advancementId.split(":")[0];
             String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(namespace, path));
+            Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(new ResourceLocation(namespace, path));
             assert advancement != null;
             return advancement == getRoot(advancement);
         }
@@ -30,7 +32,7 @@ public class Utils {
         } catch (ResourceLocationException exception) {
             return false;
         }
-        Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(id);
+        Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(id);
         return advancement != null;
     }
 
@@ -42,8 +44,9 @@ public class Utils {
         Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, path));
         if (itemValue != null) {
             ItemStack itemStack = new ItemStack(itemValue, amount);
-            if (!player.addItem(itemStack)) {
-                player.spawnAtLocation(itemStack);
+//            boolean a = player.
+            if (!player.inventory.addItemStackToInventory(itemStack)) {
+                player.entityDropItem(itemStack);
             }
         }
     }

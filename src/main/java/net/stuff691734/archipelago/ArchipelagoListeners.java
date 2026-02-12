@@ -26,7 +26,7 @@ public class ArchipelagoListeners {
     public void onDeathLink(DeathLinkEvent event) {
         Utils.sendMessage(new StringTextComponent(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
         for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.kill();
+            player.onKillCommand();
         }
     }
 
@@ -50,10 +50,10 @@ public class ArchipelagoListeners {
             }
             else {
                 for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
-                    int playerLastCheck = ChecksState.getServerState(Archipelago.server).playerLastCheck.getOrDefault(player.getStringUUID(), 0);
+                    int playerLastCheck = ChecksState.getServerState(Archipelago.server).playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0);
                     if (event.getIndex() > playerLastCheck) {
 
-                        ChecksState.getServerState(Archipelago.server).playerLastCheck.put(player.getStringUUID(), (int)event.getIndex());
+                        ChecksState.getServerState(Archipelago.server).playerLastCheck.put(player.getCachedUniqueIdString(), (int)event.getIndex());
                         Utils.giveItem(player, event.getItemName());
                     }
                 }

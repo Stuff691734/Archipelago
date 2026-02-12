@@ -21,14 +21,14 @@ import java.util.Objects;
 public abstract class AdvancementMixin {
 
     @Shadow
-    public abstract AdvancementProgress getOrStartProgress(Advancement advancement);
+    public abstract AdvancementProgress getProgress(Advancement advancement);
 
     @Inject(
-            method = "award",
+            method = "grantCriterion",
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancement.getDisplay() != null && this.getOrStartProgress(advancement).isDone()) {
+        if (advancement.getDisplay() != null && this.getProgress(advancement).isDone()) {
             if (Archipelago.client.isConnected()) {
                 Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(advancement.getId().toString());
                 if (advancement_id != null) {
@@ -43,7 +43,7 @@ public abstract class AdvancementMixin {
     }
 
     @Inject(
-            method = "award",
+            method = "grantCriterion",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/AdvancementProgress;isDone()Z"),
             cancellable = true
     )

@@ -19,7 +19,7 @@ public class ChecksState extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundNBT write(CompoundNBT nbt) {
         CompoundNBT archipelagoNbt = new CompoundNBT();
 
         CompoundNBT checksNbt = new CompoundNBT();
@@ -41,18 +41,17 @@ public class ChecksState extends WorldSavedData {
     }
 
     @Override
-    public void load(CompoundNBT tag) {
-        ChecksState state = new ChecksState(Archipelago.MODID);
+    public void read(CompoundNBT tag) {
         CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
 
         CompoundNBT checksNbt = archipelagoNbt.getCompound("checks");
-        checksNbt.getAllKeys().forEach(key -> state.checks.put(key, checksNbt.getBoolean(key)));
+        checksNbt.keySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
         CompoundNBT slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.getAllKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
+        slotDataNbt.keySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
         CompoundNBT playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.getAllKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        playerLastCheckDataNbt.keySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
     }
 
     public static ChecksState createNew() {
@@ -64,13 +63,14 @@ public class ChecksState extends WorldSavedData {
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
-        DimensionSavedDataManager persistentStateManager = server.overworld().getDataStorage();
+        // get Overworld but it has no name
+        DimensionSavedDataManager persistentStateManager = server.func_241755_D_().getSavedData();
 
-        ChecksState state = persistentStateManager.computeIfAbsent(
+        ChecksState state = persistentStateManager.getOrCreate(
                 ChecksState::createNew,
                 Archipelago.MODID);
 
-        state.setDirty();
+        state.markDirty();
 
         return state;
     }

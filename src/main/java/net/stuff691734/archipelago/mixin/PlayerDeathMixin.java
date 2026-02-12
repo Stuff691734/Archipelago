@@ -11,13 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayerEntity.class)
 public class PlayerDeathMixin {
 
-    @Inject(at = @At(value = "TAIL"), method = "die")
+    @Inject(at = @At(value = "TAIL"), method = "onDeath")
     private void onDeath(DamageSource source, CallbackInfo ci) {
-        if (!source.isBypassInvul()) {
+        if (!source.canHarmInCreative()) {
             // no looping hopefully
             Archipelago.client.sendDeathlink(
                     Archipelago.client.getMyName(),
-                    source.getLocalizedDeathMessage((ServerPlayerEntity)(Object)this).getString()
+                    source.getDeathMessage((ServerPlayerEntity)(Object)this).getString()
             );
         }
     }
