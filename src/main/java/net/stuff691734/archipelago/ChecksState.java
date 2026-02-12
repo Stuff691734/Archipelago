@@ -42,17 +42,16 @@ public class ChecksState extends WorldSavedData {
 
     @Override
     public void load(CompoundNBT tag) {
-        ChecksState state = new ChecksState(Archipelago.MODID);
         CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
 
         CompoundNBT checksNbt = archipelagoNbt.getCompound("checks");
-        checksNbt.getAllKeys().forEach(key -> state.checks.put(key, checksNbt.getBoolean(key)));
+        checksNbt.getAllKeys().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
         CompoundNBT slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.getAllKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
+        slotDataNbt.getAllKeys().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
         CompoundNBT playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.getAllKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        playerLastCheckDataNbt.getAllKeys().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
     }
 
     public static ChecksState createNew() {
