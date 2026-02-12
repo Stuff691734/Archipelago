@@ -63,10 +63,10 @@ public class Utils {
     }
 
     public static void sendMessage(StringTextComponent message) {
-        Archipelago.server.sendMessage(message, UUID.randomUUID());
+        Archipelago.server.sendMessage(message);
 
         for(ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.sendMessage(message, UUID.randomUUID());
+            player.sendMessage(message);
         }
     }
 }

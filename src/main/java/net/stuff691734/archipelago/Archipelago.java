@@ -5,7 +5,6 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +44,7 @@ public class Archipelago {
 
         client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
         client.getEventManager().registerListener(new ArchipelagoListeners());
+        Commands.register(event.getCommandDispatcher());
     }
 
     @SubscribeEvent
@@ -52,11 +52,6 @@ public class Archipelago {
         server = null;
         client.close();
         client = null;
-    }
-
-    @SubscribeEvent
-    public void RegisterCommandsEvent(RegisterCommandsEvent event) {
-        Commands.register(event.getDispatcher());
     }
 
     @SubscribeEvent
