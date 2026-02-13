@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
 import java.io.File;
@@ -36,10 +36,10 @@ public class Commands {
                                                 Archipelago.client.connect(WebSocketAddress);
                                             } catch (URISyntaxException e) {
 
-                                                context.getSource().sendFeedback(new StringTextComponent("Invalid server address"), false);
+                                                context.getSource().sendFeedback(new TextComponentString("Invalid server address"), false);
                                                 return 1;
                                             }
-                                            context.getSource().sendFeedback(new StringTextComponent("Connected"), false);
+                                            context.getSource().sendFeedback(new TextComponentString("Connected"), false);
                                             return 0;
                                         })
                                 )
@@ -53,7 +53,7 @@ public class Commands {
                 )
                 .then(literal("generate")
                         .executes(context -> {
-                            context.getSource().sendFeedback(new StringTextComponent("Started writing to file."), false);
+                            context.getSource().sendFeedback(new TextComponentString("Started writing to file."), false);
 
                             Map<String, Check> checks = new HashMap<>();
 
@@ -87,25 +87,25 @@ public class Commands {
                                 writer.close();
 
                             } catch (IOException e) {
-                                context.getSource().sendFeedback(new StringTextComponent(e.getMessage()), false);
+                                context.getSource().sendFeedback(new TextComponentString(e.getMessage()), false);
                                 return 1;
                             }
-                            context.getSource().sendFeedback(new StringTextComponent("Finished writing to file."), false);
+                            context.getSource().sendFeedback(new TextComponentString("Finished writing to file."), false);
                             return 0;
                         })
                 )
                 .then(literal("get")
                         .executes(context -> {
                             ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                            context.getSource().sendFeedback(new StringTextComponent(checkState.checks.toString()), false);
-                            context.getSource().sendFeedback(new StringTextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
+                            context.getSource().sendFeedback(new TextComponentString(checkState.checks.toString()), false);
+                            context.getSource().sendFeedback(new TextComponentString(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), false);
                             return 0;
                         })
                         .then(argument("check", StringArgumentType.greedyString())
                                 .executes(context -> {
                                     final String checkName = StringArgumentType.getString(context, "check");
                                     ChecksState checkState = ChecksState.getServerState(Archipelago.server);
-                                    context.getSource().sendFeedback(new StringTextComponent(checkState.checks.getOrDefault(checkName, false).toString()), false);
+                                    context.getSource().sendFeedback(new TextComponentString(checkState.checks.getOrDefault(checkName, false).toString()), false);
                                     return 0;
                                 })
                         )

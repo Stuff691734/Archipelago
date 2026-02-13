@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago.mixin;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.stuff691734.archipelago.Archipelago;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(EntityPlayerMP.class)
 public class PlayerDeathMixin {
 
     @Inject(at = @At(value = "TAIL"), method = "onDeath")
@@ -17,7 +17,7 @@ public class PlayerDeathMixin {
             // no looping hopefully
             Archipelago.client.sendDeathlink(
                     Archipelago.client.getMyName(),
-                    source.getDeathMessage((ServerPlayerEntity)(Object)this).getString()
+                    source.getDeathMessage((EntityPlayerMP)(Object)this).getString()
             );
         }
     }
