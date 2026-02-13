@@ -244,3 +244,9 @@ reobf {
 }
 
 build.dependsOn reobfShadowJar
+
+mixin {
+    // MixinGradle Settings
+    add sourceSets.main, 'mixins.archipelago.refmap.json'
+    config 'archipelago.mixins.json'
+}
