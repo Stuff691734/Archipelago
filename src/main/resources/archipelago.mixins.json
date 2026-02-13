@@ -14,5 +14,6 @@
   },
   "overwrites": {
     "requireAnnotations": true
-  }
+  },
+  "refmap": "mixins.archipelago.refmap.json"
 }
