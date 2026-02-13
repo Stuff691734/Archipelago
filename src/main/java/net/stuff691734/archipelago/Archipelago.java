@@ -5,9 +5,9 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.apache.logging.log4j.LogManager;
@@ -57,16 +57,16 @@ public class Archipelago {
     @SubscribeEvent
     public void onEntityLoad(PlayerEvent.PlayerLoggedInEvent event) {
         int serverLastCheck = client.getItemManager().getIndex();
-        int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(event.getEntity().getCachedUniqueIdString(), 0);
+        int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(event.getPlayer().getCachedUniqueIdString(), 0);
         if (serverLastCheck > playerLastCheck) {
-            ChecksState.getServerState(server).playerLastCheck.put(event.getEntity().getCachedUniqueIdString(), serverLastCheck);
+            ChecksState.getServerState(server).playerLastCheck.put(event.getPlayer().getCachedUniqueIdString(), serverLastCheck);
 
             for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                 if (Utils.isAdvancementId(item.itemName)) {
                     ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                 }
                 else {
-                    Utils.giveItem((ServerPlayerEntity) event.getEntity(), item.itemName);
+                    Utils.giveItem((ServerPlayerEntity) event.getPlayer(), item.itemName);
                 }
             }
         }
