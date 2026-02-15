@@ -6,18 +6,18 @@ buildscript {
     }
     dependencies {
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.0+"
     }
 }
 
 plugins {
     id 'eclipse'
     id 'idea'
-    id 'net.minecraftforge.gradle' version '3.0.197'
+    id 'net.minecraftforge.gradle' version '6.0+'
 }
 
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.gradleup.shadow'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -161,7 +161,7 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // I spent around 3-4 HOURS trying to get these to show up in game, jar had them it worked fine.
     // tried all the solutions, implementation, minecraftLibrary, fancy jarJar stuff.
@@ -180,7 +180,12 @@ dependencies {
 //    shadow ('org.java-websocket:Java-WebSocket:[1.5.6]')
 //    shadow ('org.apache.httpcomponents.core5:httpcore5:[5.4]')
 
-    compileOnly "org.spongepowered:mixin:0.8"
+//    compileOnly "org.spongepowered:mixin:0.8"
+//    implementation('org.spongepowered:mixin:0.8.5') {
+//        exclude module: 'guava'
+//        exclude module: 'commons-io'
+//        exclude module: 'gson'
+//    }
 }
 
 shadowJar {

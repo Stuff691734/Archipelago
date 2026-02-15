@@ -1,0 +1,19 @@
+[
+{
+  "modid": "archipelago",
+  "version": "${version}",
+  "name": "Archipelago",
+  "description": "Adds support for archipelago multiworld randomizer to modded minecraft.",
+  "authorList": ["Stuff691734"],
+  "url": "",
+  "updateUrl": "",
+  "license": "unlicense",
+  "logoFile": "assets/archipelago/icon.png",
+  "credits": "",
+  "mcversion": "${mcversion}",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": [],
+  "mixins": ["A"]
+}
+]

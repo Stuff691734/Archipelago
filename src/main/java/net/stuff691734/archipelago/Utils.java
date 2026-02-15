@@ -1,14 +1,12 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.command.Commands;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 
 import java.util.UUID;
@@ -29,7 +27,7 @@ public class Utils {
         ResourceLocation id;
         try {
             id = new ResourceLocation(advancementId);
-        } catch (ResourceLocationException exception) {
+        } catch (Exception exception) {
             return false;
         }
         Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(id);
@@ -46,7 +44,7 @@ public class Utils {
             ItemStack itemStack = new ItemStack(itemValue, amount);
 //            boolean a = player.
             if (!player.inventory.addItemStackToInventory(itemStack)) {
-                player.entityDropItem(itemStack);
+                player.entityDropItem(itemStack, 0);
             }
         }
     }

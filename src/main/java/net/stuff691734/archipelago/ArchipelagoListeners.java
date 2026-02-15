@@ -11,15 +11,16 @@ public class ArchipelagoListeners {
         JsonObject slotData = event.getSlotData(JsonObject.class);
 
         ChecksState checksState = ChecksState.getServerState(Archipelago.server);
+        if (checksState != null) {
+            slotData.entrySet().forEach((entry) -> checksState.slotData.put(entry.getKey(), entry.getValue().getAsString()));
+            if (checksState.slotData.getOrDefault("death_link", "0").equals("1")) {
+                Archipelago.LOGGER.info("DeathLink activated");
+                Archipelago.client.setDeathLinkEnabled(true);
+                Archipelago.client.addTag("DeathLink");
 
-        slotData.entrySet().forEach((entry) -> checksState.slotData.put(entry.getKey(), entry.getValue().getAsString()));
-        if (checksState.slotData.getOrDefault("death_link", "0").equals("1")) {
-            Archipelago.LOGGER.info("DeathLink activated");
-            Archipelago.client.setDeathLinkEnabled(true);
-            Archipelago.client.addTag("DeathLink");
-
+            }
+            Archipelago.LOGGER.info(checksState.slotData.toString());
         }
-        Archipelago.LOGGER.info(checksState.slotData.toString());
     }
 
     @ArchipelagoEventListener
@@ -45,17 +46,18 @@ public class ArchipelagoListeners {
                     event.getPlayerName(),
                     event.getLocationName()
             )));
+            ChecksState checksState = ChecksState.getServerState(Archipelago.server);
+            if (checksState != null) {
+                if (Utils.isAdvancementId(event.getItemName())) {
+                    checksState.checks.put(event.getItemName(), true);
+                } else {
+                    for (EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
+                        int playerLastCheck = checksState.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0);
+                        if (event.getIndex() > playerLastCheck) {
 
-            if (Utils.isAdvancementId(event.getItemName())) {
-                ChecksState.getServerState(Archipelago.server).checks.put(event.getItemName(), true);
-            }
-            else {
-                for (EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
-                    int playerLastCheck = ChecksState.getServerState(Archipelago.server).playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0);
-                    if (event.getIndex() > playerLastCheck) {
-
-                        ChecksState.getServerState(Archipelago.server).playerLastCheck.put(player.getCachedUniqueIdString(), (int)event.getIndex());
-                        Utils.giveItem(player, event.getItemName());
+                            checksState.playerLastCheck.put(player.getCachedUniqueIdString(), (int) event.getIndex());
+                            Utils.giveItem(player, event.getItemName());
+                        }
                     }
                 }
             }

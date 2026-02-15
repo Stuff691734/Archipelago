@@ -5,16 +5,17 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.stuff691734.archipelago.commands.GenerateCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(Archipelago.MODID)
+@Mod(modid=Archipelago.MODID, name="Archipelago", version="1.0")
 public class Archipelago {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "archipelago";
@@ -34,7 +35,7 @@ public class Archipelago {
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
+    @Mod.EventHandler
     public void onServerStarting(FMLServerStartingEvent event) {
         // Do something when the server starts
         server = event.getServer();
@@ -44,10 +45,10 @@ public class Archipelago {
 
         client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
         client.getEventManager().registerListener(new ArchipelagoListeners());
-        Commands.register(event.getCommandDispatcher());
+        event.registerServerCommand(new GenerateCommand());
     }
 
-    @SubscribeEvent
+    @Mod.EventHandler
     public void onServerStopping(FMLServerStoppingEvent event) {
         server = null;
         client.close();
@@ -57,16 +58,19 @@ public class Archipelago {
     @SubscribeEvent
     public void onEntityLoad(PlayerEvent.PlayerLoggedInEvent event) {
         int serverLastCheck = client.getItemManager().getIndex();
-        int playerLastCheck = ChecksState.getServerState(server).playerLastCheck.getOrDefault(event.getPlayer().getCachedUniqueIdString(), 0);
-        if (serverLastCheck > playerLastCheck) {
-            ChecksState.getServerState(server).playerLastCheck.put(event.getPlayer().getCachedUniqueIdString(), serverLastCheck);
+        ChecksState checksState = ChecksState.getServerState(server);
+        if (checksState != null) {
+            int playerLastCheck = checksState.playerLastCheck.getOrDefault(event.player.getCachedUniqueIdString(), 0);
+            if (serverLastCheck > playerLastCheck) {
+                checksState.playerLastCheck.put(event.player.getCachedUniqueIdString(), serverLastCheck);
 
-            for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
-                if (Utils.isAdvancementId(item.itemName)) {
-                    ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
-                }
-                else {
-                    Utils.giveItem((EntityPlayerMP) event.getPlayer(), item.itemName);
+                for (NetworkItem item: client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
+                    if (Utils.isAdvancementId(item.itemName)) {
+                        checksState.checks.put(item.itemName, true);
+                    }
+                    else {
+                        Utils.giveItem((EntityPlayerMP) event.player, item.itemName);
+                    }
                 }
             }
         }

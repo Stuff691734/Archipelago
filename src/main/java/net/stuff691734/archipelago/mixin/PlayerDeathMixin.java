@@ -17,7 +17,7 @@ public class PlayerDeathMixin {
             // no looping hopefully
             Archipelago.client.sendDeathlink(
                     Archipelago.client.getMyName(),
-                    source.getDeathMessage((EntityPlayerMP)(Object)this).getString()
+                    source.getDeathMessage((EntityPlayerMP)(Object)this).getFormattedText()
             );
         }
     }

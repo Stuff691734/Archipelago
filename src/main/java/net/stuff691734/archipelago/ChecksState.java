@@ -2,11 +2,11 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.SaveDataMemoryStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraft.world.storage.WorldSavedDataStorage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,39 +25,39 @@ public class ChecksState extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound write(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagCompound archipelagoNbt = new NBTTagCompound();
 
         NBTTagCompound checksNbt = new NBTTagCompound();
-        checks.forEach(checksNbt::putBoolean);
+        checks.forEach(checksNbt::setBoolean);
 
         NBTTagCompound slotDataNbt = new NBTTagCompound();
-        slotData.forEach(slotDataNbt::putString);
+        slotData.forEach(slotDataNbt::setString);
 
         NBTTagCompound playerLastCheckDataNbt = new NBTTagCompound();
-        playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
+        playerLastCheck.forEach(playerLastCheckDataNbt::setInteger);
 
-        archipelagoNbt.put("checks", checksNbt);
-        archipelagoNbt.put("slot_data", slotDataNbt);
-        archipelagoNbt.put("player_last_check", playerLastCheckDataNbt);
+        archipelagoNbt.setTag("checks", checksNbt);
+        archipelagoNbt.setTag("slot_data", slotDataNbt);
+        archipelagoNbt.setTag("player_last_check", playerLastCheckDataNbt);
 
-        nbt.put("archipelago", archipelagoNbt);
+        nbt.setTag("archipelago", archipelagoNbt);
 
         return nbt;
     }
 
     @Override
-    public void read(NBTTagCompound tag) {
-        NBTTagCompound archipelagoNbt = tag.getCompound("archipelago");
+    public void readFromNBT(NBTTagCompound tag) {
+        NBTTagCompound archipelagoNbt = tag.getCompoundTag("archipelago");
 
-        NBTTagCompound checksNbt = archipelagoNbt.getCompound("checks");
-        checksNbt.keySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
+        NBTTagCompound checksNbt = archipelagoNbt.getCompoundTag("checks");
+        checksNbt.getKeySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
-        NBTTagCompound slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.keySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
+        NBTTagCompound slotDataNbt = archipelagoNbt.getCompoundTag("slot_data");
+        slotDataNbt.getKeySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
-        NBTTagCompound playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.keySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        NBTTagCompound playerLastCheckDataNbt = archipelagoNbt.getCompoundTag("player_last_check");
+        playerLastCheckDataNbt.getKeySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInteger(key)));
     }
 
     public static ChecksState createNew() {
@@ -70,12 +70,14 @@ public class ChecksState extends WorldSavedData {
 
     public static ChecksState getServerState(MinecraftServer server) {
         // get World but it has no name
-        DimensionSavedDataManager persistentStateManager = new DimensionSavedDataManager(DimensionType.OVERWORLD,null);
-////        server.getWorld(DimensionType.OVERWORLD).
-//        DimensionSavedDataManager a = new DimensionSavedDataManager(DimensionType.OVERWORLD,null);
+        World world = server.getWorld(DimensionType.OVERWORLD.getId());
+        MapStorage persistentStateManager = world.getMapStorage();
+        if (persistentStateManager == null) {
+            return null;
+        }
 //
-        ChecksState state = persistentStateManager.getOrLoadData(
-                ChecksState::new,
+        ChecksState state = (ChecksState) persistentStateManager.getOrLoadData(
+                ChecksState.class,
                 Archipelago.MODID);
 
         if (state == null) {
