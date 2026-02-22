@@ -2,15 +2,17 @@ package net.stuff691734.archipelago;
 
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
+import net.minecraft.client.multiplayer.ClientAdvancementManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.stuff691734.archipelago.commands.GenerateCommand;
+import net.stuff691734.archipelago.commands.Commands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +22,7 @@ public class Archipelago {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "archipelago";
     // Directly reference a log4j logger
-    public static Logger LOGGER = LogManager.getLogger(MODID);
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static ArchipelagoClient client;
     public static MinecraftServer server;
 
@@ -45,7 +47,7 @@ public class Archipelago {
 
         client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
         client.getEventManager().registerListener(new ArchipelagoListeners());
-        event.registerServerCommand(new GenerateCommand());
+        event.registerServerCommand(new Commands());
     }
 
     @Mod.EventHandler
@@ -54,6 +56,20 @@ public class Archipelago {
         client.close();
         client = null;
     }
+
+    @SubscribeEvent
+    public void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof EntityPlayerMP) {
+            if (event.getSource().canHarmInCreative()) {
+                // no looping hopefully
+                Archipelago.client.sendDeathlink(
+                        Archipelago.client.getMyName(),
+                        event.getSource().getDeathMessage(event.getEntityLiving()).getFormattedText()
+                );
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public void onEntityLoad(PlayerEvent.PlayerLoggedInEvent event) {

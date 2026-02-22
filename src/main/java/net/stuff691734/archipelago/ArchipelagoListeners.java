@@ -39,7 +39,6 @@ public class ArchipelagoListeners {
     @ArchipelagoEventListener
     public void onReceiveItems(ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-
             Utils.sendMessage(new TextComponentString(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),

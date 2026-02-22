@@ -13,9 +13,9 @@ import java.util.Map;
 
 
 public class ChecksState extends WorldSavedData {
-    public Map<String, Boolean> checks = new HashMap<>();
-    public Map<String, String> slotData = new HashMap<>();
-    public Map<String, Integer> playerLastCheck = new HashMap<>();
+    public Map<String, Boolean> checks;
+    public Map<String, String> slotData;
+    public Map<String, Integer> playerLastCheck;
 
     public ChecksState(String key) {
         super(key);
@@ -61,15 +61,10 @@ public class ChecksState extends WorldSavedData {
     }
 
     public static ChecksState createNew() {
-        ChecksState state = new ChecksState(Archipelago.MODID);
-        state.checks = new HashMap<>();
-        state.slotData = new HashMap<>();
-        state.playerLastCheck = new HashMap<>();
-        return state;
+        return new ChecksState(Archipelago.MODID);
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
-        // get World but it has no name
         World world = server.getWorld(DimensionType.OVERWORLD.getId());
         MapStorage persistentStateManager = world.getMapStorage();
         if (persistentStateManager == null) {
@@ -78,14 +73,15 @@ public class ChecksState extends WorldSavedData {
 //
         ChecksState state = (ChecksState) persistentStateManager.getOrLoadData(
                 ChecksState.class,
-                Archipelago.MODID);
+                Archipelago.MODID
+        );
 
         if (state == null) {
             state = createNew();
+            persistentStateManager.setData(Archipelago.MODID, state);
         }
 
         state.markDirty();
-
 
         return state;
     }
