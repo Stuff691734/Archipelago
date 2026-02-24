@@ -2,6 +2,7 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.DimensionSavedDataManager;
@@ -69,17 +70,22 @@ public class ChecksState extends WorldSavedData {
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
+        World world = server.getWorld(DimensionType.OVERWORLD);
         // get World but it has no name
-        DimensionSavedDataManager persistentStateManager = new DimensionSavedDataManager(DimensionType.OVERWORLD,null);
-////        server.getWorld(DimensionType.OVERWORLD).
-//        DimensionSavedDataManager a = new DimensionSavedDataManager(DimensionType.OVERWORLD,null);
-//
-        ChecksState state = persistentStateManager.getOrLoadData(
+        WorldSavedDataStorage persistentStateManager = world.getSavedDataStorage();
+        if (persistentStateManager == null) {
+            return null;
+        }
+
+        ChecksState state = persistentStateManager.get(
+                DimensionType.OVERWORLD,
                 ChecksState::new,
-                Archipelago.MODID);
+                Archipelago.MODID
+        );
 
         if (state == null) {
             state = createNew();
+            persistentStateManager.set(DimensionType.OVERWORLD, Archipelago.MODID, state);
         }
 
         state.markDirty();
