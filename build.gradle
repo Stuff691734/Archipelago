@@ -170,13 +170,9 @@ dependencies {
     // do I think to check that? no. why wouldn't it work. anyways default runClient is a trap
     // use forgegradle runs runClient instead. I hate this.
 //    minecraftLibrary 'org.java-websocket:Java-WebSocket:1.5.6'
-    implementation('io.github.archipelagomw:Java-Client:0.2.1') {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
+    implementation('io.github.archipelagomw:Java-Client:0.2.1')
 
-    shadow ('io.github.archipelagomw:Java-Client:[0.2.1]') {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
+    shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
 //    shadow ('org.java-websocket:Java-WebSocket:[1.5.6]')
 //    shadow ('org.apache.httpcomponents.core5:httpcore5:[5.4]')
 
@@ -191,6 +187,7 @@ shadowJar {
     relocate("org.java_websocket", "shadow.archipelago.org.java_websocket")
     relocate("org.apache.hc", "shadow.archipelago.org.apache.hc")
     relocate("io.github.archipelagomw", "shadow.archipelago.io.github.archipelagomw")
+    relocate("com.google", "shadow.archipelago.com.google")
     exclude 'META-INF/versions/**'
 }
 
