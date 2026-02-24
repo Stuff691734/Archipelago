@@ -64,7 +64,7 @@ public class ChecksState extends WorldSavedData {
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
-        ServerWorld world = server.func_71218_a(DimensionType.OVERWORLD);
+        ServerWorld world = server.getWorld(DimensionType.OVERWORLD);
         // get World but it has no name
         DimensionSavedDataManager persistentStateManager = world.getSavedData();
 
