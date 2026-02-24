@@ -2,8 +2,8 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -64,7 +64,7 @@ public class ChecksState extends WorldSavedData {
     }
 
     public static ChecksState getServerState(MinecraftServer server) {
-        ServerWorld world = server.getWorld(DimensionType.OVERWORLD);
+        ServerWorld world = server.func_71218_a(DimensionType.OVERWORLD);
         // get World but it has no name
         DimensionSavedDataManager persistentStateManager = world.getSavedData();
 
