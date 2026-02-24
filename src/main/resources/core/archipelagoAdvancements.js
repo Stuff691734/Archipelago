@@ -161,11 +161,6 @@ function preventAdvancement() {
     // L0
     var L0 = new LabelNode();
 
-
-    newInstructionList.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-    newInstructionList.add(new LdcInsnNode("preventAdvancement is being run"));
-    newInstructionList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
-
     newInstructionList.add(L0);
     newInstructionList.add(new VarInsnNode(ALOAD, 1));
     newInstructionList.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "func_192068_c", "()Lnet/minecraft/advancements/DisplayInfo;", false));
