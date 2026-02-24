@@ -1,13 +1,12 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 
@@ -36,7 +35,7 @@ public class Utils {
         return advancement != null;
     }
 
-    public static void giveItem(EntityPlayerMP player, String item) {
+    public static void giveItem(ServerPlayerEntity player, String item) {
         String[] strings = item.split(" ");
         int amount = Integer.parseInt(strings[0]);
         String namespace = strings[1].split(":")[0];
@@ -62,10 +61,10 @@ public class Utils {
         }
     }
 
-    public static void sendMessage(TextComponentString message) {
+    public static void sendMessage(StringTextComponent message) {
         Archipelago.server.sendMessage(message);
 
-        for(EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
+        for(ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
             player.sendMessage(message);
         }
     }

@@ -2,7 +2,8 @@ package net.stuff691734.archipelago;
 
 import io.github.archipelagomw.flags.ItemsHandling;
 import io.github.archipelagomw.parts.NetworkItem;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -66,7 +67,7 @@ public class Archipelago {
                     ChecksState.getServerState(Archipelago.server).checks.put(item.itemName, true);
                 }
                 else {
-                    Utils.giveItem((EntityPlayerMP) event.getPlayer(), item.itemName);
+                    Utils.giveItem((ServerPlayerEntity) event.getPlayer(), item.itemName);
                 }
             }
         }
