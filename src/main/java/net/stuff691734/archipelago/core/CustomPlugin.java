@@ -5,7 +5,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-@IFMLLoadingPlugin.MCVersion("1.12.1")
+@IFMLLoadingPlugin.MCVersion("1.12")
 @IFMLLoadingPlugin.TransformerExclusions("net.stuff691734.archipelago.core")
 @IFMLLoadingPlugin.Name("Archipelago")
 @IFMLLoadingPlugin.SortingIndex(10000)
