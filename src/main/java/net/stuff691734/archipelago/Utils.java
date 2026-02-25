@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-
 import java.util.UUID;
 
 public class Utils {
