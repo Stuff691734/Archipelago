@@ -49,9 +49,11 @@ public class FTBQuestsViewQuestPanelMixin {
             }
             else if (Objects.equals(Archipelago.archipelagoPersistentState.slotData.get("unlock_type"), "tree")) {
                 QuestAccessor questAccessor = (QuestAccessor) (Object) this.quest;
-                Stream<QuestObject> dependencyStream = this.quest.streamDependencies();
-                if (dependencyStream.findAny().isEmpty()) {
+                Stream<QuestObject> dependencyStream;
+                if (this.quest.streamDependencies().findAny().isEmpty()) {
                     dependencyStream = Stream.of(quest);
+                } else {
+                    dependencyStream = this.quest.streamDependencies();
                 }
                 // can only be null if quest is null, already checked above
                 assert questAccessor != null;
