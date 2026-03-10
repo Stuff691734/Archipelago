@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class ChecksState extends SavedData {
-    public Map<String, Boolean> checks = new HashMap<>();
+public class ArchipelagoPersistentState extends SavedData {
+    public Map<String, Boolean> advancementChecks = new HashMap<>();
+    public Map<String, Boolean> ftbQuestChecks = new HashMap<>();
     public Map<String, String> slotData = new HashMap<>();
     public Map<String, Integer> playerLastCheck = new HashMap<>();
 
@@ -20,8 +21,11 @@ public class ChecksState extends SavedData {
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         CompoundTag archipelagoNbt = new CompoundTag();
 
-        CompoundTag checksNbt = new CompoundTag();
-        checks.forEach(checksNbt::putBoolean);
+        CompoundTag advancementChecksNbt = new CompoundTag();
+        advancementChecks.forEach(advancementChecksNbt::putBoolean);
+
+        CompoundTag ftbQuestChecksNbt = new CompoundTag();
+        ftbQuestChecks.forEach(ftbQuestChecksNbt::putBoolean);
 
         CompoundTag slotDataNbt = new CompoundTag();
         slotData.forEach(slotDataNbt::putString);
@@ -29,7 +33,8 @@ public class ChecksState extends SavedData {
         CompoundTag playerLastCheckDataNbt = new CompoundTag();
         playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
 
-        archipelagoNbt.put("checks", checksNbt);
+        archipelagoNbt.put("advancement_checks", advancementChecksNbt);
+        archipelagoNbt.put("ftb_quest_checks", ftbQuestChecksNbt);
         archipelagoNbt.put("slot_data", slotDataNbt);
         archipelagoNbt.put("player_last_check", playerLastCheckDataNbt);
 
@@ -38,12 +43,15 @@ public class ChecksState extends SavedData {
         return nbt;
     }
 
-    public static ChecksState createFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        ChecksState state = new ChecksState();
+    public static ArchipelagoPersistentState createFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+        ArchipelagoPersistentState state = new ArchipelagoPersistentState();
         CompoundTag archipelagoNbt = tag.getCompound("archipelago");
 
-        CompoundTag checksNbt = archipelagoNbt.getCompound("checks");
-        checksNbt.getAllKeys().forEach(key -> state.checks.put(key, checksNbt.getBoolean(key)));
+        CompoundTag advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
+        advancementChecksNbt.getAllKeys().forEach(key -> state.advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
+
+        CompoundTag ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
+        ftbQuestChecksNbt.getAllKeys().forEach(key -> state.ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
 
         CompoundTag slotDataNbt = archipelagoNbt.getCompound("slot_data");
         slotDataNbt.getAllKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
@@ -54,24 +62,24 @@ public class ChecksState extends SavedData {
         return state;
     }
 
-    public static ChecksState createNew() {
-        ChecksState state = new ChecksState();
-        state.checks = new HashMap<>();
+    public static ArchipelagoPersistentState createNew() {
+        ArchipelagoPersistentState state = new ArchipelagoPersistentState();
+        state.advancementChecks = new HashMap<>();
+        state.ftbQuestChecks = new HashMap<>();
         state.slotData = new HashMap<>();
         state.playerLastCheck = new HashMap<>();
         return state;
     }
 
-    private static final Factory<ChecksState> type = new Factory<>(
-            ChecksState::createNew,
-            ChecksState::createFromNbt,
-            null
+    private static final Factory<ArchipelagoPersistentState> type = new Factory<>(
+            ArchipelagoPersistentState::createNew,
+            ArchipelagoPersistentState::createFromNbt
     );
 
-    public static ChecksState getServerState(MinecraftServer server) {
+    public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
         DimensionDataStorage persistentStateManager = server.overworld().getDataStorage();
 
-        ChecksState state = persistentStateManager.computeIfAbsent(type, Archipelago.MODID);
+        ArchipelagoPersistentState state = persistentStateManager.computeIfAbsent(type, Archipelago.MODID);
 
         state.setDirty();
 

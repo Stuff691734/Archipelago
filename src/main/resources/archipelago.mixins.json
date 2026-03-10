@@ -5,8 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AdvancementMixin",
-    "PlayerDeathMixin"
+    "FTBQuestsQuestMixin",
+    "FTBQuestsTeamDataMixin",
+    "FTBQuestsViewQuestPanelMixin"
   ],
+  "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
   ],
   "injectors": {

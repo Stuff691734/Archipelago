@@ -1,0 +1,30 @@
+package net.stuff691734.archipelago.commands;
+
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.stuff691734.archipelago.Archipelago;
+
+import java.net.URISyntaxException;
+
+public class ConnectCommand {
+    public static int execute(CommandContext<CommandSourceStack> context) {
+        final String Name = StringArgumentType.getString(context, "Name");
+        final String WebSocketAddress = StringArgumentType.getString(context, "WSAddress");
+        Archipelago.client.setName(Name);
+        try {
+            Archipelago.client.connect(WebSocketAddress);
+        } catch (URISyntaxException e) {
+            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.invalid_server"), false);
+            return 1;
+        }
+        if (Archipelago.client.isConnected()) {
+            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.connected"), false);
+            return 0;
+        } else {
+            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.failed_connection"), false);
+            return 1;
+        }
+    }
+}
