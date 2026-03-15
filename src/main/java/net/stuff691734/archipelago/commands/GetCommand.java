@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.Utils;
 
 public class GetCommand {
     public static int execute(CommandContext<CommandSourceStack> context) {
