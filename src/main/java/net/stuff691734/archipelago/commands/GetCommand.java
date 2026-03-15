@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.Utils;
 
 public class GetCommand {
     public static int execute(CommandContext<CommandSourceStack> context) {
@@ -17,7 +18,11 @@ public class GetCommand {
 
     public static int executeSpecific(CommandContext<CommandSourceStack> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        context.getSource().sendSuccess(() -> Component.literal(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkName, false).toString()), true);
+        if (checkName.startsWith("adv ")) {
+            context.getSource().sendSuccess(() -> Component.literal(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+        } else {
+            context.getSource().sendSuccess(() -> Component.literal(Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+        }
         return 0;
     }
 }

@@ -10,6 +10,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
@@ -36,12 +38,16 @@ public class Utils {
         return false;
     }
 
-    public static void giveItem(MinecraftServer server, String item, long index) {
+    public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            // make sure user hasn't already gotten item
-            if (Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) < index) {
-                Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), (int) index);
-                Archipelago.archipelagoPersistentState.setDirty();
+            if (index != null) {
+                // make sure user hasn't already gotten item
+                if (Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) < index) {
+                    Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
+                    Archipelago.archipelagoPersistentState.setDirty();
+                    giveItem(player, item);
+                }
+            } else {
                 giveItem(player, item);
             }
         }

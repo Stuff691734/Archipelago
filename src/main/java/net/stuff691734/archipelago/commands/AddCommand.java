@@ -10,7 +10,9 @@ import net.stuff691734.archipelago.events.archipealgo.ReceiveItemEvent;
 public class AddCommand {
     public static int execute(CommandContext<CommandSourceStack> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        Archipelago.archipelagoPersistentState.advancementChecks.put(checkName, true);
+        String[] itemName = checkName.split(" ",2);
+        ReceiveItemEvent.parseItem(itemName[0], itemName[1], null);
+//        Archipelago.archipelagoPersistentState.advancementChecks.put(checkName, true);
         Archipelago.archipelagoPersistentState.setDirty();
         return 0;
     }
