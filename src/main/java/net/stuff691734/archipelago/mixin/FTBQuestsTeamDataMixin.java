@@ -3,6 +3,7 @@ package net.stuff691734.archipelago.mixin;
 import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
+import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,12 +50,18 @@ public class FTBQuestsTeamDataMixin {
                 cir.setReturnValue(false);
             }
             if (requirement.needOnlyOne()) {
-                if (quest.streamDependencies().noneMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))) {
+                if (quest.streamDependencies()
+                        .map((dependency) -> dependency instanceof Task ? ((Task)dependency).getQuest() : dependency)
+                        .noneMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
+                ) {
                     // need one dependency, check if it has any
                     cir.setReturnValue(false);
                 }
             } else {
-                if (!quest.streamDependencies().allMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))) {
+                if (!quest.streamDependencies()
+                        .map((dependency) -> dependency instanceof Task ? ((Task)dependency).getQuest() : dependency)
+                        .allMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
+                ) {
                     // need all dependency, check if it has all
                     cir.setReturnValue(false);
                 }

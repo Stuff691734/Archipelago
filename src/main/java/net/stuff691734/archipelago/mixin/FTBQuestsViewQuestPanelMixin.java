@@ -6,6 +6,7 @@ import dev.ftb.mods.ftblibrary.ui.ContextMenuItem;
 import dev.ftb.mods.ftbquests.client.gui.quests.ViewQuestPanel;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
+import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.minecraft.network.chat.Component;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
@@ -55,10 +56,11 @@ public class FTBQuestsViewQuestPanelMixin {
                 } else {
                     dependencyStream = this.quest.streamDependencies();
                 }
+                dependencyStream = dependencyStream.map((dependency) -> dependency instanceof Task ? ((Task)dependency).getQuest() : dependency);
                 // can only be null if quest is null, already checked above
                 assert questAccessor != null;
                 if (questAccessor.archipelago$getDependencyRequirement().needOnlyOne()) {
-                    title = "Archipelago Item: any(" + dependencyStream.map(questObject -> "ftb " + questObject) + ")";
+                    title = "Archipelago Item: any(" + dependencyStream.map(questObject -> "ftb " + questObject).collect(Collectors.joining(", ")) + ")";
                 }
                 else {
                     title = "Archipelago Item: all(" + dependencyStream.map(questObject -> "ftb " + questObject).collect(Collectors.joining(", ")) + ")";

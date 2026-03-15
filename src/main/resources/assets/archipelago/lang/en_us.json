@@ -1,7 +1,5 @@
 {
   "death.attack.archipelago.death_link": "%s was killed by archipelago death link",
   "archipelago.recieved.check": "Received %s from %s (%s)",
-  "archipelago.connection.invalid_server": "Invalid server address",
-  "archipelago.connection.connected": "Connected",
-  "archipelago.connection.failed_connection": "Connection Failed"
+  "archipelago.connection.invalid_server": "Invalid server address"
 }

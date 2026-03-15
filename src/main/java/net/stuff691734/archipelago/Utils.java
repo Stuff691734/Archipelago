@@ -36,9 +36,14 @@ public class Utils {
         return false;
     }
 
-    public static void giveItem(MinecraftServer server, String item) {
+    public static void giveItem(MinecraftServer server, String item, long index) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            giveItem(player, item);
+            // make sure user hasn't already gotten item
+            if (Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) < index) {
+                Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), (int) index);
+                Archipelago.archipelagoPersistentState.setDirty();
+                giveItem(player, item);
+            }
         }
     }
 

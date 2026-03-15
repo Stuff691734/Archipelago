@@ -46,7 +46,7 @@ public class ReceiveItemEvent {
                     break;
                 case "item":
                     if (Utils.isItemId(itemName[1])) {
-                        Utils.giveItem(Archipelago.server, itemName[1]);
+                        Utils.giveItem(Archipelago.server, itemName[1], event.getIndex());
                     } else {
                         Archipelago.LOGGER.error(
                                 "Could not verify integrity of received item check. check: {}|item: {}",

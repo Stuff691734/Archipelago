@@ -30,7 +30,7 @@ public abstract class AdvancementMixin {
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancement.value().display().isPresent() && this.getOrStartProgress(advancement).isDone()) {
+        if (this.getOrStartProgress(advancement).isDone()) {
             if (Archipelago.client.isConnected()) {
                 Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("adv " + advancement.id());
                 if (advancement_id != null) {
@@ -59,7 +59,7 @@ public abstract class AdvancementMixin {
                 (!modules.contains("Advancements") || !difficulty.contains(display.getType().getSerializedName()))
             ) {
                 // modules or difficulty being null means not initialized -> show dependency
-                // not randomizing ftb quests or not randomizing this type of quest
+                // not randomizing ftb advancements or not randomizing this type of quest
                 return;
             }
 

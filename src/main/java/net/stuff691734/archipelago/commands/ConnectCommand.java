@@ -19,12 +19,6 @@ public class ConnectCommand {
             context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.invalid_server"), false);
             return 1;
         }
-        if (Archipelago.client.isConnected()) {
-            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.connected"), false);
-            return 0;
-        } else {
-            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.failed_connection"), false);
-            return 1;
-        }
+        return 0;
     }
 }
