@@ -1,8 +1,10 @@
-package net.stuff691734.archipelago.mixin;
+package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 
 import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
+import dev.ftb.mods.ftbquests.quest.reward.Reward;
+import dev.ftb.mods.ftbquests.quest.reward.RewardClaimType;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
@@ -12,9 +14,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Mixin(TeamData.class)
-public class FTBQuestsTeamDataMixin {
+public class TeamDataMixin {
     @Inject(
             method = "canStartTasks",
             at = @At(value = "RETURN"),
@@ -72,6 +75,17 @@ public class FTBQuestsTeamDataMixin {
         else {
             if (!Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false)) {
                 cir.setReturnValue(false);
+            }
+        }
+    }
+
+    @Inject(method = "getClaimType", at = @At(value = "RETURN"), cancellable = true)
+    private void preventRewardAccess(UUID player, Reward reward, CallbackInfoReturnable<RewardClaimType> cir) {
+        if (!cir.getReturnValue().isClaimed()) {
+            if (Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(reward.getQuest().getCodeString(), false)) {
+                cir.setReturnValue(RewardClaimType.CAN_CLAIM);
+            } else {
+                cir.setReturnValue(RewardClaimType.CANT_CLAIM);
             }
         }
     }

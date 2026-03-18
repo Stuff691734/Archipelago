@@ -1,6 +1,9 @@
 package net.stuff691734.archipelago.ftbquests;
 
 import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
+import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.QuestObject;
+import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
 
 public class FTBUtils {
@@ -13,6 +16,22 @@ public class FTBUtils {
             return false;
         }
         return FTBQuestsAPI.api().getQuestFile(true).getQuest(id) != null;
+    }
+
+    public static boolean hasQuestRewardAccess(TeamData teamData, QuestObject questObject) {
+        if (questObject instanceof Quest quest) {
+            String modules = Archipelago.archipelagoPersistentState.slotData.get("activated_modules");
+            String shapes = Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape");
+            if (
+                modules == null ||
+                shapes == null ||
+                (modules.contains("FTBQuests") && shapes.contains(quest.getShape()))
+            ) {
+                // only modify if it is a quest and it is randomized
+                return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
+            }
+        }
+        return teamData.isCompleted(questObject);
     }
 
 }

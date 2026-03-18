@@ -15,9 +15,15 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
     private static final Supplier<Boolean> FTB_QUESTS_CONDITION = () -> LoadingModList.get().getModFileById("ftbquests") != null;
 
     private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of(
-            "net.stuff691734.archipelago.mixin.FTBQuestsQuestMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuestsViewQuestPanelMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuestsTeamDataMixin", FTB_QUESTS_CONDITION
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimRewardMessageMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.quest.task.AdvancementTaskMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.quest.QuestMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.quest.TeamDataMixin", FTB_QUESTS_CONDITION
     );
 
 

@@ -2,7 +2,10 @@ package net.stuff691734.archipelago.ftbquests.commands;
 
 import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
 import dev.ftb.mods.ftbquests.quest.task.Task;
+import dev.ftb.mods.ftbquests.quest.task.TaskTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
+import net.stuff691734.archipelago.ftbquests.accessor.AdvancementTaskAccessor;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 
 import java.util.HashMap;
@@ -23,7 +26,12 @@ public class FTBGenerateCommand {
                                     .distinct()
                                     .map(String::valueOf).toArray(String[]::new),
                             questAccessor.archipelago$getDependencyRequirement().getId(),
-                            quest.getChapter().getCodeString()
+                            quest.getChapter().getCodeString(),
+                            quest.getTasks().stream()
+                                    .filter(task -> task.getType() == TaskTypes.ADVANCEMENT)
+                                    .map(task -> ((AdvancementTaskAccessor)task).archipelago$advancement())
+                                    .map(ResourceLocation::toString)
+                                    .toArray(String[]::new)
                     )
             );
         });

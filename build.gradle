@@ -65,7 +65,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.6'
-//    implementation ('io.github.archipelagomw:Java-Client:0.2.1')
 
     additionalRuntimeClasspath('io.github.archipelagomw:Java-Client:0.2.1')
 
@@ -74,6 +73,7 @@ dependencies {
     jarJar(implementation ('org.apache.httpcomponents.core5:httpcore5:5.4'))
 
     compileOnly("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
+    compileOnly("curse.maven:ftb-library-forge-404465:7420412")
 
     implementation "curse.maven:ftb-quests-forge-289412:${ftb_quests_version}"
     implementation "curse.maven:ftb-library-forge-404465:7420412"

@@ -1,4 +1,4 @@
-package net.stuff691734.archipelago.mixin;
+package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
@@ -17,12 +17,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mixin(ViewQuestPanel.class)
-public class FTBQuestsViewQuestPanelMixin {
+public class ViewQuestPanelMixin {
 
     @Shadow
     private Quest quest;

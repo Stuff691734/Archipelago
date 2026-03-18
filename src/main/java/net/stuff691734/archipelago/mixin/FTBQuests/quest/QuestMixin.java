@@ -1,4 +1,4 @@
-package net.stuff691734.archipelago.mixin;
+package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 
 import dev.ftb.mods.ftbquests.events.QuestProgressEventData;
 import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Quest.class)
-public class FTBQuestsQuestMixin implements QuestAccessor {
+public class QuestMixin implements QuestAccessor {
     @Shadow
     private DependencyRequirement dependencyRequirement;
 
