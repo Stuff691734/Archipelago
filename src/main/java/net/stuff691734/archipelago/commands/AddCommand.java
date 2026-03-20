@@ -11,7 +11,6 @@ public class AddCommand {
         final String checkName = StringArgumentType.getString(context, "check");
         String[] itemName = checkName.split(" ",2);
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], null);
-        Archipelago.archipelagoPersistentState.setDirty();
         return 0;
     }
 }

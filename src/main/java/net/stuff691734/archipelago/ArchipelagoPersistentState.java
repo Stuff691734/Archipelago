@@ -1,12 +1,14 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,6 +17,7 @@ public class ArchipelagoPersistentState extends SavedData {
     public Map<String, Boolean> ftbQuestChecks = new HashMap<>();
     public Map<String, String> slotData = new HashMap<>();
     public Map<String, Integer> playerLastCheck = new HashMap<>();
+    public List<String> pendingChecks = new ArrayList<>();
 
 
     @Override
@@ -33,10 +36,14 @@ public class ArchipelagoPersistentState extends SavedData {
         CompoundTag playerLastCheckDataNbt = new CompoundTag();
         playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
 
+        CompoundTag pendingChecksNbt = new CompoundTag();
+        pendingChecks.forEach(check -> pendingChecksNbt.putString(check, check));
+
         archipelagoNbt.put("advancement_checks", advancementChecksNbt);
         archipelagoNbt.put("ftb_quest_checks", ftbQuestChecksNbt);
         archipelagoNbt.put("slot_data", slotDataNbt);
         archipelagoNbt.put("player_last_check", playerLastCheckDataNbt);
+        archipelagoNbt.put("pending_checks", pendingChecksNbt);
 
         nbt.put("archipelago", archipelagoNbt);
 
@@ -59,6 +66,9 @@ public class ArchipelagoPersistentState extends SavedData {
         CompoundTag playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
         playerLastCheckDataNbt.getAllKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
 
+        CompoundTag pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
+        state.pendingChecks.addAll(pendingChecksNbt.getAllKeys());
+
         return state;
     }
 
@@ -68,6 +78,7 @@ public class ArchipelagoPersistentState extends SavedData {
         state.ftbQuestChecks = new HashMap<>();
         state.slotData = new HashMap<>();
         state.playerLastCheck = new HashMap<>();
+        state.pendingChecks = new ArrayList<>();
         return state;
     }
 

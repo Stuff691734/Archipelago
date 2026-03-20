@@ -39,6 +39,9 @@ public abstract class AdvancementMixin {
                         Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                     }
                 }
+            } else {
+                Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.id());
+                Archipelago.archipelagoPersistentState.setDirty();
             }
         }
     }

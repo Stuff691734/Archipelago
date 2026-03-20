@@ -36,6 +36,9 @@ public class QuestMixin implements QuestAccessor {
                     Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                 }
             }
+        } else {
+            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
+            Archipelago.archipelagoPersistentState.setDirty();
         }
     }
 }
