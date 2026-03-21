@@ -6,9 +6,6 @@ import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
 
-import java.util.List;
-import java.util.Objects;
-
 public class FTBUtils {
     public static boolean isQuestId(String questId) {
         long id;

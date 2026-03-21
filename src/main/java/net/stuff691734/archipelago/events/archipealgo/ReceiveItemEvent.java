@@ -11,7 +11,6 @@ import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class ReceiveItemEvent {
     @ArchipelagoEventListener
