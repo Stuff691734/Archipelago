@@ -6,11 +6,8 @@ import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nullable;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -38,21 +35,6 @@ public class Utils {
         return false;
     }
 
-    public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (index != null) {
-                // make sure user hasn't already gotten item
-                if (Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) < index) {
-                    Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
-                    Archipelago.archipelagoPersistentState.setDirty();
-                    giveItem(player, item);
-                }
-            } else {
-                giveItem(player, item);
-            }
-        }
-    }
-
     public static void giveItem(ServerPlayer player, String itemId) {
         String[] strings = itemId.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
@@ -61,10 +43,6 @@ public class Utils {
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
         }
-    }
-
-    public static void sendMessage(ServerPlayer player, Component message) {
-        player.sendSystemMessage(message);
     }
 
     public static void sendMessage(Component message) {

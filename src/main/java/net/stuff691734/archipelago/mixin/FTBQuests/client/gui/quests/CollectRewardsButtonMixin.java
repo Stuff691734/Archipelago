@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,9 +29,12 @@ public class CollectRewardsButtonMixin {
 
     @Unique
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
+        if (!Archipelago.slotData.quest_checks_give_rewards) {
+            return teamData.hasUnclaimedRewards(player, object);
+        }
         // always called with arguments of this.questScreen.file
         ClientQuestFile questFile = (ClientQuestFile) object;
-        AtomicBoolean test = new AtomicBoolean(false);
+        AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
         questFile.forAllQuests(quest -> {
             if (
                 Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false) &&
@@ -38,9 +42,9 @@ public class CollectRewardsButtonMixin {
                     reward -> !teamData.isRewardClaimed(player, reward)
                 )
             ) {
-                test.set(true);
+                hasAvailableReward.set(true);
             }
         });
-        return test.get();
+        return hasAvailableReward.get();
     }
 }

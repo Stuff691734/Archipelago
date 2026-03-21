@@ -32,7 +32,7 @@ public class QuestMixin implements QuestAccessor {
             Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
             if (quest_id != null) {
                 Archipelago.client.getLocationManager().checkLocation(quest_id);
-                if (("ftb " + this).equals(Archipelago.archipelagoPersistentState.slotData.get("final_goal"))) {
+                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
                     Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                 }
             }

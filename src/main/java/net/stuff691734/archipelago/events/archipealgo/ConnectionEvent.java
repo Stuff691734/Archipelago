@@ -5,6 +5,7 @@ import io.github.archipelagomw.ClientStatus;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.SlotData;
 
 public class ConnectionEvent {
     @ArchipelagoEventListener
@@ -12,7 +13,18 @@ public class ConnectionEvent {
         JsonObject slotData = event.getSlotData(JsonObject.class);
 
         slotData.asMap().forEach((key, value) -> Archipelago.archipelagoPersistentState.slotData.put(key, value.getAsString()));
-        if (Archipelago.archipelagoPersistentState.slotData.getOrDefault("death_link", "0").equals("1")) {
+        Archipelago.slotData = new SlotData(
+                Archipelago.archipelagoPersistentState.slotData.get("unlock_type"),
+                Archipelago.archipelagoPersistentState.slotData.get("final_goal"),
+                Archipelago.archipelagoPersistentState.slotData.get("activated_modules"),
+                Archipelago.archipelagoPersistentState.slotData.get("advancement_check_difficulty"),
+                Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape"),
+                Archipelago.archipelagoPersistentState.slotData.get("advancement_checks_give_items"),
+                Archipelago.archipelagoPersistentState.slotData.get("quest_checks_give_rewards"),
+                Archipelago.archipelagoPersistentState.slotData.get("death_link")
+        );
+
+        if (Archipelago.slotData.death_link) {
             Archipelago.LOGGER.info("DeathLink activated");
             Archipelago.client.setDeathLinkEnabled(true);
             Archipelago.client.addTag("DeathLink");
@@ -23,7 +35,7 @@ public class ConnectionEvent {
             Long check_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(check);
             if (check_id != null) {
                 Archipelago.client.getLocationManager().checkLocation(check_id);
-                if ((check).equals(Archipelago.archipelagoPersistentState.slotData.get("final_goal"))) {
+                if ((check).equals(Archipelago.slotData.final_goal)) {
                     Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                 }
             }

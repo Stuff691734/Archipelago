@@ -1,13 +1,17 @@
 package net.stuff691734.archipelago.events.archipealgo;
 
 import io.github.archipelagomw.events.ArchipelagoEventListener;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class ReceiveItemEvent {
     @ArchipelagoEventListener
@@ -26,48 +30,60 @@ public class ReceiveItemEvent {
     }
 
     public static void parseItem(String itemType, String itemName, @Nullable Long index) {
+        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+            playerParseItem(player, itemType, itemName, index);
+        }
         switch (itemType) {
             case "adv":
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                } else {
-                    Archipelago.LOGGER.error(
-                            "Could not verify integrity of received advancement check. advancement: {}",
-                            itemName
-                    );
                 }
                 break;
             case "ftb":
                 if (ModList.get().isLoaded("ftbquests")) {
                     if (FTBUtils.isQuestId(itemName)) {
-                        Archipelago.LOGGER.info("Added Ftb Quest Item");
                         Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
-                    } else {
-                        Archipelago.LOGGER.error(
-                                "Could not verify integrity of received quest check. quest: {}",
-                                itemName
+                    }
+                }
+                break;
+        }
+        Archipelago.archipelagoPersistentState.setDirty();
+    }
+
+    public static void playerParseItem(ServerPlayer player, String itemType, String itemName, @Nullable Long index) {
+        if (
+            index != null &&
+            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) >= index
+        ) {
+            return;
+        }
+        if (index != null) {
+            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
+        }
+
+        switch (itemType) {
+            case "adv":
+                if (Utils.isAdvancementId(itemName)) {
+                    Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
+                    AdvancementHolder advancement = Archipelago.server.getAdvancements().get(ResourceLocation.parse(itemName));
+                    if (Archipelago.slotData.advancement_checks_give_items) {
+                        assert advancement != null; // via isAdvancementId
+                        advancement.value().display().ifPresent(
+                            display -> Utils.giveItem(player, display.getIcon().toString())
                         );
                     }
                 }
                 break;
-            case "item":
-                if (Utils.isItemId(itemName)) {
-                    Utils.giveItem(Archipelago.server, itemName, index);
-                } else {
-                    Archipelago.LOGGER.error(
-                            "Could not verify integrity of received item check. item: {}",
-                            itemName
-                    );
+            case "ftb":
+                if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
+                    Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
                 }
                 break;
-            default:
-                Archipelago.LOGGER.error(
-                        "Check of unknown type received. name: {}|type: {}",
-                        itemName,
-                        itemType
-                );
+            case "item":
+                if (Utils.isItemId(itemName)) {
+                    Utils.giveItem(player, itemName);
+                }
                 break;
         }
-        Archipelago.archipelagoPersistentState.setDirty();
     }
 }

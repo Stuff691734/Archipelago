@@ -18,6 +18,7 @@ public class Archipelago {
     public static ArchipelagoClient client;
     public static MinecraftServer server;
     public static ArchipelagoPersistentState archipelagoPersistentState;
+    public static SlotData slotData = new SlotData();
 
     public static final ResourceKey<DamageType> DeathLinkDamage = ResourceKey.create(
         Registries.DAMAGE_TYPE,

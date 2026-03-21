@@ -6,6 +6,9 @@ import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
 
+import java.util.List;
+import java.util.Objects;
+
 public class FTBUtils {
     public static boolean isQuestId(String questId) {
         long id;
@@ -20,12 +23,13 @@ public class FTBUtils {
 
     public static boolean hasQuestRewardAccess(TeamData teamData, QuestObject questObject) {
         if (questObject instanceof Quest quest) {
-            String modules = Archipelago.archipelagoPersistentState.slotData.get("activated_modules");
-            String shapes = Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape");
             if (
-                modules == null ||
-                shapes == null ||
-                (modules.contains("FTBQuests") && shapes.contains(quest.getShape()))
+                !Archipelago.slotData.isInitiated ||
+                (
+                    Archipelago.slotData.activated_modules.contains("FTBQuests") &&
+                    Archipelago.slotData.ftb_quest_shape.contains(quest.getShape()) &&
+                    Archipelago.slotData.quest_checks_give_rewards
+                )
             ) {
                 // only modify if it is a quest and it is randomized
                 return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);

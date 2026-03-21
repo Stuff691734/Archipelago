@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(QuestButton.class)
 public class QuestButtonMixin {
     @Shadow
@@ -35,14 +37,15 @@ public class QuestButtonMixin {
             @Local(name = "questIcon") LocalRef<Icon> icon,
             @Local(name = "teamData") TeamData teamData
     ) {
-        String modules = Archipelago.archipelagoPersistentState.slotData.get("activated_modules");
-        String shapes = Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape");
         if (
-                modules == null ||
-                shapes == null ||
-                (modules.contains("FTBQuests") && shapes.contains(this.quest.getShape()))
+            !Archipelago.slotData.isInitiated ||
+            (
+                Archipelago.slotData.activated_modules.contains("FTBQuests") &&
+                Archipelago.slotData.ftb_quest_shape.contains(quest.getShape()) &&
+                Archipelago.slotData.quest_checks_give_rewards
+            )
         ) {
-            // only modify if it is a quest and it is randomized
+            // only modify if it is a quest and it is randomized and we randomized rewards
             if (
                 Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(this.quest.getCodeString(), false) &&
                 // sadly this undoes some of the optimization done by the ftb team, but teamData.hasUnclaimedRewards returns false when not having access

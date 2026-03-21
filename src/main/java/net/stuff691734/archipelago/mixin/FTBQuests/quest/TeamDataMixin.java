@@ -24,13 +24,12 @@ public class TeamDataMixin {
             cancellable = true
     )
     private void preventTaskCompletion(Quest quest, CallbackInfoReturnable<Boolean> cir) {
-        String modules = Archipelago.archipelagoPersistentState.slotData.get("activated_modules");
-        String shapes = Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape");
-
         if (
-            modules != null &&
-            shapes != null &&
-            (!modules.contains("FTBQuests") || !shapes.contains(quest.getShape()))
+            Archipelago.slotData.isInitiated &&
+            (
+                !Archipelago.slotData.activated_modules.contains("FTBQuests") ||
+                !Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
+            )
         ) {
             // modules or shapes being null means not initialized -> show dependency
             // not randomizing ftb quests or not randomizing this type of quest
@@ -38,13 +37,13 @@ public class TeamDataMixin {
         }
 
         // prevents quests from being unlocked
-        if (Objects.equals(Archipelago.archipelagoPersistentState.slotData.get("unlock_type"), "tab")) {
+        if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
             if (!Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getChapter().getCodeString(), false)) {
                 // if player hasn't received quest chapter check prevent them from getting the advancement
                 cir.setReturnValue(false);
             }
         }
-        else if (Objects.equals(Archipelago.archipelagoPersistentState.slotData.get("unlock_type"), "tree")) {
+        else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             QuestAccessor questAccessor = (QuestAccessor) (Object) quest;
             assert questAccessor != null;
             DependencyRequirement requirement = questAccessor.archipelago$getDependencyRequirement();

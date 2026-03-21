@@ -32,25 +32,22 @@ public class ViewQuestPanelMixin {
     @Inject(method = "showList", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/BaseScreen;openContextMenu(Ljava/util/List;)Ldev/ftb/mods/ftblibrary/ui/ContextMenu;"))
     private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, @Local(name = "contextMenu") List<ContextMenuItem> contextMenu) {
         if (this.quest != null && dependencies) {
-            String modules = Archipelago.archipelagoPersistentState.slotData.get("activated_modules");
-            String shapes = Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape");
-
             if (
-                modules != null &&
-                shapes != null &&
-                (!modules.contains("FTBQuests") || !shapes.contains(this.quest.getShape()))
+                Archipelago.slotData.isInitiated &&
+                (
+                    !Archipelago.slotData.activated_modules.contains("FTBQuests") ||
+                    !Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
+                )
             ) {
-                // modules or shapes being null means not initialized -> show dependency
-                // not randomizing ftb quests or not randomizing this type of quest
                 return;
             }
 
             // only do this for dependencies
             String title;
-            if (Objects.equals(Archipelago.archipelagoPersistentState.slotData.get("unlock_type"), "tab")) {
+            if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
                 title = "Archipelago Item: ftb " + this.quest.getChapter();
             }
-            else if (Objects.equals(Archipelago.archipelagoPersistentState.slotData.get("unlock_type"), "tree")) {
+            else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
                 QuestAccessor questAccessor = (QuestAccessor) (Object) this.quest;
                 Stream<QuestObject> dependencyStream;
                 if (this.quest.streamDependencies().findAny().isEmpty()) {
