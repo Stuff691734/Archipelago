@@ -14,7 +14,7 @@ import java.util.Map;
 public class FTBGenerateCommand {
     public static Map<String, FTBQuestsCheck> generateFTBChecks() {
         Map<String, FTBQuestsCheck> ftbQuestsChecks = new HashMap<>();
-        FTBQuestsAPI.api().getQuestFile(true).forAllQuests((quest) -> {
+        FTBQuestsAPI.api().getQuestFile(false).forAllQuests((quest) -> {
             QuestAccessor questAccessor = (QuestAccessor) (Object) quest;
 
             ftbQuestsChecks.put(
