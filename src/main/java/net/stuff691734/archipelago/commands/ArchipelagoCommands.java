@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 
@@ -22,7 +23,10 @@ public class ArchipelagoCommands {
                 .executes(DisconnectCommand::execute)
             )
             .then(literal("generate")
-                .executes(GenerateCommand::execute)
+                .executes((context) -> GenerateCommand.execute(context, false))
+                .then(argument("SingleLine", BoolArgumentType.bool())
+                    .executes((context) -> GenerateCommand.execute(context, BoolArgumentType.getBool(context, "SingleLine")))
+                )
             )
             .then(literal("get")
                 .executes(GetCommand::execute)

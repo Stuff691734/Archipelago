@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static int execute(CommandContext<CommandSourceStack> context) {
+    public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine) {
         context.getSource().sendSuccess(() -> Component.literal("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
@@ -39,11 +39,13 @@ public class GenerateCommand {
             new File("output/archipelago_data.json").createNewFile();
 
             Writer writer = new FileWriter("output/archipelago_data.json");
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
+            GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
-                    .serializeNulls()
-                    .create();
+                    .serializeNulls();
+            if (!singleLine) {
+                builder.setPrettyPrinting();
+            }
+            Gson gson = builder.create();
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
