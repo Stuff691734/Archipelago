@@ -65,7 +65,7 @@ public class ReceiveItemEvent {
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
                     AdvancementHolder advancement = Archipelago.server.getAdvancements().get(ResourceLocation.parse(itemName));
-                    if (Archipelago.slotData.advancement_checks_give_items) {
+                    if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
                             display -> Utils.giveItem(player, display.getIcon().toString())
