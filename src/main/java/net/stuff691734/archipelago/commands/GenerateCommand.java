@@ -18,7 +18,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static int execute(CommandContext<CommandSourceStack> context) {
@@ -74,6 +76,14 @@ public class GenerateCommand {
                 }
             });
         }
-        return advancementsChecks;
+        return advancementsChecks.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1, // use first instance when dealing with conflicts
+                        LinkedHashMap::new
+                )
+        );
     }
 }
