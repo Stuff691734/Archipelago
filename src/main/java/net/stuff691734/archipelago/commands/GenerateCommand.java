@@ -63,7 +63,7 @@ public class GenerateCommand {
                     }
                     if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
                         advancementsChecks.put(advancement.id().toString(), new AdvancementsCheck(
-                                display.getType().getSerializedName(),
+                                display.getFrame().getName(),
                                 parent_id
                         ));
                     }
