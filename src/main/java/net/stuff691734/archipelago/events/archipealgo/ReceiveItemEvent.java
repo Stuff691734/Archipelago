@@ -5,7 +5,6 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 

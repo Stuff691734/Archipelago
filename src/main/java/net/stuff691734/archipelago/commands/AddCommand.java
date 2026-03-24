@@ -3,7 +3,6 @@ package net.stuff691734.archipelago.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.events.archipealgo.ReceiveItemEvent;
 
 public class AddCommand {

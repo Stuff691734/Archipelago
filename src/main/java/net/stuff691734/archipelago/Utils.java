@@ -11,17 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 public class Utils {
-    public static boolean isRootAdvancementId(String advancementId) {
-        if (isAdvancementId(advancementId)) {
-            String namespace = advancementId.split(":")[0];
-            String path = advancementId.split(":")[1];
-            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(new ResourceLocation(namespace, path));
-            assert advancement != null;
-            return advancement.value().isRoot();
-        }
-        return false;
-    }
-
     public static boolean isAdvancementId(String advancementId) {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         if (id.isSuccess()) {
