@@ -54,7 +54,7 @@ public abstract class AdvancementMixin {
     private void preventAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         advancement.value().display().ifPresent(display -> {
             if (
-                !Archipelago.slotData.isInitiated ||
+                Archipelago.slotData.isInitiated ||
                 (
                     Archipelago.slotData.activated_modules.contains("Advancements") &&
                     Archipelago.slotData.ftb_quest_shape.contains(display.getType().getSerializedName())
