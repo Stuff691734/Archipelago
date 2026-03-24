@@ -1,0 +1,13 @@
+package net.stuff691734.archipelago.events.neoforge;
+
+import net.neoforged.bus.api.IEventBus;
+
+public class NeoForgeEvents {
+    public static void register(IEventBus eventBus) {
+        eventBus.register(new EntityLoadEvent());
+        eventBus.register(new PlayerDeathEvent());
+        eventBus.register(new RegisterCommandsEvent());
+        eventBus.register(new ServerStartingEvent());
+        eventBus.register(new ServerStoppingEvent());
+    }
+}

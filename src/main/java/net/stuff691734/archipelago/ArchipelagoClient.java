@@ -1,7 +1,6 @@
 package net.stuff691734.archipelago;
 
 import io.github.archipelagomw.Client;
-import net.stuff691734.archipelago.Archipelago;
 
 public class ArchipelagoClient extends Client {
     @Override
