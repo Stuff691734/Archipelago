@@ -32,12 +32,26 @@ public class Utils {
         return false;
     }
 
-    public static void giveItem(ServerPlayer player, String item) {
-        String[] strings = item.split(" ");
+    public static boolean isItemId(String itemId) {
+        String item;
+        try {
+            item = itemId.split(" ")[1];
+        } catch (IndexOutOfBoundsException exception) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
+            return false;
+        }
+        DataResult<ResourceLocation> id = ResourceLocation.read(item);
+        if (id.isSuccess()) {
+            return BuiltInRegistries.ITEM.containsKey(id.getOrThrow());
+        }
+        return false;
+    }
+
+    public static void giveItem(ServerPlayer player, String itemId) {
+        String[] strings = itemId.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String namespace = strings[1].split(":")[0];
-        String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(namespace, path)), amount);
+        String item = strings[1];
+        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(item)), amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
         }
