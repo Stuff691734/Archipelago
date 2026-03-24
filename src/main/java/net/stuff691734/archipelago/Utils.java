@@ -13,34 +13,38 @@ import net.minecraft.world.item.ItemStack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
-    public static boolean isRootAdvancementId(String advancementId) {
-        if (isAdvancementId(advancementId)) {
-            String namespace = advancementId.split(":")[0];
-            String path = advancementId.split(":")[1];
-            AdvancementHolder advancement = Archipelago.server.getAdvancements().get(new ResourceLocation(namespace, path));
-            assert advancement != null;
-            return advancement.value().isRoot();
-        }
-        return false;
-    }
-
     public static boolean isAdvancementId(String advancementId) {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         AtomicBoolean result = new AtomicBoolean(false);
         id.result().ifPresent(identifier -> {
             AdvancementTree advancementManager = Archipelago.server.getAdvancements().tree();
             AdvancementNode advancement = advancementManager.get(identifier);
-            result.set(true);
+            result.set(advancement != null);
         });
         return result.get();
     }
 
-    public static void giveItem(ServerPlayer player, String item) {
-        String[] strings = item.split(" ");
+    public static boolean isItemId(String itemId) {
+        String item;
+        try {
+            item = itemId.split(" ")[1];
+        } catch (IndexOutOfBoundsException exception) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
+            return false;
+        }
+        DataResult<ResourceLocation> id = ResourceLocation.read(item);
+
+        if (id.result().isPresent()) {
+            return BuiltInRegistries.ITEM.containsKey(id.result().get());
+        }
+        return false;
+    }
+
+    public static void giveItem(ServerPlayer player, String itemId) {
+        String[] strings = itemId.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String namespace = strings[1].split(":")[0];
-        String path = strings[1].split(":")[1];
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(namespace, path)), amount);
+        String item = strings[1];
+        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(item)), amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
         }
