@@ -30,6 +30,8 @@ public class GenerateCommand {
 
         if (ModList.get().isLoaded("ftbquests")) {
             checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
+        } else {
+            checks.put("FTBQuests", new HashMap<>());
         }
 
         checks.put("Advancements", generateAdvancementChecks());
