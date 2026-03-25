@@ -57,7 +57,7 @@ public abstract class AdvancementMixin {
                 Archipelago.slotData.isInitiated &&
                 (
                     !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.ftb_quest_shape.contains(display.getType().getSerializedName())
+                    !Archipelago.slotData.advancement_difficulty.contains(display.getType().getSerializedName())
                 )
             ) {
                 return;
