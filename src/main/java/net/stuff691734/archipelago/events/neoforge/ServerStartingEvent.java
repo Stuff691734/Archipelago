@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.events.neoforge;
 
 import io.github.archipelagomw.flags.ItemsHandling;
-import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoClient;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
@@ -10,7 +10,7 @@ import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
 
 public class ServerStartingEvent {
     @SubscribeEvent
-    public void onEvent(net.neoforged.neoforge.event.server.ServerStartingEvent event) {
+    public void onEvent(net.minecraftforge.event.server.ServerStartingEvent event) {
         Archipelago.server = event.getServer();
         ArchipelagoClient client = new ArchipelagoClient();
 

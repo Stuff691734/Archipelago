@@ -36,7 +36,7 @@ public abstract class AdvancementMixin {
                     }
                 }
             } else {
-                Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.id());
+                Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.getId());
                 Archipelago.archipelagoPersistentState.setDirty();
             }
         }
@@ -54,7 +54,7 @@ public abstract class AdvancementMixin {
                 !Archipelago.slotData.isInitiated ||
                 (
                     !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.ftb_quest_shape.contains(display.getType().getSerializedName())
+                    !Archipelago.slotData.ftb_quest_shape.contains(display.getFrame().getName())
                 )
             ) {
                 return;

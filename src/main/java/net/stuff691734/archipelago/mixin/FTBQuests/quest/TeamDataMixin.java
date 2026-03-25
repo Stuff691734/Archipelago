@@ -21,7 +21,8 @@ public class TeamDataMixin {
     @Inject(
             method = "areDependenciesComplete",
             at = @At(value = "RETURN"),
-            cancellable = true
+            cancellable = true,
+            remap = false
     )
     private void preventTaskCompletion(Quest quest, CallbackInfoReturnable<Boolean> cir) {
         if (
@@ -78,7 +79,7 @@ public class TeamDataMixin {
         }
     }
 
-    @Inject(method = "getClaimType", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "getClaimType", at = @At(value = "RETURN"), cancellable = true, remap = false)
     private void preventRewardAccess(UUID player, Reward reward, CallbackInfoReturnable<RewardClaimType> cir) {
         if (!cir.getReturnValue().isClaimed()) {
             if (Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(reward.getQuest().getCodeString(), false)) {

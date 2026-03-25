@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AdvancementTask.class)
 public class AdvancementTaskMixin implements AdvancementTaskAccessor {
-    @Shadow
+    @Shadow(remap = false)
     private ResourceLocation advancement;
 
     @Override

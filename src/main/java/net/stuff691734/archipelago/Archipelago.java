@@ -6,9 +6,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageType;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
-import net.stuff691734.archipelago.events.neoforge.NeoForgeEvents;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
+import net.stuff691734.archipelago.events.neoforge.ForgeEvents;
 import org.slf4j.Logger;
 
 @Mod(Archipelago.MODID)
@@ -22,10 +22,10 @@ public class Archipelago {
 
     public static final ResourceKey<DamageType> DeathLinkDamage = ResourceKey.create(
         Registries.DAMAGE_TYPE,
-        new ResourceLocation(MODID, "death_link")
+        ResourceLocation.fromNamespaceAndPath(MODID, "death_link")
     );
 
     public Archipelago() {
-        NeoForgeEvents.register(NeoForge.EVENT_BUS);
+        ForgeEvents.register(MinecraftForge.EVENT_BUS);
     }
 }

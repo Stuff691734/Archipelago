@@ -1,11 +1,12 @@
 package net.stuff691734.archipelago.events.archipealgo;
 
 import io.github.archipelagomw.events.ArchipelagoEventListener;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
@@ -64,12 +65,13 @@ public class ReceiveItemEvent {
             case "adv":
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                    AdvancementHolder advancement = Archipelago.server.getAdvancements().get(new ResourceLocation(itemName));
+                    Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(ResourceLocation.parse(itemName));
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
-                        advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(player, display.getIcon().toString())
-                        );
+                        DisplayInfo display = advancement.getDisplay();
+                        if (display != null) {
+                            Utils.giveItem(player, display.getIcon().toString());
+                        }
                     }
                 }
                 break;

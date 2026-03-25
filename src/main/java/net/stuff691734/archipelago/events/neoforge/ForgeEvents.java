@@ -1,8 +1,8 @@
 package net.stuff691734.archipelago.events.neoforge;
 
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 
-public class NeoForgeEvents {
+public class ForgeEvents {
     public static void register(IEventBus eventBus) {
         eventBus.register(new EntityLoadEvent());
         eventBus.register(new PlayerDeathEvent());

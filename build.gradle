@@ -100,13 +100,13 @@ dependencies {
     jarJar (implementation'org.java-websocket:Java-WebSocket:[1.5.6]')
     jarJar (implementation'org.apache.httpcomponents.core5:httpcore5:[5.4]')
 
-    compileOnly("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    compileOnly("curse.maven:ftb-library-forge-404465:5567594")
+//    compileOnly("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
+//    compileOnly("curse.maven:ftb-library-forge-404465:5567594")
 
-    implementation "curse.maven:ftb-quests-forge-289412:${ftb_quests_version}"
-    implementation "curse.maven:ftb-library-forge-404465:5567594"
-    implementation "curse.maven:ftb-teams-forge-404468:5202951"
-    implementation "curse.maven:architectury-api-419699:5173990"
+    implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
+    implementation fg.deobf("curse.maven:ftb-library-forge-404465:7296748")
+    implementation fg.deobf("curse.maven:ftb-teams-forge-404468:7499810")
+    implementation fg.deobf("curse.maven:architectury-api-419699:5137938")
 }
 
 tasks.named('processResources', ProcessResources).configure {

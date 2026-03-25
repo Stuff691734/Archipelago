@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(RewardButton.class)
 public class RewardButtonMixin {
-    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
     private boolean modifyRewardAccess(TeamData teamData, QuestObject questObject) {
         return FTBUtils.hasQuestRewardAccess(teamData, questObject);
     }
 
-    @Redirect(method = "getWidgetType", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
-    public boolean getWidgetType(TeamData teamData, QuestObject questObject) {
-        return FTBUtils.hasQuestRewardAccess(teamData, questObject);
-    }
+//    @Redirect(method = "getWidgetType", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+//    public boolean getWidgetType(TeamData teamData, QuestObject questObject) {
+//        return FTBUtils.hasQuestRewardAccess(teamData, questObject);
+//    }
 }

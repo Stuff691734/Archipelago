@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ClaimRewardMessage.class)
 public class ClaimRewardMessageMixin {
-    @Redirect(method = "handle", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+    @Redirect(method = "handle", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
     private boolean modifyRewardAccess(TeamData teamData, QuestObject questObject) {
         return FTBUtils.hasQuestRewardAccess(teamData, questObject);
     }

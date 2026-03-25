@@ -3,11 +3,11 @@ package net.stuff691734.archipelago.commands;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
@@ -61,24 +61,22 @@ public class GenerateCommand {
     public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (AdvancementHolder advancement : Archipelago.server.getAdvancements().getAllAdvancements()) {
+        for (Advancement advancement : Archipelago.server.getAdvancements().getAllAdvancements()) {
 
-            advancement.value().display().ifPresent(display -> {
-                AdvancementNode placedAdvancement = Archipelago.server.getAdvancements().tree().get(advancement);
-                if (placedAdvancement != null) {
-                    AdvancementNode parent = placedAdvancement.parent();
-                    String parent_id = null;
-                    if (parent != null) {
-                        parent_id = parent.holder().id().toString();
-                    }
-                    if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                        advancementsChecks.put(advancement.id().toString(), new AdvancementsCheck(
-                                display.getType().getSerializedName(),
-                                parent_id
-                        ));
-                    }
+            DisplayInfo display = advancement.getDisplay();
+            if (display != null) {
+                Advancement parent = advancement.getParent();
+                String parent_id = null;
+                if (parent != null) {
+                    parent_id = parent.getId().toString();
                 }
-            });
+                if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
+                    advancementsChecks.put(advancement.getId().toString(), new AdvancementsCheck(
+                            display.getFrame().getName(),
+                            parent_id
+                    ));
+                }
+            }
         }
         return advancementsChecks.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())

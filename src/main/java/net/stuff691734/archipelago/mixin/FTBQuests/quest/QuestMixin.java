@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Quest.class)
 public class QuestMixin implements QuestAccessor {
-    @Shadow
+    @Shadow(remap = false)
     private DependencyRequirement dependencyRequirement;
 
     @Override
@@ -24,7 +24,8 @@ public class QuestMixin implements QuestAccessor {
 
     @Inject(
             method = "onCompleted",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            remap = false
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
         Archipelago.LOGGER.info("Quest Completed.");

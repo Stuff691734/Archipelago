@@ -82,15 +82,14 @@ public class ArchipelagoPersistentState extends SavedData {
         return state;
     }
 
-    private static final Factory<ArchipelagoPersistentState> type = new Factory<>(
-            ArchipelagoPersistentState::createNew,
-            ArchipelagoPersistentState::createFromNbt
-    );
-
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
         DimensionDataStorage persistentStateManager = server.overworld().getDataStorage();
 
-        ArchipelagoPersistentState state = persistentStateManager.computeIfAbsent(type, Archipelago.MODID);
+        ArchipelagoPersistentState state = persistentStateManager.computeIfAbsent(
+            ArchipelagoPersistentState::createFromNbt,
+            ArchipelagoPersistentState::createNew,
+            Archipelago.MODID
+        );
 
         state.setDirty();
 

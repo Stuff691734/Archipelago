@@ -16,12 +16,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(CollectRewardsButton.class)
 public class CollectRewardsButtonMixin {
 
-    @Redirect(method = "onClicked", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+    @Redirect(method = "onClicked", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
     public boolean onClickedHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         return archipelago$HasUnclaimedRewards(teamData, player, object);
     }
 
-    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
     public boolean drawHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         return archipelago$HasUnclaimedRewards(teamData, player, object);
     }
