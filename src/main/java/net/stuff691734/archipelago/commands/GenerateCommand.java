@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine) {
-        context.getSource().sendSuccess(() -> Component.literal("Started writing to file."), false);
+        context.getSource().sendSuccess(Component.literal("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
@@ -47,10 +47,10 @@ public class GenerateCommand {
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
-            context.getSource().sendSuccess(() -> Component.literal(e.getMessage()), false);
+            context.getSource().sendSuccess(Component.literal(e.getMessage()), false);
             return 1;
         }
-        context.getSource().sendSuccess(() -> Component.literal("Finished writing to file."), false);
+        context.getSource().sendSuccess(Component.literal("Finished writing to file."), false);
         return 0;
     }
 
