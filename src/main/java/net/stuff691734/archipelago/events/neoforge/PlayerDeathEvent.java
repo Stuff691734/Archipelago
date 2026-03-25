@@ -9,7 +9,7 @@ public class PlayerDeathEvent {
     @SubscribeEvent
     public void onEvent(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer) {
-            if (!event.getSource().is(Archipelago.DeathLinkDamage)) {
+            if (event.getSource() != Archipelago.DeathLinkDamage) {
                 // no looping hopefully
                 Archipelago.client.sendDeathlink(
                         Archipelago.client.getMyName(),
