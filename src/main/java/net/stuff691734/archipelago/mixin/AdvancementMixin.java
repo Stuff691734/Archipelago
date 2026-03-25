@@ -7,7 +7,6 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.server.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ChecksState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,16 +26,18 @@ public abstract class AdvancementMixin {
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (advancement.getDisplay() != null && this.getOrStartProgress(advancement).isDone()) {
+        if (this.getOrStartProgress(advancement).isDone()) {
             if (Archipelago.client.isConnected()) {
-                Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(advancement.getId().toString());
+                Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("adv " + advancement.getId());
                 if (advancement_id != null) {
                     Archipelago.client.getLocationManager().checkLocation(advancement_id);
-                    ChecksState checksState = ChecksState.getServerState(Archipelago.server);
-                    if (advancement.getId().toString().equals(checksState.slotData.get("final_goal"))) {
+                    if (("adv " + advancement.getId()).equals(Archipelago.slotData.final_goal)) {
                         Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                     }
                 }
+            } else {
+                Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.getId());
+                Archipelago.archipelagoPersistentState.setDirty();
             }
         }
     }
@@ -49,22 +50,30 @@ public abstract class AdvancementMixin {
     private void preventAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         DisplayInfo display = advancement.getDisplay();
         if (display != null) {
-            ChecksState checksState = ChecksState.getServerState(Archipelago.server);
+            if (
+                Archipelago.slotData.isInitiated &&
+                (
+                    !Archipelago.slotData.activated_modules.contains("Advancements") ||
+                    !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
+                )
+            ) {
+                return;
+            }
 
-            if (Objects.equals(checksState.slotData.get("unlock_type"), "tab")) {
+            if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
                 Advancement rootAdvancement = Advancement.getRoot(advancement);
                 String rootAdvancementName = rootAdvancement.getId().toString();
 
-                if (!checksState.checks.getOrDefault(rootAdvancementName, false)) {
+                if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false)) {
                     // if player hasn't received root check prevent them from getting the advancement
                     cir.setReturnValue(false);
                 }
             }
             // parent advancement
-            else if (Objects.equals(checksState.slotData.get("unlock_type"), "tree")) {
+            else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
                 if (Advancement.getRoot(advancement) == advancement) {
                     // if root check against self
-                    if (!checksState.checks.getOrDefault(advancement.getId().toString(), false)) {
+                    if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false)) {
                         cir.setReturnValue(false);
                     }
                 } else {
@@ -76,7 +85,7 @@ public abstract class AdvancementMixin {
 
                         if (checkAdvancement != null) {
                             String checkAdvancementName = checkAdvancement.getId().toString();
-                            if (!checksState.checks.getOrDefault(checkAdvancementName, false)) {
+                            if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkAdvancementName, false)) {
                                 cir.setReturnValue(false);
                             }
                         }
@@ -86,7 +95,7 @@ public abstract class AdvancementMixin {
             // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
             // to do an advancement insanity thing
             else {
-                cir.setReturnValue(checksState.checks.getOrDefault(advancement.getId().toString(), false));
+                cir.setReturnValue(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false));
             }
         }
     }
