@@ -4,9 +4,9 @@
   "package": "net.stuff691734.archipelago.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AdvancementMixin",
-    "PlayerDeathMixin"
+    "AdvancementMixin"
   ],
+  "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
   ],
   "injectors": {
