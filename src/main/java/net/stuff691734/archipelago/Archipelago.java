@@ -22,7 +22,7 @@ public class Archipelago {
 
     public static final ResourceKey<DamageType> DeathLinkDamage = ResourceKey.create(
         Registries.DAMAGE_TYPE,
-        new ResourceLocation(MODID, "death_link")
+        ResourceLocation.fromNamespaceAndPath(MODID, "death_link")
     );
 
     public Archipelago() {
