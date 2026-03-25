@@ -16,7 +16,7 @@ public class ConnectCommand {
         try {
             Archipelago.client.connect(WebSocketAddress);
         } catch (URISyntaxException e) {
-            context.getSource().sendSuccess(() -> Component.translatable("archipelago.connection.invalid_server"), false);
+            context.getSource().sendSuccess(Component.translatable("archipelago.connection.invalid_server"), false);
             return 1;
         }
         return 0;
