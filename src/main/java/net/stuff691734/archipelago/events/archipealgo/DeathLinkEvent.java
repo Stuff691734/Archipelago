@@ -1,0 +1,24 @@
+package net.stuff691734.archipelago.events.archipealgo;
+
+import io.github.archipelagomw.events.ArchipelagoEventListener;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.Utils;
+
+public class DeathLinkEvent {
+    @ArchipelagoEventListener
+    public void onDeathLink(io.github.archipelagomw.events.DeathLinkEvent event) {
+        Utils.sendMessage(Component.literal(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
+        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+            DamageSource damageSource = new DamageSource(
+                    Archipelago.server.registryAccess()
+                            .lookupOrThrow(Registries.DAMAGE_TYPE)
+                            .getOrThrow(Archipelago.DeathLinkDamage)
+            );
+            player.hurt(damageSource, Float.MAX_VALUE);
+        }
+    }
+}
