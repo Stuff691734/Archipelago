@@ -15,5 +15,5 @@
   "overwrites": {
     "requireAnnotations": true
   },
-  "refmap": "mixins.archipelago.refmap.json"
+  "refmap": "archipelago.refmap.json"
 }
