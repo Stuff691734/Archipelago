@@ -51,10 +51,10 @@ public abstract class AdvancementMixin {
         DisplayInfo display = advancement.getDisplay();
         if (display != null) {
             if (
-                !Archipelago.slotData.isInitiated ||
+                Archipelago.slotData.isInitiated &&
                 (
                     !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.ftb_quest_shape.contains(display.getFrame().getName())
+                    !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
                 )
             ) {
                 return;
