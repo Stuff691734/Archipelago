@@ -5,8 +5,16 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AdvancementMixin",
-    "PlayerDeathMixin"
+    "FTBQuests.net.ClaimAllRewardsMessageMixin",
+    "FTBQuests.net.ClaimRewardMessageMixin",
+    "FTBQuests.gui.quests.CollectRewardsButtonMixin",
+    "FTBQuests.gui.quests.QuestButtonMixin",
+    "FTBQuests.quest.QuestMixin",
+    "FTBQuests.gui.quests.RewardButtonMixin",
+    "FTBQuests.quest.TeamDataMixin",
+    "FTBQuests.gui.quests.ViewQuestPanelMixin"
   ],
+  "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
   ],
   "injectors": {
@@ -15,5 +23,5 @@
   "overwrites": {
     "requireAnnotations": true
   },
-  "refmap": "mixins.archipelago.refmap.json"
+  "refmap": "archipelago.refmap.json"
 }
