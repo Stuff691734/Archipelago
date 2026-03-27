@@ -10,19 +10,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
-    public static boolean isRootAdvancementId(String advancementId) {
-        if (isAdvancementId(advancementId)) {
-            String namespace = advancementId.split(":")[0];
-            String path = advancementId.split(":")[1];
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(namespace, path));
-            assert advancement != null;
-            return advancement == getRoot(advancement);
-        }
-        return false;
-    }
-
     public static boolean isAdvancementId(String advancementId) {
         ResourceLocation id;
         try {
@@ -34,12 +24,25 @@ public class Utils {
         return advancement != null;
     }
 
-    public static void giveItem(ServerPlayerEntity player, String item) {
-        String[] strings = item.split(" ");
+    public static boolean isItemId(String itemId) {
+        String item;
+        try {
+            item = itemId.split(" ")[1];
+        } catch (IndexOutOfBoundsException exception) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
+            return false;
+        }
+        DataResult<ResourceLocation> id = ResourceLocation.read(item);
+        AtomicBoolean result = new AtomicBoolean(false);
+        id.result().ifPresent((identifier) ->  result.set(ForgeRegistries.ITEMS.containsKey(identifier)));
+        return result.get();
+    }
+
+    public static void giveItem(ServerPlayerEntity player, String itemId) {
+        String[] strings = itemId.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String namespace = strings[1].split(":")[0];
-        String path = strings[1].split(":")[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(namespace, path));
+        String item = strings[1];
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item));
         if (itemValue != null) {
             ItemStack itemStack = new ItemStack(itemValue, amount);
             if (!player.addItem(itemStack)) {
