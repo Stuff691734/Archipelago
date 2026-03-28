@@ -1,10 +1,8 @@
 package net.stuff691734.archipelago.events.archipealgo;
 
 import io.github.archipelagomw.events.ArchipelagoEventListener;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 
