@@ -1,22 +1,18 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import dev.ftb.mods.ftblibrary.icon.Icon;
-import dev.ftb.mods.ftblibrary.ui.Theme;
+import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
+import dev.ftb.mods.ftbquests.client.ClientQuestFile;
 import dev.ftb.mods.ftbquests.client.gui.quests.QuestButton;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.theme.property.ThemeProperties;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.stuff691734.archipelago.Archipelago;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(QuestButton.class)
 public class QuestButtonMixin {
@@ -33,7 +29,7 @@ public class QuestButtonMixin {
                 Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(this.quest.getCodeString(), false) &&
                 // sadly this undoes some of the optimization done by the ftb team, but teamData.hasUnclaimedRewards returns false when not having access
                 this.quest.getRewards().stream().anyMatch(
-                    reward -> !((ClientQuestFile)FTBQuestsAPI.api().getQuestFile(true)).selfTeamData.isRewardClaimed(Minecraft.getInstance().player.getUUID(), reward)
+                    reward -> !((ClientQuestFile) FTBQuestsAPI.api().getQuestFile(true)).selfTeamData.isRewardClaimed(Minecraft.getInstance().player.getUUID(), reward)
                 )
             ) {
                 // got this check but haven't claimed yet
