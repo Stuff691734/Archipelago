@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
-//import com.llamalad7.mixinextras.sugar.Local;
 import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.ContextMenuItem;
 import dev.ftb.mods.ftbquests.client.gui.quests.ViewQuestPanel;
@@ -41,13 +40,7 @@ public class ViewQuestPanelMixin {
     )
     private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, int hidden, List<ContextMenuItem> contextMenu) {
         if (this.quest != null && dependencies) {
-            if (
-                Archipelago.slotData.isInitiated &&
-                (
-                    !Archipelago.slotData.activated_modules.contains("FTBQuests") ||
-                    !Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
-                )
-            ) {
+            if (!Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
                 return;
             }
 
@@ -82,8 +75,13 @@ public class ViewQuestPanelMixin {
     }
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"), remap = false)
-    private boolean alwaysHaveDependencies(Quest instance) {
-        // always treat as having dependencies
-        return true;
+    private boolean alwaysHaveDependencies(Quest quest) {
+        return (
+                !Archipelago.slotData.isInitiated ||
+                (
+                    Archipelago.slotData.activated_modules.contains("FTBQuests") &&
+                    Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
+                ) ||
+                quest.hasDependencies());
     }
 }

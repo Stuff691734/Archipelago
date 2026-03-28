@@ -81,7 +81,7 @@ public class TeamDataMixin {
 
     @Inject(method = "getClaimType", at = @At(value = "RETURN"), cancellable = true, remap = false)
     private void preventRewardAccess(UUID player, Reward reward, CallbackInfoReturnable<RewardClaimType> cir) {
-        if (!cir.getReturnValue().isClaimed()) {
+        if (!cir.getReturnValue().isClaimed() && Archipelago.slotData.isFTBQuestRewardRandomized(reward.getQuest().getShape())) {
             if (Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(reward.getQuest().getCodeString(), false)) {
                 cir.setReturnValue(RewardClaimType.CAN_CLAIM);
             } else {

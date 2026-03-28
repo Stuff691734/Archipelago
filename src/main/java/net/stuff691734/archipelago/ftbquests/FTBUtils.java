@@ -3,8 +3,9 @@ package net.stuff691734.archipelago.ftbquests;
 import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
-import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
+
+import java.util.function.Function;
 
 public class FTBUtils {
     public static boolean isQuestId(String questId) {
@@ -18,21 +19,22 @@ public class FTBUtils {
         return FTBQuestsAPI.api().getQuestFile(true).getQuest(id) != null;
     }
 
-    public static boolean hasQuestRewardAccess(TeamData teamData, QuestObject questObject) {
-        if (questObject instanceof Quest quest) {
-            if (
-                !Archipelago.slotData.isInitiated ||
-                (
-                    Archipelago.slotData.activated_modules.contains("FTBQuests") &&
-                    Archipelago.slotData.ftb_quest_shape.contains(quest.getShape()) &&
-                    Archipelago.slotData.quest_checks_give_rewards
-                )
-            ) {
-                // only modify if it is a quest and it is randomized
-                return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
-            }
+    public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
+            return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
         }
-        return teamData.isCompleted(questObject);
+        return action.apply(quest);
+    }
+
+    public static boolean hasQuestRewardAccess(Quest quest) {
+        return hasQuestRewardAccess(quest, (Quest q) -> false);
+    }
+
+    public static boolean hasQuestRewardAccess(QuestObject questObject, Function<QuestObject, Boolean> action) {
+        if (questObject instanceof Quest quest) {
+            return hasQuestRewardAccess(quest, (Function<Quest, Boolean>) action::apply);
+        }
+        return action.apply(questObject);
     }
 
 }
