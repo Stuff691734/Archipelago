@@ -45,12 +45,12 @@ public class TeamDataMixin {
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             DependencyRequirement requirement = quest.dependencyRequirement;
-            if (quest.getDependencies().findAny().isEmpty() && !Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false)) {
+            if (quest.dependencies.isEmpty() && !Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false)) {
                 // no dependencies, check if it has self
                 cir.setReturnValue(false);
             }
             if (requirement.one) {
-                if (quest.getDependencies()
+                if (quest.dependencies.stream()
                         .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
                         .noneMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
                 ) {
@@ -58,7 +58,7 @@ public class TeamDataMixin {
                     cir.setReturnValue(false);
                 }
             } else {
-                if (!quest.getDependencies()
+                if (!quest.dependencies.stream()
                         .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
                         .allMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
                 ) {

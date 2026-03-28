@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 public class ViewQuestPanelMixin {
 
     @Shadow(remap = false)
-    private Quest quest;
+    public Quest quest;
 
     @Inject(
             method = "showList",
@@ -37,8 +37,8 @@ public class ViewQuestPanelMixin {
             remap = false,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, int hidden, List<ContextMenuItem> contextMenu) {
-        if (this.quest != null && dependencies) {
+    private void AddArchipelagoDependency(Collection<QuestObject> c, CallbackInfo ci, int hidden, List<ContextMenuItem> contextMenu) {
+        if (this.quest != null && this.quest.dependencies == c) {
             if (!Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
                 return;
             }
@@ -50,10 +50,10 @@ public class ViewQuestPanelMixin {
             }
             else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
                 Stream<QuestObject> dependencyStream;
-                if (this.quest.getDependencies().findAny().isEmpty()) {
+                if (this.quest.dependencies.isEmpty()) {
                     dependencyStream = Stream.of(quest);
                 } else {
-                    dependencyStream = this.quest.getDependencies();
+                    dependencyStream = this.quest.dependencies.stream();
                 }
                 dependencyStream = dependencyStream.map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency);
                 if (this.quest.dependencyRequirement.one) {
@@ -70,14 +70,14 @@ public class ViewQuestPanelMixin {
         }
     }
 
-    @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"), remap = false)
-    private boolean alwaysHaveDependencies(Quest quest) {
+    @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 2), remap = false)
+    private boolean alwaysHaveDependencies(List<QuestObject> dependencies) {
         return (
                 !Archipelago.slotData.isInitiated ||
                 (
                     Archipelago.slotData.activated_modules.contains("FTBQuests") &&
                     Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
                 ) ||
-                quest.hasDependencies());
+                quest.dependencies.isEmpty());
     }
 }
