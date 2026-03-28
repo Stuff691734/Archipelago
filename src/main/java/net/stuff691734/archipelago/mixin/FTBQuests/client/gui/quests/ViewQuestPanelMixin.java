@@ -32,13 +32,7 @@ public class ViewQuestPanelMixin {
     @Inject(method = "showList", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/BaseScreen;openContextMenu(Ljava/util/List;)Ldev/ftb/mods/ftblibrary/ui/ContextMenu;"))
     private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, @Local(name = "contextMenu") List<ContextMenuItem> contextMenu) {
         if (this.quest != null && dependencies) {
-            if (
-                Archipelago.slotData.isInitiated &&
-                (
-                    !Archipelago.slotData.activated_modules.contains("FTBQuests") ||
-                    !Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
-                )
-            ) {
+            if (!Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
                 return;
             }
 
@@ -72,9 +66,14 @@ public class ViewQuestPanelMixin {
         }
     }
 
-    @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"))
-    private boolean alwaysHaveDependencies(Quest instance) {
-        // always treat as having dependencies
-        return true;
+    @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"), remap = false)
+    private boolean alwaysHaveDependencies(Quest quest) {
+        return (
+                !Archipelago.slotData.isInitiated ||
+                (
+                    Archipelago.slotData.activated_modules.contains("FTBQuests") &&
+                    Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
+                ) ||
+                quest.hasDependencies());
     }
 }

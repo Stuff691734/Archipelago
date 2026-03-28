@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ClaimRewardMessageMixin {
     @Redirect(method = "lambda$handle$0", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
     private static boolean modifyRewardAccess(TeamData teamData, QuestObject questObject) {
-        return FTBUtils.hasQuestRewardAccess(teamData, questObject);
+        return FTBUtils.hasQuestRewardAccess(questObject, teamData::isCompleted);
     }
 }
