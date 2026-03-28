@@ -20,7 +20,7 @@ public class FTBUtils {
     }
 
     public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
-        if (isQuestRewardRandomized(quest)) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
         }
         return action.apply(quest);
@@ -35,15 +35,6 @@ public class FTBUtils {
             return hasQuestRewardAccess(quest, (Function<Quest, Boolean>) action::apply);
         }
         return action.apply(questObject);
-    }
-
-    public static boolean isQuestRewardRandomized(Quest quest) {
-        return !Archipelago.slotData.isInitiated ||
-            (
-                Archipelago.slotData.activated_modules.contains("FTBQuests") &&
-                Archipelago.slotData.ftb_quest_shape.contains(quest.getShape()) &&
-                Archipelago.slotData.quest_checks_give_rewards
-            );
     }
 
 }
