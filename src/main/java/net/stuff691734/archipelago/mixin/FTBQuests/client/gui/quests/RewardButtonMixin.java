@@ -17,6 +17,6 @@ public class RewardButtonMixin {
 
     @Redirect(method = "getWidgetType", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
     public boolean getWidgetType(TeamData teamData, QuestObject questObject) {
-        return FTBUtils.hasQuestRewardAccess(teamData, questObject);
+        return FTBUtils.hasQuestRewardAccess(questObject, teamData::isCompleted);
     }
 }
