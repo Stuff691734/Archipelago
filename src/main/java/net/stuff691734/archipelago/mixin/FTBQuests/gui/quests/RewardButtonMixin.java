@@ -14,4 +14,10 @@ public class RewardButtonMixin {
     private boolean modifyRewardAccess(TeamData teamData, QuestObject questObject) {
         return FTBUtils.hasQuestRewardAccess(questObject, teamData::isCompleted);
     }
+
+    @Redirect(method = "getWidgetType", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
+    public boolean getWidgetType(TeamData teamData, QuestObject questObject) {
+        // required for allowing user to click on quest reward and get reward
+        return FTBUtils.hasQuestRewardAccess(questObject, teamData::isCompleted);
+    }
 }
