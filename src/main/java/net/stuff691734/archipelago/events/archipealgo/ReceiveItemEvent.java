@@ -4,6 +4,7 @@ import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
@@ -17,7 +18,7 @@ public class ReceiveItemEvent {
     @ArchipelagoEventListener
     public void onReceiveItems(io.github.archipelagomw.events.ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(Component.literal(String.format(
+            Utils.sendMessage(new TextComponent(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),

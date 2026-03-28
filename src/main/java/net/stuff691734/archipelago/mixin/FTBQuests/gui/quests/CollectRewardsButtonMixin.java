@@ -41,7 +41,7 @@ public class CollectRewardsButtonMixin {
         boolean hasAvailableReward = false;
         for(ChapterGroup group : questFile.chapterGroups) {
             for(Chapter chapter : group.chapters) {
-                for(Quest quest : chapter.getQuests()) {
+                for(Quest quest : chapter.quests) {
                     if (
                         FTBUtils.hasQuestRewardAccess(quest) &&
                         quest.rewards.stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))

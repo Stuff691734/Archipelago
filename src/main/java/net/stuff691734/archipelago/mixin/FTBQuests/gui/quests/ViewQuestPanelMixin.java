@@ -6,7 +6,7 @@ import dev.ftb.mods.ftbquests.gui.quests.ViewQuestPanel;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.task.Task;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.stuff691734.archipelago.Archipelago;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -66,7 +66,7 @@ public class ViewQuestPanelMixin {
             else {
                 title = "Archipelago Item: ftb " + this.quest;
             }
-            contextMenu.add(new ContextMenuItem(Component.literal(title), Color4I.EMPTY, null));
+            contextMenu.add(new ContextMenuItem(new TextComponent(title), Color4I.EMPTY, null));
         }
     }
 

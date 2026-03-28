@@ -5,7 +5,7 @@ import io.github.archipelagomw.ClientStatus;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.SlotData;
 import net.stuff691734.archipelago.Utils;
@@ -15,7 +15,7 @@ public class ConnectionEvent {
     public void onConnection(ConnectionResultEvent event) {
         JsonObject slotData = event.getSlotData(JsonObject.class);
         if (event.getResult() != ConnectionResult.Success) {
-            Utils.sendMessage(Component.literal(String.format("Connection Refused: %s",event.getResult().name())));
+            Utils.sendMessage(new TextComponent(String.format("Connection Refused: %s",event.getResult().name())));
             return;
         }
 

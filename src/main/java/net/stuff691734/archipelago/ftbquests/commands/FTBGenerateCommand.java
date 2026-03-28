@@ -18,7 +18,7 @@ public class FTBGenerateCommand {
 
         for(ChapterGroup group : ServerQuestFile.INSTANCE.chapterGroups) {
             for(Chapter chapter : group.chapters) {
-                for (Quest quest : chapter.getQuests()) {
+                for (Quest quest : chapter.quests) {
                     ftbQuestsChecks.put(
                         quest.getCodeString(),
                         new FTBQuestsCheck(
