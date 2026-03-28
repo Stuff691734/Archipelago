@@ -7,7 +7,6 @@ import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.theme.property.ThemeProperties;
 import net.minecraft.client.Minecraft;
 import net.stuff691734.archipelago.Archipelago;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,11 +15,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(QuestButton.class)
 public class QuestButtonMixin {
     @Shadow(remap = false)
-    @Final
     public Quest quest;
 
     // function after quest icon is set but before getting drawn
-    @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/GuiHelper;setupDrawing()V"), remap = false, name = "questIcon")
+    @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/QuestShape;get(Ljava/lang/String;)Ldev/ftb/mods/ftbquests/quest/QuestShape;"), remap = false, name = "qicon")
     public Icon drawAlertIcon(Icon questIcon) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
             // only modify if it is a quest and it is randomized and we randomized rewards

@@ -32,10 +32,13 @@ public class Utils {
             Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
             return false;
         }
-        DataResult<ResourceLocation> id = ResourceLocation.read(item);
-        AtomicBoolean result = new AtomicBoolean(false);
-        id.result().ifPresent((identifier) ->  result.set(ForgeRegistries.ITEMS.containsKey(identifier)));
-        return result.get();
+        ResourceLocation id;
+        try {
+            id = new ResourceLocation(item);
+        } catch (ResourceLocationException exception) {
+            return false;
+        }
+        return ForgeRegistries.ITEMS.containsKey(id);
     }
 
     public static void giveItem(ServerPlayerEntity player, String itemId) {

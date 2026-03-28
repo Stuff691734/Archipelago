@@ -5,13 +5,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
 import net.stuff691734.archipelago.events.neoforge.ForgeEvents;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(Archipelago.MODID)
 public class Archipelago {
     public static final String MODID = "archipelago";
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static ArchipelagoClient client;
     public static MinecraftServer server;
     public static ArchipelagoPersistentState archipelagoPersistentState;

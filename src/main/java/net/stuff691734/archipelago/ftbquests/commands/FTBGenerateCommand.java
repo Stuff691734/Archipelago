@@ -23,7 +23,7 @@ public class FTBGenerateCommand {
                         quest.getCodeString(),
                         new FTBQuestsCheck(
                             quest.getShape(),
-                            quest.getDependencies()
+                            quest.dependencies.stream()
                                     .map((dependency) -> dependency instanceof Task ? ((Task) dependency).quest : dependency)
                                     .distinct()
                                     .map(String::valueOf).toArray(String[]::new),
