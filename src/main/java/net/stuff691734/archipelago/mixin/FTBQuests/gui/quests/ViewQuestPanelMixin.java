@@ -8,7 +8,6 @@ import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.minecraft.network.chat.Component;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,7 +39,7 @@ public class ViewQuestPanelMixin {
     )
     private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, int hidden, List<ContextMenuItem> contextMenu) {
         if (this.quest != null && dependencies) {
-            if (!FTBUtils.isQuestRewardRandomized(this.quest)) {
+            if (!Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
                 return;
             }
 
@@ -73,6 +72,6 @@ public class ViewQuestPanelMixin {
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"), remap = false)
     private boolean alwaysHaveDependencies(Quest quest) {
-        return FTBUtils.isQuestRewardRandomized(quest);
+        return Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape());
     }
 }
