@@ -41,4 +41,14 @@ public class SlotData {
     public SlotData() {
 
     }
+
+    public boolean isFTBQuestRewardRandomized(String shape) {
+        // default: on
+        return !this.isInitiated ||
+                (
+                    this.activated_modules.contains("FTBQuests") &&
+                    this.ftb_quest_shape.contains(shape) &&
+                    this.quest_checks_give_rewards
+                );
+    }
 }
