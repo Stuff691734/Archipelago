@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -32,10 +31,13 @@ public class Utils {
             Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
             return false;
         }
-        DataResult<ResourceLocation> id = ResourceLocation.read(item);
-        AtomicBoolean result = new AtomicBoolean(false);
-        id.result().ifPresent((identifier) ->  result.set(ForgeRegistries.ITEMS.containsKey(identifier)));
-        return result.get();
+        ResourceLocation id;
+        try {
+            id = new ResourceLocation(item);
+        } catch (ResourceLocationException exception) {
+            return false;
+        }
+        return ForgeRegistries.ITEMS.containsKey(id);
     }
 
     public static void giveItem(ServerPlayer player, String itemId) {
