@@ -13,7 +13,7 @@ public class PlayerDeathEvent {
                 // no looping hopefully
                 Archipelago.client.sendDeathlink(
                         Archipelago.client.getMyName(),
-                        event.getSource().getLocalizedDeathMessage(event.getEntity()).getString()
+                        event.getSource().getLocalizedDeathMessage(event.getEntityLiving()).getString()
                 );
             }
         }
