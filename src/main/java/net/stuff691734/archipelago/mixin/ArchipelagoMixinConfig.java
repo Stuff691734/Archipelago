@@ -8,14 +8,23 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
     private static final Supplier<Boolean> TRUE = () -> true;
     private static final Supplier<Boolean> FTB_QUESTS_CONDITION = () -> LoadingModList.get().getModFileById("ftbquests") != null;
+    private static final BiFunction<String, String, Boolean> EQUAL_OR_OVER_VERSION_CONDITION = (modName, version) -> LoadingModList.get().getModFileById(modName).versionString().compareTo(version) >= 0;
+    private static final BiFunction<String, String, Boolean> UNDER_VERSION_CONDITION = (modName, version) -> LoadingModList.get().getModFileById(modName).versionString().compareTo(version) < 0;
+    private static final Function<String, Boolean> FTB_QUESTS_EQUAL_OR_OVER_VERSION_CONDITION = (version) -> FTB_QUESTS_CONDITION.get() && EQUAL_OR_OVER_VERSION_CONDITION.apply("ftbquests", version);
+    private static final Function<String, Boolean> FTB_QUESTS_UNDER_VERSION_CONDITION = (version) -> FTB_QUESTS_CONDITION.get() && UNDER_VERSION_CONDITION.apply("ftbquests", version);
+
+
 
     private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of(
-            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin", FTB_QUESTS_CONDITION,
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin", () -> FTB_QUESTS_EQUAL_OR_OVER_VERSION_CONDITION.apply("2101.1.23"),
+            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin", () -> FTB_QUESTS_UNDER_VERSION_CONDITION.apply("2101.1.23"),
             "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION,
             "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION,
             "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION,

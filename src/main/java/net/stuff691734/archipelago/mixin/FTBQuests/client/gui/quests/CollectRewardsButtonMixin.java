@@ -16,17 +16,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(CollectRewardsButton.class)
 public class CollectRewardsButtonMixin {
 
-    @Redirect(method = "onClicked", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
-    public boolean onClickedHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
-        return archipelago$HasUnclaimedRewards(teamData, player, object);
-    }
+//    @Redirect(method = "onClicked", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+//    public boolean onClickedHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
+//        return archipelago$HasUnclaimedRewards(teamData, player, object);
+//    }
+//
+//    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;a(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+//    public boolean drawHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
+//        return archipelago$HasUnclaimedRewards(teamData, player, object);
+//    }
 
-    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
-    public boolean drawHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
-        return archipelago$HasUnclaimedRewards(teamData, player, object);
-    }
-
-    @Unique
+    @Redirect(method = "anyUnclaimedRewards", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         if (
             !Archipelago.slotData.isInitiated ||
