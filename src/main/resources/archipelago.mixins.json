@@ -5,15 +5,17 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AdvancementMixin",
-    "FTBQuests.quest.task.AdvancementTaskMixin",
+    "FTBQuests.client.gui.quests.CollectRewardsButtonMixin",
+    "FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin",
+    "FTBQuests.client.gui.quests.OldQuestButtonMixin",
+    "FTBQuests.client.gui.quests.QuestButtonMixin",
+    "FTBQuests.client.gui.quests.RewardButtonMixin",
+    "FTBQuests.client.gui.quests.ViewQuestPanelMixin",
     "FTBQuests.net.ClaimAllRewardsMessageMixin",
     "FTBQuests.net.ClaimRewardMessageMixin",
-    "FTBQuests.client.gui.quests.CollectRewardsButtonMixin",
-    "FTBQuests.client.gui.quests.QuestButtonMixin",
     "FTBQuests.quest.QuestMixin",
-    "FTBQuests.client.gui.quests.RewardButtonMixin",
     "FTBQuests.quest.TeamDataMixin",
-    "FTBQuests.client.gui.quests.ViewQuestPanelMixin"
+    "FTBQuests.quest.task.AdvancementTaskMixin"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
