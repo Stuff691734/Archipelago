@@ -1,7 +1,5 @@
 package net.stuff691734.archipelago.archipelagoData;
 
-import org.jetbrains.annotations.NotNull;
-
 public class FTBQuestsCheck extends Check implements Comparable<FTBQuestsCheck> {
     public String dependant_type;
     public String chapter;
@@ -15,7 +13,7 @@ public class FTBQuestsCheck extends Check implements Comparable<FTBQuestsCheck> 
     }
 
     @Override
-    public int compareTo(@NotNull FTBQuestsCheck ftbQuestsCheck) {
+    public int compareTo(FTBQuestsCheck ftbQuestsCheck) {
         return this.chapter.compareTo(ftbQuestsCheck.chapter);
     }
 }
