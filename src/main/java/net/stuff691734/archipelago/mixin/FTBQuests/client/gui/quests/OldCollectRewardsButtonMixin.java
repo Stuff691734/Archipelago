@@ -29,11 +29,11 @@ public class OldCollectRewardsButtonMixin {
     @Unique
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         if (
-                !Archipelago.slotData.isInitiated ||
-                        (
-                                !Archipelago.slotData.quest_checks_give_rewards ||
-                                        !Archipelago.slotData.activated_modules.contains("FTBQuests")
-                        )
+            Archipelago.slotData.isInitiated &&
+            (
+                !Archipelago.slotData.quest_checks_give_rewards ||
+                !Archipelago.slotData.activated_modules.contains("FTBQuests")
+            )
         ) {
             return teamData.hasUnclaimedRewards(player, object);
         }
@@ -42,10 +42,10 @@ public class OldCollectRewardsButtonMixin {
         AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
         questFile.forAllQuests(quest -> {
             if (
-                    Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false) &&
-                            quest.getRewards().stream().anyMatch(
-                                    reward -> !teamData.isRewardClaimed(player, reward)
-                            )
+                Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false) &&
+                quest.getRewards().stream().anyMatch(
+                        reward -> !teamData.isRewardClaimed(player, reward)
+                )
             ) {
                 hasAvailableReward.set(true);
             }
