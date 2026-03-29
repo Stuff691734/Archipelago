@@ -4,7 +4,7 @@ import dev.ftb.mods.ftbquests.quest.*;
 import dev.ftb.mods.ftbquests.quest.task.AdvancementTask;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import dev.ftb.mods.ftbquests.quest.task.TaskTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
 
 import java.util.HashMap;

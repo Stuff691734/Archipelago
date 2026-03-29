@@ -3,10 +3,9 @@ package net.stuff691734.archipelago.events.archipealgo;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
@@ -18,7 +17,7 @@ public class ReceiveItemEvent {
     @ArchipelagoEventListener
     public void onReceiveItems(io.github.archipelagomw.events.ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(new TextComponent(String.format(
+            Utils.sendMessage(new StringTextComponent(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
@@ -31,7 +30,7 @@ public class ReceiveItemEvent {
     }
 
     public static void parseItem(String itemType, String itemName, @Nullable Long index) {
-        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+        for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
             playerParseItem(player, itemType, itemName, index);
         }
         switch (itemType) {
@@ -51,7 +50,7 @@ public class ReceiveItemEvent {
         Archipelago.archipelagoPersistentState.setDirty();
     }
 
-    public static void playerParseItem(ServerPlayer player, String itemType, String itemName, @Nullable Long index) {
+    public static void playerParseItem(ServerPlayerEntity player, String itemType, String itemName, @Nullable Long index) {
         if (
             index != null &&
             Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) >= index

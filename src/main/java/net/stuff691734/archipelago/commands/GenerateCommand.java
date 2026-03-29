@@ -5,9 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
@@ -24,8 +23,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine) {
-        context.getSource().sendSuccess(new TextComponent("Started writing to file."), false);
+    public static int execute(CommandContext<CommandSource> context, boolean singleLine) {
+        context.getSource().sendSuccess(new StringTextComponent("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
@@ -52,10 +51,10 @@ public class GenerateCommand {
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
-            context.getSource().sendSuccess(new TextComponent(e.getMessage()), false);
+            context.getSource().sendSuccess(new StringTextComponent(e.getMessage()), false);
             return 1;
         }
-        context.getSource().sendSuccess(new TextComponent("Finished writing to file."), false);
+        context.getSource().sendSuccess(new StringTextComponent("Finished writing to file."), false);
         return 0;
     }
 

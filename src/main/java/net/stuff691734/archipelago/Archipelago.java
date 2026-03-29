@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
 import net.stuff691734.archipelago.events.neoforge.ForgeEvents;

@@ -3,14 +3,14 @@ package net.stuff691734.archipelago.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.CommandSource;
 
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
+import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
 
 
 public class ArchipelagoCommands {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(literal("archipelago")
             .then(literal("connect")
                 .then(argument("Name", StringArgumentType.word())

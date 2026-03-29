@@ -3,6 +3,7 @@ package net.stuff691734.archipelago;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SlotData {
     public String unlock_type;
@@ -28,9 +29,9 @@ public class SlotData {
     ) {
         this.unlock_type = unlock_type;
         this.final_goal = final_goal;
-        this.activated_modules = Arrays.stream(activated_modules.split("\\|")).toList();
-        this.advancement_difficulty = Arrays.stream(advancement_difficulty.split("\\|")).toList();
-        this.ftb_quest_shape = Arrays.stream(ftb_quest_shape.split("\\|")).toList();
+        this.activated_modules = Arrays.stream(activated_modules.split("\\|")).collect(Collectors.toList());
+        this.advancement_difficulty = Arrays.stream(advancement_difficulty.split("\\|")).collect(Collectors.toList());
+        this.ftb_quest_shape = Arrays.stream(ftb_quest_shape.split("\\|")).collect(Collectors.toList());
         this.advancement_checks_give_items = advancement_checks_give_items.equals("1");
         this.quest_checks_give_rewards = quest_checks_give_rewards.equals("1");
         this.death_link = death_link.equals("1");

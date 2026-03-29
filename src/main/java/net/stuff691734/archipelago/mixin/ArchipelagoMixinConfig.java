@@ -5,6 +5,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,17 +15,19 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
     private static final Supplier<Boolean> TRUE = () -> true;
     private static final Supplier<Boolean> FTB_QUESTS_CONDITION = () -> LoadingModList.get().getModFileById("ftbquests") != null;
 
-    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of(
-            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimRewardMessageMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.quest.task.AdvancementTaskMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.quest.QuestMixin", FTB_QUESTS_CONDITION,
-            "net.stuff691734.archipelago.mixin.FTBQuests.quest.TeamDataMixin", FTB_QUESTS_CONDITION
-    );
+    private static final Map<String, Supplier<Boolean>> CONDITIONS = new HashMap<String, Supplier<Boolean>>() {
+        {
+            put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimRewardMessageMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.quest.task.AdvancementTaskMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.quest.QuestMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.quest.TeamDataMixin", FTB_QUESTS_CONDITION);
+        }
+    };
 
 
     @Override

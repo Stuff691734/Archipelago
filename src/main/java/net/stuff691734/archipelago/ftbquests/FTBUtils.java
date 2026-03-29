@@ -31,7 +31,8 @@ public class FTBUtils {
     }
 
     public static boolean hasQuestRewardAccess(QuestObject questObject, Function<QuestObject, Boolean> action) {
-        if (questObject instanceof Quest quest) {
+        if (questObject instanceof Quest) {
+            Quest quest = (Quest)questObject;
             return hasQuestRewardAccess(quest, (Function<Quest, Boolean>) action::apply);
         }
         return action.apply(questObject);

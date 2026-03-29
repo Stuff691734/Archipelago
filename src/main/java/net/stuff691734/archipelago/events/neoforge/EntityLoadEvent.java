@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.events.neoforge;
 
 import io.github.archipelagomw.parts.NetworkItem;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.stuff691734.archipelago.Archipelago;
@@ -17,7 +17,7 @@ public class EntityLoadEvent {
 
             for (NetworkItem item: Archipelago.client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                 String[] itemName = item.itemName.split(" ",2);
-                ReceiveItemEvent.playerParseItem((ServerPlayer) event.getEntity(), itemName[0], itemName[1], null);
+                ReceiveItemEvent.playerParseItem((ServerPlayerEntity) event.getEntity(), itemName[0], itemName[1], null);
             }
             Archipelago.archipelagoPersistentState.setDirty();
         }

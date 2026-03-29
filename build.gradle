@@ -101,10 +101,10 @@ dependencies {
     }
 
     implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    implementation fg.deobf("curse.maven:ftb-library-forge-404465:3598890")
-    implementation fg.deobf("curse.maven:ftb-teams-forge-404468:3657259")
-    implementation fg.deobf("curse.maven:architectury-api-419699:3807004")
-    implementation fg.deobf("curse.maven:item-filters-309674:3596362")
+    implementation fg.deobf("curse.maven:ftb-library-forge-404465:3553840")
+    implementation fg.deobf("curse.maven:ftb-teams-forge-404468:3535953")
+    implementation fg.deobf("curse.maven:architectury-api-419699:4521290")
+    implementation fg.deobf("curse.maven:item-filters-309674:3376819")
 }
 
 shadowJar {
