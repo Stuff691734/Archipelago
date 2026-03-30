@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(PlayerAdvancements.class)
 public interface PlayerAdvancementAccessor {
-    @Invoker("markForVisibilityUpdate")
+    @Invoker("ensureVisibility")
     void archipelago$markForVisibilityUpdate(Advancement advancement);
 }
