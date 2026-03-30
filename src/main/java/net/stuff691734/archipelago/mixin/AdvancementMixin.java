@@ -11,16 +11,11 @@ import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Mixin(PlayerAdvancements.class)
@@ -123,8 +118,8 @@ public abstract class AdvancementMixin {
         }
     }
 
-    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;forEach(Ljava/util/function/Consumer;)V"))
-    private void forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Consumer<Map.Entry<ResourceLocation, AdvancementProgress>> consumer) {
-        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> consumer.accept(Map.entry(advancementHolder.getId(), this.getOrStartProgress(advancementHolder))));
+    @ModifyVariable(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"), name = "stream")
+    private Stream<Map.Entry<ResourceLocation, AdvancementProgress>> forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> value) {
+        return Archipelago.server.getAdvancements().getAllAdvancements().stream().map((advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement)));
     }
 }
