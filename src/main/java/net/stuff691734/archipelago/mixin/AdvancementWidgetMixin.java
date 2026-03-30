@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago.mixin;
 
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
 import net.stuff691734.archipelago.Archipelago;
@@ -26,10 +26,10 @@ public abstract class AdvancementWidgetMixin {
 
     @Shadow
     @Final
-    private AdvancementNode advancementNode;
+    private Advancement advancement;
 
     @Redirect(method = "drawConnectivity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementWidget;parent:Lnet/minecraft/client/gui/screens/advancements/AdvancementWidget;", opcode = Opcodes.GETFIELD))
     public AdvancementWidget parent(AdvancementWidget thisWidget) {
-        return Utils.shouldAdvancementBeHidden(this.display, this.advancementNode) ? null : this.parent;
+        return Utils.shouldAdvancementBeHidden(this.display, this.advancement) ? null : this.parent;
     }
 }
