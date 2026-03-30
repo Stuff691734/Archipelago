@@ -103,7 +103,7 @@ public abstract class AdvancementMixin {
         }
     }
 
-    @Inject(method = "shouldBeVisible", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "shouldBeVisible", at = @At(value = "HEAD"), cancellable = true)
     public void shouldBeVisible(Advancement advancement, CallbackInfoReturnable<Boolean> cir) {
         if (advancement.getDisplay() != null) {
             if (Archipelago.slotData.isInitiated &&
