@@ -105,10 +105,10 @@ public abstract class AdvancementMixin {
     public void shouldBeVisible(Advancement advancement, CallbackInfoReturnable<Boolean> cir) {
         if (advancement.getDisplay() != null) {
             if (Archipelago.slotData.isInitiated &&
-                    (
-                            !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                                    !Archipelago.slotData.advancement_difficulty.contains(advancement.getDisplay().getFrame().getName())
-                    )
+                (
+                    !Archipelago.slotData.activated_modules.contains("Advancements") ||
+                    !Archipelago.slotData.advancement_difficulty.contains(advancement.getDisplay().getFrame().getName())
+                )
             ) {
                 return;
             }
