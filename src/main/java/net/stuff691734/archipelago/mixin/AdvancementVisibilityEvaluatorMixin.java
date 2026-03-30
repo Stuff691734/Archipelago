@@ -18,7 +18,7 @@ public class AdvancementVisibilityEvaluatorMixin {
             if (Archipelago.slotData.isInitiated &&
                 (
                     !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.advancement_difficulty.contains(((AdvancementNode) t).advancement().display().get().getType().getSerializedName())
+                    !Archipelago.slotData.advancement_difficulty.contains(((AdvancementNode) t).advancement().display().get().getFrame().getName())
                 )
             ) {
                 return instance.test((AdvancementNode) t);
