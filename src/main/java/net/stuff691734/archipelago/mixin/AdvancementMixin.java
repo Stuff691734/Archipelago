@@ -103,6 +103,21 @@ public abstract class AdvancementMixin {
         }
     }
 
+    @Inject(method = "shouldBeVisible", at = @At(value = "RETURN"), cancellable = true)
+    public void shouldBeVisible(Advancement advancement, CallbackInfoReturnable<Boolean> cir) {
+        if (advancement.getDisplay() != null) {
+            if (Archipelago.slotData.isInitiated &&
+                (
+                    !Archipelago.slotData.activated_modules.contains("Advancements") ||
+                    !Archipelago.slotData.advancement_difficulty.contains(advancement.getDisplay().getFrame().getName())
+                )
+            ) {
+                return;
+            }
+            cir.setReturnValue(true);
+        }
+    }
+
     @ModifyVariable(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"), name = "stream")
     private Stream<Map.Entry<ResourceLocation, AdvancementProgress>> forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> value) {
         return Archipelago.server.getAdvancements().getAllAdvancements().stream().map((advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement)));
