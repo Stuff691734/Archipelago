@@ -100,4 +100,19 @@ public abstract class AdvancementMixin {
             }
         }
     }
+
+    @Inject(method = "shouldBeVisible", at = @At(value = "RETURN"), cancellable = true)
+    public void shouldBeVisible(Advancement advancement, CallbackInfoReturnable<Boolean> cir) {
+        if (advancement.getDisplay() != null) {
+            if (Archipelago.slotData.isInitiated &&
+                (
+                    !Archipelago.slotData.activated_modules.contains("Advancements") ||
+                    !Archipelago.slotData.advancement_difficulty.contains(advancement.getDisplay().getFrame().getName())
+                )
+            ) {
+                return;
+            }
+            cir.setReturnValue(true);
+        }
+    }
 }
