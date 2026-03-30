@@ -53,23 +53,22 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public void load(CompoundNBT tag) {
-        ArchipelagoPersistentState state = new ArchipelagoPersistentState(Archipelago.MODID);
         CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
 
         CompoundNBT advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
-        advancementChecksNbt.getAllKeys().forEach(key -> state.advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
+        advancementChecksNbt.getAllKeys().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
 
         CompoundNBT ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
-        ftbQuestChecksNbt.getAllKeys().forEach(key -> state.ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
+        ftbQuestChecksNbt.getAllKeys().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
 
         CompoundNBT slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.getAllKeys().forEach(key -> state.slotData.put(key, slotDataNbt.getString(key)));
+        slotDataNbt.getAllKeys().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
         CompoundNBT playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.getAllKeys().forEach(key -> state.playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        playerLastCheckDataNbt.getAllKeys().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
 
         CompoundNBT pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
-        state.pendingChecks.addAll(pendingChecksNbt.getAllKeys());
+        pendingChecks.addAll(pendingChecksNbt.getAllKeys());
     }
 
     public static ArchipelagoPersistentState createNew() {
