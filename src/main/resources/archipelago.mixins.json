@@ -7,6 +7,7 @@
     "AdvancementMixin",
     "AdvancementVisibilityEvaluatorMixin",
     "DisplayInfoMixin",
+    "PlayerAdvancementAccessor",
     "FTBQuests.client.gui.quests.CollectRewardsButtonMixin",
     "FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin",
     "FTBQuests.client.gui.quests.OldQuestButtonMixin",
