@@ -75,17 +75,17 @@ public class Utils {
         }
     }
 
-    public static boolean shouldAdvancementBeHidden(DisplayInfo display, AdvancementNode advancement) {
+    public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
         if (
             Archipelago.slotData.isInitiated &&
             (
                 !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                !Archipelago.slotData.advancement_difficulty.contains(display.getType().getSerializedName())
+                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
             )
         ) {
             if (
                 Archipelago.slotData.activated_modules.contains("Advancements") &&
-                !Archipelago.slotData.advancement_difficulty.contains(display.getType().getSerializedName())
+                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
             ) {
                 return true;
             }
@@ -94,25 +94,25 @@ public class Utils {
         }
 
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            AdvancementNode rootAdvancement = AdvancementNode.getRoot(advancement);
-            String rootAdvancementName = rootAdvancement.holder().id().toString();
+            Advancement rootAdvancement = Advancement.getRoot(advancement);
+            String rootAdvancementName = rootAdvancement.getId().toString();
 
             return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false);
         }
         // parent advancement
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (AdvancementNode.getRoot(advancement) == advancement) {
+            if (Advancement.getRoot(advancement) == advancement) {
                 // if root check against self
-                return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.holder().id().toString(), false);
+                return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
             } else {
                 // otherwise check against values up tree not including self
-                AdvancementNode checkAdvancement = advancement;
+                Advancement checkAdvancement = advancement;
                 // exits when all advancements up the tree have been checked
                 while (checkAdvancement != null) {
-                    checkAdvancement = checkAdvancement.parent();
+                    checkAdvancement = checkAdvancement.getParent();
 
                     if (checkAdvancement != null) {
-                        String checkAdvancementName = checkAdvancement.holder().id().toString();
+                        String checkAdvancementName = checkAdvancement.getId().toString();
                         if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkAdvancementName, false)) {
                             return true;
                         }
@@ -124,7 +124,7 @@ public class Utils {
         // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
         // to do an advancement insanity thing
         else {
-            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.holder().id().toString(), false);
+            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
         }
     }
 }
