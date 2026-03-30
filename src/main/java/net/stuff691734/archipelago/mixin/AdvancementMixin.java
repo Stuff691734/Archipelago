@@ -5,16 +5,20 @@ import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class AdvancementMixin {
@@ -99,5 +103,10 @@ public abstract class AdvancementMixin {
                 cir.setReturnValue(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false));
             }
         }
+    }
+
+    @Redirect(method = "applyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements$Data;forEach(Ljava/util/function/BiConsumer;)V"))
+    private void forEach(@Coerce Object instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
+        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> {action.accept(advancementHolder.getId(), this.getOrStartProgress(advancementHolder));Archipelago.LOGGER.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");});
     }
 }
