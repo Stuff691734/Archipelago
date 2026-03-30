@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AdvancementMixin",
-    "AdvancementVisibilityEvaluatorMixin",
     "DisplayInfoMixin"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
