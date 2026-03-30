@@ -113,6 +113,6 @@ public abstract class AdvancementMixin {
 
     @Redirect(method = "applyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements$Data;forEach(Ljava/util/function/BiConsumer;)V"))
     private void forEach(@Coerce Object instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
-        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> {action.accept(advancementHolder.id(), this.getOrStartProgress(advancementHolder));Archipelago.LOGGER.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");});
+        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> action.accept(advancementHolder.id(), this.getOrStartProgress(advancementHolder)));
     }
 }
