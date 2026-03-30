@@ -29,7 +29,7 @@ public class CollectRewardsButtonMixin {
     @Unique
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         if (
-            !Archipelago.slotData.isInitiated ||
+            Archipelago.slotData.isInitiated &&
             (
                 !Archipelago.slotData.quest_checks_give_rewards ||
                 !Archipelago.slotData.activated_modules.contains("FTBQuests")
