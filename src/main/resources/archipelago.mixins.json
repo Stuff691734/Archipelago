@@ -6,7 +6,8 @@
   "mixins": [
     "AdvancementMixin",
     "AdvancementVisibilityEvaluatorMixin",
-    "DisplayInfoMixin"
+    "DisplayInfoMixin",
+    "PlayerAdvancementAccessor"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
