@@ -9,13 +9,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 @Mixin(PlayerAdvancements.class)
@@ -23,6 +27,13 @@ public abstract class AdvancementMixin {
 
     @Shadow
     public abstract AdvancementProgress getOrStartProgress(Advancement advancement);
+
+    @Shadow
+    @Final
+    private Set<Advancement> progressChanged;
+
+    @Shadow
+    protected abstract void ensureVisibility(Advancement p_136011_);
 
     @Inject(
             method = "award",
@@ -118,8 +129,12 @@ public abstract class AdvancementMixin {
         }
     }
 
-    @ModifyVariable(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"), name = "stream")
-    private Stream<Map.Entry<ResourceLocation, AdvancementProgress>> forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> value) {
-        return Archipelago.server.getAdvancements().getAllAdvancements().stream().map((advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement)));
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
+    private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
+        return Archipelago.server.getAdvancements().getAllAdvancements().stream().map((advancement) -> {
+            this.progressChanged.add(advancement);
+            this.ensureVisibility(advancement);
+            return Map.entry(advancement.getId(), this.getOrStartProgress(advancement));
+        }).collect(arCollector);
     }
 }
