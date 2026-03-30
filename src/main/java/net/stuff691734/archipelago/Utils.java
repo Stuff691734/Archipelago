@@ -89,14 +89,14 @@ public class Utils {
         }
 
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            Advancement rootAdvancement = Advancement.getRoot(advancement);
+            Advancement rootAdvancement = Utils.getRoot(advancement);
             String rootAdvancementName = rootAdvancement.getId().toString();
 
             return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false);
         }
         // parent advancement
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (Advancement.getRoot(advancement) == advancement) {
+            if (Utils.getRoot(advancement) == advancement) {
                 // if root check against self
                 return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
             } else {
