@@ -2,7 +2,7 @@ package net.stuff691734.archipelago.mixin;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import net.minecraft.client.gui.advancements.AdvancementEntryGui;
 import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(AdvancementWidget.class)
+@Mixin(AdvancementEntryGui.class)
 public class DisplayInfoMixin {
     @Shadow
     @Final
