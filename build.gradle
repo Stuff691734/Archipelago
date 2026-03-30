@@ -73,10 +73,10 @@ dependencies {
     jarJar(implementation ('org.apache.httpcomponents.core5:httpcore5:5.4'))
 
     compileOnly("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    compileOnly("curse.maven:ftb-library-forge-404465:7420412")
+    compileOnly("curse.maven:ftb-library-forge-404465:7746959")
 
     implementation "curse.maven:ftb-quests-forge-289412:${ftb_quests_version}"
-    implementation "curse.maven:ftb-library-forge-404465:7420412"
+    implementation "curse.maven:ftb-library-forge-404465:7746959"
     implementation "curse.maven:ftb-teams-forge-404468:7369021"
     implementation "curse.maven:architectury-api-419699:5786327"
 }
