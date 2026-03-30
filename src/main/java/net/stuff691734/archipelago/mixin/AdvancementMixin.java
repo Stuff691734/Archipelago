@@ -16,8 +16,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class AdvancementMixin {
@@ -104,8 +107,8 @@ public abstract class AdvancementMixin {
         }
     }
 
-    @Redirect(method = "applyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements$Data;forEach(Ljava/util/function/BiConsumer;)V"))
-    private void forEach(@Coerce Object instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
-        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> {action.accept(advancementHolder.getId(), this.getOrStartProgress(advancementHolder));Archipelago.LOGGER.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");});
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;forEach(Ljava/util/function/Consumer;)V"))
+    private void forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Consumer<Map.Entry<ResourceLocation, AdvancementProgress>> consumer) {
+        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> consumer.accept(Map.entry(advancementHolder.getId(), this.getOrStartProgress(advancementHolder))));
     }
 }
