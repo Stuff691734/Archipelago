@@ -74,12 +74,12 @@ public class Utils {
             Archipelago.slotData.isInitiated &&
             (
                 !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                !Archipelago.slotData.advancement_difficulty.contains(display.getType().getSerializedName())
+                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
             )
         ) {
             if (
                 Archipelago.slotData.activated_modules.contains("Advancements") &&
-                !Archipelago.slotData.advancement_difficulty.contains(display.getType().getSerializedName())
+                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
             ) {
                 return true;
             }
