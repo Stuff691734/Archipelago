@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago.mixin;
 
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
@@ -11,12 +11,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(AdvancementsScreen.class)
 public class AdvancementsScreenMixin {
-    @Redirect(method = "onAddAdvancementRoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;create(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;ILnet/minecraft/advancements/AdvancementNode;)Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;"))
-    public AdvancementTab avoidAddingEmptyPages(Minecraft minecraft, AdvancementsScreen screen, int index, AdvancementNode advancementNode) {
+    @Redirect(method = "onAddAdvancementRoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;create(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;ILnet/minecraft/advancements/Advancement;)Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;"))
+    public AdvancementTab avoidAddingEmptyPages(Minecraft minecraft, AdvancementsScreen screen, int index, Advancement advancementNode) {
         AdvancementTab advancementTab = AdvancementTab.create(minecraft, screen, index, advancementNode);
         if (advancementTab == null || (Archipelago.slotData.isInitiated && !Archipelago.slotData.activated_modules.contains("Advancements"))) {
             return advancementTab;
         }
-        return Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancementTab.getRootNode().holder().id().toString(), false) ? advancementTab : null;
+        return Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancementTab.getAdvancement().getId().toString(), false) ? advancementTab : null;
     }
 }
