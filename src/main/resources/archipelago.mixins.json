@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AdvancementMixin",
+    "AdvancementVisibilityEvaluatorMixin",
+    "DisplayInfoMixin",
     "FTBQuests.client.gui.quests.CollectRewardsButtonMixin",
     "FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin",
     "FTBQuests.client.gui.quests.OldQuestButtonMixin",
@@ -19,6 +21,8 @@
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
+    "AdvancementsScreenMixin",
+    "AdvancementWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1
