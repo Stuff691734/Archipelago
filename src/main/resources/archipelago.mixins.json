@@ -6,7 +6,6 @@
   "mixins": [
     "AdvancementMixin",
     "DisplayInfoMixin",
-    "AdvancementVisibilityEvaluatorMixin",
     "PlayerAdvancementAccessor",
     "FTBQuests.net.ClaimAllRewardsMessageMixin",
     "FTBQuests.net.ClaimRewardMessageMixin",
