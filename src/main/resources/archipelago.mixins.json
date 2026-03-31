@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AdvancementMixin",
+    "AdvancementMixin$DataMixin",
     "AdvancementVisibilityEvaluatorMixin",
     "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
