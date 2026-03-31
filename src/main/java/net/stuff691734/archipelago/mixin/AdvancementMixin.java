@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mixin(PlayerAdvancements.class)
@@ -109,6 +110,14 @@ public abstract class AdvancementMixin {
 
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;forEach(Ljava/util/function/Consumer;)V"))
     private void forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Consumer<Map.Entry<ResourceLocation, AdvancementProgress>> consumer) {
-        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> consumer.accept(Map.entry(advancementHolder.getId(), this.getOrStartProgress(advancementHolder))));
+        Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancements().getAllAdvancements().stream().map(
+                (advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2)->e1
+                )
+        );
+        instance.forEach((entry) -> list.put(entry.getKey(), entry.getValue()));
+        list.entrySet().forEach(consumer);
     }
 }
