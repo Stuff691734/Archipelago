@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.mixin;
 
 
+import com.mojang.serialization.Codec;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementHolder;
@@ -8,17 +9,21 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.commands.data.DataAccessor;
 import net.stuff691734.archipelago.Archipelago;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class AdvancementMixin {
@@ -112,7 +117,21 @@ public abstract class AdvancementMixin {
     }
 
     @Redirect(method = "applyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements$Data;forEach(Ljava/util/function/BiConsumer;)V"))
-    private void forEach(@Coerce Object instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
-        Archipelago.server.getAdvancements().getAllAdvancements().forEach((advancementHolder) -> action.accept(advancementHolder.id(), this.getOrStartProgress(advancementHolder)));
+    private void forEach(@Coerce DataMixin instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
+        Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancements().getAllAdvancements().stream().map(
+                (advancement) -> Map.entry(advancement.id(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2)->e1
+                )
+        );
+        instance.archipelago$forEach(list::put);
+        list.forEach(action);
+    }
+
+    @Mixin(targets = "net.minecraft.server.PlayerAdvancements$Data")
+    public interface DataMixin {
+        @Invoker("forEach")
+        void archipelago$forEach(BiConsumer<ResourceLocation, AdvancementProgress> p_300973_);
     }
 }
