@@ -1,25 +1,29 @@
 package net.stuff691734.archipelago.mixin;
 
 
+import com.google.gson.stream.JsonReader;
+import com.mojang.serialization.Dynamic;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mixin(PlayerAdvancements.class)
@@ -34,6 +38,9 @@ public abstract class AdvancementMixin {
 
     @Shadow
     protected abstract void ensureVisibility(Advancement p_136011_);
+
+    @Shadow
+    protected abstract void startProgress(Advancement p_135986_, AdvancementProgress p_135987_);
 
     @Inject(
             method = "award",
@@ -131,10 +138,21 @@ public abstract class AdvancementMixin {
 
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
     private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
-        return Archipelago.server.getAdvancements().getAllAdvancements().stream().map((advancement) -> {
-            this.progressChanged.add(advancement);
-            this.ensureVisibility(advancement);
-            return Map.entry(advancement.getId(), this.getOrStartProgress(advancement));
-        }).collect(arCollector);
+        Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancements().getAllAdvancements().stream().map(
+            (advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (e1, e2)->e1
+            )
+        );
+        instance.forEach((entry) -> list.put(entry.getKey(), entry.getValue()));
+        return new ArrayList<>(list.entrySet());
+    }
+
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
+    public void showThings(PlayerAdvancements instance, Advancement advancement, AdvancementProgress progress) {
+        this.startProgress(advancement, progress);
+        this.progressChanged.add(advancement);
+        this.ensureVisibility(advancement);
     }
 }
