@@ -7,10 +7,8 @@ import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.server.ServerAdvancementManager;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import org.spongepowered.asm.mixin.Final;
@@ -139,7 +137,7 @@ public abstract class AdvancementMixin {
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
     private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
         Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancements().getAllAdvancements().stream().map(
-            (advancement) -> Map.entry(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
+            (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
                 (e1, e2)->e1
@@ -149,7 +147,7 @@ public abstract class AdvancementMixin {
         return new ArrayList<>(list.entrySet());
     }
 
-    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
     public void showThings(PlayerAdvancements instance, Advancement advancement, AdvancementProgress progress) {
         this.startProgress(advancement, progress);
         this.progressChanged.add(advancement);
