@@ -1,6 +1,6 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.gui.quests;
 
-import com.feed_the_beast.ftbquests.gui.quests.QuestButton;
+import com.feed_the_beast.ftbquests.gui.quests.ButtonQuest;
 import com.feed_the_beast.ftbquests.quest.PlayerData;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.theme.property.ThemeProperties;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(QuestButton.class)
+@Mixin(ButtonQuest.class)
 public class QuestButtonMixin {
     @Shadow(remap = false)
     public Quest quest;
