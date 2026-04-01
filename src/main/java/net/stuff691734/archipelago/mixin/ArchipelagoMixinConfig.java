@@ -17,7 +17,6 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
 
     private static final Map<String, Supplier<Boolean>> CONDITIONS = new HashMap<String, Supplier<Boolean>>() {
         {
-            put("net.stuff691734.archipelago.mixin.FTBQuests.gui.quests.ModpackButtonMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION);
