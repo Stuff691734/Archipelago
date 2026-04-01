@@ -2,7 +2,7 @@ package net.stuff691734.archipelago.commands;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.stuff691734.archipelago.Archipelago;
 
 import java.net.URISyntaxException;
@@ -16,8 +16,7 @@ public class ConnectCommand {
         try {
             Archipelago.client.connect(args[2]);
         } catch (URISyntaxException e) {
-            sender.sendMessage(new TextComponentString("Invalid server address"));
+            sender.sendMessage(new TextComponentTranslation("archipelago.connection.invalid_server"));
         }
-        sender.sendMessage(new TextComponentString("Connected"));
     }
 }

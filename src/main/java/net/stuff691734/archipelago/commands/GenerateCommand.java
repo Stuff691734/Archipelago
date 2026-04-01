@@ -7,6 +7,8 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.relauncher.libraries.ModList;
+import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
 import java.io.File;
@@ -14,15 +16,48 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static void execute(MinecraftServer server, ICommandSender sender) {
         sender.sendMessage(new TextComponentString("Started writing to file."));
 
-        Map<String, Check> checks = new HashMap<>();
+        Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
-        for (Advancement advancement : server.getAdvancementManager().getAdvancements()) {
+        if (ModList.isLoaded("ftbquests")) {
+            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
+        } else {
+            checks.put("FTBQuests", new HashMap<>());
+        }
+
+        checks.put("Advancements", generateAdvancementChecks());
+
+        try {
+            new File("output").mkdir();
+            new File("output/archipelago_data.json").createNewFile();
+
+            Writer writer = new FileWriter("output/archipelago_data.json");
+            GsonBuilder builder = new GsonBuilder()
+                    .disableHtmlEscaping()
+                    .serializeNulls();
+            if (!singleLine) {
+                builder.setPrettyPrinting();
+            }
+            Gson gson = builder.create();
+            gson.toJson(checks, writer);
+            writer.close();
+        } catch (IOException e) {
+            sender.sendMessage(new TextComponentString(e.getMessage()));
+        }
+        sender.sendMessage(new TextComponentString("Finished writing to file."));
+    }
+
+    public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
+        Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
+
+        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAdvancements()) {
 
             DisplayInfo display = advancement.getDisplay();
             if (display != null) {
@@ -32,29 +67,21 @@ public class GenerateCommand {
                     parent_id = parent.getId().toString();
                 }
                 if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                    checks.put(advancement.getId().toString(), new Check(
+                    advancementsChecks.put(advancement.getId().toString(), new AdvancementsCheck(
                             display.getFrame().getName(),
                             parent_id
                     ));
                 }
             }
         }
-        try {
-            new File("output").mkdir();
-            new File("output/archipelago_data.json").createNewFile();
-            Writer writer = new FileWriter("output/archipelago_data.json");
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .disableHtmlEscaping()
-                    .serializeNulls()
-                    .create();
-            gson.toJson(checks, writer);
-            writer.close();
-
-        } catch (IOException e) {
-            sender.sendMessage(new TextComponentString(e.getMessage()));
-            return;
-        }
-        sender.sendMessage(new TextComponentString("Finished writing to file."));
+        return advancementsChecks.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                Map.Entry::getValue,
+                                (e1, e2) -> e1, // use first instance when dealing with conflicts
+                                LinkedHashMap::new
+                        )
+                );
     }
 }
