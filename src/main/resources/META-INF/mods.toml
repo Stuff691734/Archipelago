@@ -28,10 +28,3 @@ mandatory = true
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies."${mod_id}"]]
-modId = "ftbquests"
-mandatory = false
-versionRange = "${ftb_quests_version}"
-ordering = "NONE"
-side = "BOTH"

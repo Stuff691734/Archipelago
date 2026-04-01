@@ -11,15 +11,15 @@ public class EntityLoadEvent {
     @SubscribeEvent
     public void onEvent(PlayerEvent.PlayerLoggedInEvent event) {
         int serverLastCheck = Archipelago.client.getItemManager().getIndex();
-        int playerLastCheck = Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(event.getEntity().getStringUUID(), 0);
+        int playerLastCheck = Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(event.getEntity().getCachedUniqueIdString(), 0);
         if (serverLastCheck > playerLastCheck) {
-            Archipelago.archipelagoPersistentState.playerLastCheck.put(event.getEntity().getStringUUID(), serverLastCheck);
+            Archipelago.archipelagoPersistentState.playerLastCheck.put(event.getEntity().getCachedUniqueIdString(), serverLastCheck);
 
             for (NetworkItem item: Archipelago.client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                 String[] itemName = item.itemName.split(" ",2);
                 ReceiveItemEvent.playerParseItem((ServerPlayerEntity) event.getEntity(), itemName[0], itemName[1], null);
             }
-            Archipelago.archipelagoPersistentState.setDirty();
+            Archipelago.archipelagoPersistentState.setDirty(true);
         }
     }
 }
