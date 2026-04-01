@@ -73,12 +73,12 @@ public class ViewQuestPanelMixin {
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 2), remap = false)
     private boolean alwaysHaveDependencies(List<QuestObject> dependencies) {
-        return (
+        return !(
                 !Archipelago.slotData.isInitiated ||
                 (
                     Archipelago.slotData.activated_modules.contains("FTBQuests") &&
                     Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
                 ) ||
-                quest.dependencies.isEmpty());
+                !quest.dependencies.isEmpty());
     }
 }

@@ -28,7 +28,7 @@ public class FTBGenerateCommand {
                             quest.dependencies.stream()
                                     .map((dependency) -> dependency instanceof Task ? ((Task) dependency).quest : dependency)
                                     .distinct()
-                                    .map(String::valueOf).toArray(String[]::new),
+                                    .map(Quest::getCodeString).toArray(String[]::new),
                             quest.dependencyRequirement.id,
                             quest.getChapter().getCodeString(),
                             quest.tasks.stream()
