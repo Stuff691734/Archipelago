@@ -9,9 +9,9 @@ import java.util.function.Function;
 
 public class FTBUtils {
     public static boolean isQuestId(String questId) {
-        long id;
+        int id;
         try {
-            id = Long.parseLong(questId, 16);
+            id = Integer.parseInt(questId);
         } catch (NumberFormatException exception) {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;

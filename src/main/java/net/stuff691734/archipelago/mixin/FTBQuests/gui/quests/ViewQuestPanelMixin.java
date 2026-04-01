@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.gui.quests;
 
 
-import com.feed_the_beast.ftbquests.gui.quests.ViewQuestPanel;
+import com.feed_the_beast.ftbquests.gui.quests.PanelViewQuest;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.QuestObject;
 import com.feed_the_beast.ftbquests.quest.task.Task;
@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Mixin(ViewQuestPanel.class)
+@Mixin(PanelViewQuest.class)
 public class ViewQuestPanelMixin {
 
     @Shadow(remap = false)
@@ -73,12 +73,12 @@ public class ViewQuestPanelMixin {
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 2), remap = false)
     private boolean alwaysHaveDependencies(List<QuestObject> dependencies) {
-        return (
+        return !(
                 !Archipelago.slotData.isInitiated ||
                 (
                     Archipelago.slotData.activated_modules.contains("FTBQuests") &&
                     Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
                 ) ||
-                quest.dependencies.isEmpty());
+                !quest.dependencies.isEmpty());
     }
 }
