@@ -6,10 +6,8 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
-import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 
 import javax.annotation.Nullable;
@@ -41,32 +39,28 @@ public class ReceiveItemEvent {
                 }
                 break;
             case "ftb":
-                if (ModList.get().isLoaded("ftbquests")) {
-                    if (FTBUtils.isQuestId(itemName)) {
-                        Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
-                    }
-                }
+                Archipelago.LOGGER.error("Got FTB check on version without FTB Quests");
                 break;
         }
-        Archipelago.archipelagoPersistentState.setDirty();
+        Archipelago.archipelagoPersistentState.setDirty(true);
     }
 
     public static void playerParseItem(ServerPlayerEntity player, String itemType, String itemName, @Nullable Long index) {
         if (
             index != null &&
-            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) >= index
+            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(),0) >= index
         ) {
             return;
         }
         if (index != null) {
-            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
+            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getCachedUniqueIdString(), index.intValue());
         }
 
         switch (itemType) {
             case "adv":
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                    Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(itemName));
+                    Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
                     PlayerAdvancementAccessor playerAdvancements = ((PlayerAdvancementAccessor)Archipelago.server.getPlayerList().getPlayerAdvancements(player));
                     playerAdvancements.archipelago$markForVisibilityUpdate(advancement);
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
@@ -79,9 +73,6 @@ public class ReceiveItemEvent {
                 }
                 break;
             case "ftb":
-                if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
-                    Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
-                }
                 break;
             case "item":
                 if (Utils.isItemId(itemName)) {

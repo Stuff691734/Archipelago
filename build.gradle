@@ -94,11 +94,6 @@ dependencies {
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
-
-    implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    implementation fg.deobf("curse.maven:ftb-library-forge-404465:3133000")
-    implementation fg.deobf("curse.maven:architectury-api-419699:3200651")
-    implementation fg.deobf("curse.maven:item-filters-309674:3132233")
 }
 
 shadowJar {
@@ -123,8 +118,7 @@ tasks.named('processResources', ProcessResources).configure {
                              mod_license            : mod_license,
                              mod_version            : mod_version,
                              mod_authors            : mod_authors,
-                             mod_description        : mod_description,
-                             ftb_quests_version     : ftb_quests_version]
+                             mod_description        : mod_description]
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {

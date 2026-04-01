@@ -49,6 +49,6 @@ public class ConnectionEvent {
         }
         // handled, remove so they aren't given again
         Archipelago.archipelagoPersistentState.pendingChecks.clear();
-        Archipelago.archipelagoPersistentState.setDirty();
+        Archipelago.archipelagoPersistentState.setDirty(true);
     }
 }

@@ -7,11 +7,9 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
-import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,15 +22,11 @@ import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static int execute(CommandContext<CommandSource> context, boolean singleLine) {
-        context.getSource().sendSuccess(new StringTextComponent("Started writing to file."), false);
+        context.getSource().sendFeedback(new StringTextComponent("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
-        if (ModList.get().isLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
-        } else {
-            checks.put("FTBQuests", new HashMap<>());
-        }
+        checks.put("FTBQuests", new HashMap<>());
 
         checks.put("Advancements", generateAdvancementChecks());
 
@@ -51,17 +45,17 @@ public class GenerateCommand {
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
-            context.getSource().sendSuccess(new StringTextComponent(e.getMessage()), false);
+            context.getSource().sendFeedback(new StringTextComponent(e.getMessage()), false);
             return 1;
         }
-        context.getSource().sendSuccess(new StringTextComponent("Finished writing to file."), false);
+        context.getSource().sendFeedback(new StringTextComponent("Finished writing to file."), false);
         return 0;
     }
 
     public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (Advancement advancement : Archipelago.server.getAdvancements().getAllAdvancements()) {
+        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAllAdvancements()) {
 
             DisplayInfo display = advancement.getDisplay();
             if (display != null) {
