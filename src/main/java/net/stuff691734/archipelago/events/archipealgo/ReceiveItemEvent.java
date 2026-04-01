@@ -48,25 +48,25 @@ public class ReceiveItemEvent {
                 }
                 break;
         }
-        Archipelago.archipelagoPersistentState.setDirty();
+        Archipelago.archipelagoPersistentState.setDirty(true);
     }
 
     public static void playerParseItem(ServerPlayerEntity player, String itemType, String itemName, @Nullable Long index) {
         if (
             index != null &&
-            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) >= index
+            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(),0) >= index
         ) {
             return;
         }
         if (index != null) {
-            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
+            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getCachedUniqueIdString(), index.intValue());
         }
 
         switch (itemType) {
             case "adv":
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                    Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(new ResourceLocation(itemName));
+                    Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
                     PlayerAdvancementAccessor playerAdvancements = ((PlayerAdvancementAccessor)Archipelago.server.getPlayerList().getPlayerAdvancements(player));
                     playerAdvancements.archipelago$markForVisibilityUpdate(advancement);
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {

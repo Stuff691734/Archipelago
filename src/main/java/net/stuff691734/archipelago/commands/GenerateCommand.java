@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static int execute(CommandContext<CommandSource> context, boolean singleLine) {
-        context.getSource().sendSuccess(new StringTextComponent("Started writing to file."), false);
+        context.getSource().sendFeedback(new StringTextComponent("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
@@ -51,17 +51,17 @@ public class GenerateCommand {
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
-            context.getSource().sendSuccess(new StringTextComponent(e.getMessage()), false);
+            context.getSource().sendFeedback(new StringTextComponent(e.getMessage()), false);
             return 1;
         }
-        context.getSource().sendSuccess(new StringTextComponent("Finished writing to file."), false);
+        context.getSource().sendFeedback(new StringTextComponent("Finished writing to file."), false);
         return 0;
     }
 
     public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (Advancement advancement : Archipelago.server.getAdvancements().getAllAdvancements()) {
+        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAllAdvancements()) {
 
             DisplayInfo display = advancement.getDisplay();
             if (display != null) {

@@ -99,7 +99,7 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-library-forge-404465:3043999")
     implementation fg.deobf("curse.maven:item-filters-309674:3005432")
 
-//    implementation "org.spongepowered:mixin:0.8"
+    implementation "org.spongepowered:mixin:0.8"
 }
 
 shadowJar {

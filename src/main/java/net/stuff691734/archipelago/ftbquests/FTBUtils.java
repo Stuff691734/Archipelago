@@ -20,7 +20,7 @@ public class FTBUtils {
     }
 
     public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
-        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape().id)) {
             return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
         }
         return action.apply(quest);

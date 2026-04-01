@@ -18,9 +18,9 @@ public class QuestButtonMixin {
     public Quest quest;
 
     // function after quest icon is set but before getting drawn
-    @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Lcom/feed_the_beast/ftbquests/quest/QuestShape;get(Ljava/lang/String;)Lcom/feed_the_beast/ftbquests/quest/QuestShape;"), remap = false, name = "qicon")
+    @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Lcom/feed_the_beast/ftbquests/quest/Quest;getShape()Lcom/feed_the_beast/ftbquests/quest/QuestShape;"), remap = false, name = "qicon")
     public Icon drawAlertIcon(Icon questIcon) {
-        if (Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape().id)) {
             // only modify if it is a quest and it is randomized and we randomized rewards
             assert Minecraft.getInstance().player != null; // would've already errored in QuestButton.draw
             if (

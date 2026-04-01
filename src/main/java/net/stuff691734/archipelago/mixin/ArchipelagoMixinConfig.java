@@ -19,7 +19,6 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
         {
             put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.QuestButtonMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.RewardButtonMixin", FTB_QUESTS_CONDITION);
-            put("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.ViewQuestPanelMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.net.MessageClaimAllRewardsMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.net.MessageClaimRewardMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.quest.task.AdvancementTaskMixin", FTB_QUESTS_CONDITION);

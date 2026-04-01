@@ -21,7 +21,7 @@ public abstract class AdvancementWidgetMixin {
 
     @Shadow
     @Final
-    private DisplayInfo display;
+    private DisplayInfo displayInfo;
 
     @Shadow
     @Final
@@ -29,6 +29,6 @@ public abstract class AdvancementWidgetMixin {
 
     @Redirect(method = "drawConnectivity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;parent:Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;", opcode = Opcodes.GETFIELD))
     public AdvancementEntryGui parent(AdvancementEntryGui thisWidget) {
-        return Utils.shouldAdvancementBeHidden(this.display, this.advancement) ? null : this.parent;
+        return Utils.shouldAdvancementBeHidden(this.displayInfo, this.advancement) ? null : this.parent;
     }
 }

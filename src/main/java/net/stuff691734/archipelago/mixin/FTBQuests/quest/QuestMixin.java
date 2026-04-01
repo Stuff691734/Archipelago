@@ -31,7 +31,7 @@ public class QuestMixin {
             }
         } else {
             Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
-            Archipelago.archipelagoPersistentState.setDirty();
+            Archipelago.archipelagoPersistentState.setDirty(true);
         }
     }
 }

@@ -22,7 +22,7 @@ public class FTBGenerateCommand {
                 ftbQuestsChecks.put(
                     quest.getCodeString(),
                     new FTBQuestsCheck(
-                        quest.getShape(),
+                        quest.getShape().id,
                         quest.dependencies.stream()
                                 .map((dependency) -> dependency instanceof Task ? ((Task) dependency).quest : dependency)
                                 .distinct()

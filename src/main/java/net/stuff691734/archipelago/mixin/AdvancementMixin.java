@@ -1,8 +1,6 @@
 package net.stuff691734.archipelago.mixin;
 
 
-import com.google.gson.stream.JsonReader;
-import com.mojang.serialization.Dynamic;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
@@ -15,9 +13,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -56,7 +52,7 @@ public abstract class AdvancementMixin {
                 }
             } else {
                 Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.getId());
-                Archipelago.archipelagoPersistentState.setDirty();
+                Archipelago.archipelagoPersistentState.setDirty(true);
             }
         }
     }
@@ -136,8 +132,8 @@ public abstract class AdvancementMixin {
 
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
     private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
-        Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancements().getAllAdvancements().stream().map(
-            (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
+        Map<ResourceLocation, AdvancementProgress> list = Archipelago.server.getAdvancementManager().getAllAdvancements().stream().map(
+            (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getProgress(advancement))).collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
                 (e1, e2)->e1
