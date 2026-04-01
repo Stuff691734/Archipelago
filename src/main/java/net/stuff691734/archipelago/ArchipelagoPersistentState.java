@@ -23,7 +23,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
+    public CompoundNBT write(CompoundNBT nbt) {
         CompoundNBT archipelagoNbt = new CompoundNBT();
 
         CompoundNBT advancementChecksNbt = new CompoundNBT();
@@ -52,23 +52,23 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         return nbt;
     }
 
-    public void load(CompoundNBT tag) {
+    public void read(CompoundNBT tag) {
         CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
 
         CompoundNBT advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
-        advancementChecksNbt.getAllKeys().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
+        advancementChecksNbt.keySet().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
 
         CompoundNBT ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
-        ftbQuestChecksNbt.getAllKeys().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
+        ftbQuestChecksNbt.keySet().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
 
         CompoundNBT slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.getAllKeys().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
+        slotDataNbt.keySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
         CompoundNBT playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.getAllKeys().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        playerLastCheckDataNbt.keySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
 
         CompoundNBT pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
-        pendingChecks.addAll(pendingChecksNbt.getAllKeys());
+        pendingChecks.addAll(pendingChecksNbt.keySet());
     }
 
     public static ArchipelagoPersistentState createNew() {
@@ -82,14 +82,14 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
-        DimensionSavedDataManager persistentStateManager = server.overworld().getDataStorage();
+        DimensionSavedDataManager persistentStateManager = server.func_241755_D_().getSavedData();
 
-        ArchipelagoPersistentState state = persistentStateManager.computeIfAbsent(
+        ArchipelagoPersistentState state = persistentStateManager.getOrCreate(
             ArchipelagoPersistentState::createNew,
             Archipelago.MODID
         );
 
-        state.setDirty();
+        state.setDirty(true);
 
         return state;
     }

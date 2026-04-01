@@ -10,6 +10,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.libraries.ModList;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.Check;
+import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +27,7 @@ public class GenerateCommand {
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
-        if (ModList.isLoaded("ftbquests")) {
+        if (ModList.get().isLoaded("ftbquests")) {
             checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
         } else {
             checks.put("FTBQuests", new HashMap<>());
@@ -77,11 +78,11 @@ public class GenerateCommand {
         return advancementsChecks.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue,
-                                (e1, e2) -> e1, // use first instance when dealing with conflicts
-                                LinkedHashMap::new
-                        )
-                );
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1, // use first instance when dealing with conflicts
+                        LinkedHashMap::new
+                )
+        );
     }
 }
