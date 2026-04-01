@@ -96,10 +96,8 @@ dependencies {
     }
 
     implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    implementation fg.deobf("curse.maven:ftb-library-forge-404465:3237039")
-    implementation fg.deobf("curse.maven:ftb-teams-forge-404468:3237174")
-    implementation fg.deobf("curse.maven:architectury-api-419699:4521290")
-    implementation fg.deobf("curse.maven:item-filters-309674:3376819")
+    implementation fg.deobf("curse.maven:ftb-library-forge-404465:3043999")
+    implementation fg.deobf("curse.maven:item-filters-309674:3005432")
 
 //    implementation "org.spongepowered:mixin:0.8"
 }

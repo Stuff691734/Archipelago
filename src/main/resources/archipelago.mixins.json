@@ -7,7 +7,6 @@
     "AdvancementMixin",
     "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
-    "FTBQuests.gui.quests.ModpackButtonMixin",
     "FTBQuests.gui.quests.QuestButtonMixin",
     "FTBQuests.gui.quests.RewardButtonMixin",
     "FTBQuests.gui.quests.ViewQuestPanelMixin",
