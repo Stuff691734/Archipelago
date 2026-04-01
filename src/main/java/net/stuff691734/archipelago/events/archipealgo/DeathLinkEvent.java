@@ -11,7 +11,7 @@ public class DeathLinkEvent {
     public void onDeathLink(io.github.archipelagomw.events.DeathLinkEvent event) {
         Utils.sendMessage(new StringTextComponent(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
         for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.hurt(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
+            player.attackEntityFrom(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
         }
     }
 }

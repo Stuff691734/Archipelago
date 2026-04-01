@@ -16,7 +16,7 @@ public class DisplayInfoMixin {
     @Final
     private Advancement advancement;
 
-    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
+    @Redirect(method = "drawAdvancement", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
     public boolean drawSetNotHidden(DisplayInfo display) {
         return Utils.shouldAdvancementBeHidden(display, this.advancement);
     }
