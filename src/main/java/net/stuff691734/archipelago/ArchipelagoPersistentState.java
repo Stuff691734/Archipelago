@@ -2,6 +2,7 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -82,7 +83,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
-        DimensionSavedDataManager persistentStateManager = server.func_241755_D_().getSavedData();
+        DimensionSavedDataManager persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedData();
 
         ArchipelagoPersistentState state = persistentStateManager.getOrCreate(
             ArchipelagoPersistentState::createNew,
