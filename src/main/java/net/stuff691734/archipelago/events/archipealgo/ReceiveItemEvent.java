@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
-import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
+//import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 
 import javax.annotation.Nullable;
 
@@ -61,8 +61,8 @@ public class ReceiveItemEvent {
                 if (Utils.isAdvancementId(itemName)) {
                     Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
                     Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
-                    PlayerAdvancementAccessor playerAdvancements = ((PlayerAdvancementAccessor)Archipelago.server.getPlayerList().getPlayerAdvancements(player));
-                    playerAdvancements.archipelago$markForVisibilityUpdate(advancement);
+//                    PlayerAdvancementAccessor playerAdvancements = ((PlayerAdvancementAccessor)Archipelago.server.getPlayerList().getPlayerAdvancements(player));
+//                    playerAdvancements.archipelago$markForVisibilityUpdate(advancement);
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
