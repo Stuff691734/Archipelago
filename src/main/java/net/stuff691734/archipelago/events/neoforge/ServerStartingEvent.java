@@ -7,6 +7,7 @@ import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoClient;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelago.commands.ArchipelagoCommands;
 import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
 
 public class ServerStartingEvent {
@@ -37,5 +38,7 @@ public class ServerStartingEvent {
                     Archipelago.archipelagoPersistentState.slotData.get("death_link")
             );
         }
+
+        ArchipelagoCommands.register(event.getCommandDispatcher());
     }
 }
