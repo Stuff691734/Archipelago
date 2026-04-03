@@ -1,3 +1,5 @@
 {
-  "transformers": "core/archipelagoAdvancements.js"
+  "archipelago$PlayerAdvancementsMixin": "core/PlayerAdvancementsMixin.js",
+  "archipelago$AdvancementsScreenMixin": "core/AdvancementsScreenMixin.js",
+  "archipelago$AdvancementEntryGuiMixin": "core/AdvancementEntryGuiMixin.js"
 }
