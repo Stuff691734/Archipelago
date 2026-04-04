@@ -83,7 +83,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
-        DimensionSavedDataManager persistentStateManager = server.func_71218_a(DimensionType.OVERWORLD).getSavedData();
+        DimensionSavedDataManager persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedData();
 
         ArchipelagoPersistentState state = persistentStateManager.getOrCreate(
             ArchipelagoPersistentState::createNew,
