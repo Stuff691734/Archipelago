@@ -3,14 +3,8 @@ package net.stuff691734.archipelago.mixin;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.advancements.AdvancementTabGui;
-import net.minecraft.client.gui.advancements.AdvancementsScreen;
-import net.minecraftforge.coremod.api.ASMAPI;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 import java.util.Objects;
@@ -101,22 +95,5 @@ public class MixinHelper {
             }
         }
         return true;
-    }
-    
-    public void a() {
-//        new InsnList().add();
-//        int a  = Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC | Opcodes.ACC_STATIC;
-//        MethodNode b = new MethodNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC | Opcodes.ACC_STATIC, "lambda$forEach$0", "(I)[Ljava/util/Map$Entry;", null, null);
-//        b.instructions.add();
-//        (
-//        final int access,
-//        final String name,
-//        final String descriptor,
-//        final String signature,
-//        final String[] exceptions)
-//        InvokeDynamicInsnNode;
-//        Type.getType("(Ljava/lang/Object;)V");
-//        Type.getType("net/minecraft/advancements/PlayerAdvancements.lambda$forEach(Ljava/util/Map;Ljava/util/Map$Entry;)V");
-//        Type.getType("(Ljava/util/Map$Entry;)V");
     }
 }
