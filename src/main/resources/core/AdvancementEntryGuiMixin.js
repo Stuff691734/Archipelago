@@ -24,7 +24,7 @@ function initializeCoreMod() {
         "archipelago$AdvancementEntryGuiMixin": {
             "target": {
                 "type": "CLASS",
-                "name": "net/minecraft/client/gui/advancements/AdvancementEntryGui"
+                "name": "net/minecraft/client/gui/advancements/GuiAdvancement"
             },
             "transformer": function(classNode) {
                 classNode.methods.forEach(function (method) {
@@ -88,7 +88,7 @@ function SetHidden() {
     var instructions = new InsnList();
 
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "advancement", "Lnet/minecraft/advancements/Advancement;"));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "advancement", "Lnet/minecraft/advancements/Advancement;"));
     instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Utils", "shouldAdvancementBeHidden", "(Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Z", false));
 
     return instructions;
@@ -100,9 +100,9 @@ function DrawConnectivitySetHidden() {
     var getParent = new LabelNode();
     var end = new LabelNode();
 
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "displayInfo", "Lnet/minecraft/advancements/DisplayInfo;"));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "displayInfo", "Lnet/minecraft/advancements/DisplayInfo;"));
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "advancement", "Lnet/minecraft/advancements/Advancement;"));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "advancement", "Lnet/minecraft/advancements/Advancement;"));
     instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Utils", "shouldAdvancementBeHidden", "(Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Z", false));
 
     instructions.add(new JumpInsnNode(IFEQ, getParent));
@@ -112,7 +112,7 @@ function DrawConnectivitySetHidden() {
 
     instructions.add(getParent);
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "parent", "Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;"));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "parent", "Lnet/minecraft/client/gui/advancements/GuiAdvancement;"));
 
     instructions.add(end);
 

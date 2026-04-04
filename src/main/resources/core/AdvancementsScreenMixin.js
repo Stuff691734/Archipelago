@@ -28,11 +28,11 @@ function initializeCoreMod() {
         "archipelago$AdvancementsScreenMixin": {
             "target": {
                 "type": "CLASS",
-                "name": "net/minecraft/client/gui/advancements/AdvancementsScreen"
+                "name": "net/minecraft/client/gui/advancements/GuiScreenAdvancements"
             },
             "transformer": function(classNode) {
                 classNode.methods.forEach(function (method) {
-                    // AdvancementsScreen.rootAdvancementAdded
+                    // GuiScreenAdvancements.rootAdvancementAdded
                     if (method.name.equals(ASMAPI.mapMethod("func_191931_a"))) {
                         var avoidAddingEmptyPagesTarget = null;
                         for (var iterator = method.instructions.iterator(); iterator.hasNext();) {
@@ -92,7 +92,7 @@ function avoidAddingEmptyPages() {
     instructions.add(new JumpInsnNode(IFEQ, end));
 
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementsScreen", "tabs", "Ljava/util/Map;"));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiScreenAdvancements", "tabs", "Ljava/util/Map;"));
     instructions.add(new VarInsnNode(ALOAD, 1));
     instructions.add(new VarInsnNode(ALOAD, 2));
     instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"));
