@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedDataStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,22 +25,22 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
-        CompoundNBT archipelagoNbt = new CompoundNBT();
+    public NBTTagCompound write(NBTTagCompound nbt) {
+        NBTTagCompound archipelagoNbt = new NBTTagCompound();
 
-        CompoundNBT advancementChecksNbt = new CompoundNBT();
+        NBTTagCompound advancementChecksNbt = new NBTTagCompound();
         advancementChecks.forEach(advancementChecksNbt::putBoolean);
 
-        CompoundNBT ftbQuestChecksNbt = new CompoundNBT();
+        NBTTagCompound ftbQuestChecksNbt = new NBTTagCompound();
         ftbQuestChecks.forEach(ftbQuestChecksNbt::putBoolean);
 
-        CompoundNBT slotDataNbt = new CompoundNBT();
+        NBTTagCompound slotDataNbt = new NBTTagCompound();
         slotData.forEach(slotDataNbt::putString);
 
-        CompoundNBT playerLastCheckDataNbt = new CompoundNBT();
+        NBTTagCompound playerLastCheckDataNbt = new NBTTagCompound();
         playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
 
-        CompoundNBT pendingChecksNbt = new CompoundNBT();
+        NBTTagCompound pendingChecksNbt = new NBTTagCompound();
         pendingChecks.forEach(check -> pendingChecksNbt.putString(check, check));
 
         archipelagoNbt.put("advancement_checks", advancementChecksNbt);
@@ -53,22 +54,22 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         return nbt;
     }
 
-    public void read(CompoundNBT tag) {
-        CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
+    public void read(NBTTagCompound tag) {
+        NBTTagCompound archipelagoNbt = tag.getCompound("archipelago");
 
-        CompoundNBT advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
+        NBTTagCompound advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
         advancementChecksNbt.keySet().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
 
-        CompoundNBT ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
+        NBTTagCompound ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
         ftbQuestChecksNbt.keySet().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
 
-        CompoundNBT slotDataNbt = archipelagoNbt.getCompound("slot_data");
+        NBTTagCompound slotDataNbt = archipelagoNbt.getCompound("slot_data");
         slotDataNbt.keySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
-        CompoundNBT playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
+        NBTTagCompound playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
         playerLastCheckDataNbt.keySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
 
-        CompoundNBT pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
+        NBTTagCompound pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
         pendingChecks.addAll(pendingChecksNbt.keySet());
     }
 
@@ -83,12 +84,21 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
-        DimensionSavedDataManager persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedData();
+        WorldSavedDataStorage persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedDataStorage();
+        if (persistentStateManager == null) {
+            return null;
+        }
 
-        ArchipelagoPersistentState state = persistentStateManager.getOrCreate(
-            ArchipelagoPersistentState::createNew,
+        ArchipelagoPersistentState state = persistentStateManager.get(
+            DimensionType.OVERWORLD,
+            ArchipelagoPersistentState::new,
             Archipelago.MODID
         );
+
+        if (state == null) {
+            state = createNew();
+            persistentStateManager.set(DimensionType.OVERWORLD, Archipelago.MODID, state);
+        }
 
         state.setDirty(true);
 

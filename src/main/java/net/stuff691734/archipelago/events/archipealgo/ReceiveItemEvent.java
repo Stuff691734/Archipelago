@@ -3,9 +3,9 @@ package net.stuff691734.archipelago.events.archipealgo;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 //import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
@@ -16,7 +16,7 @@ public class ReceiveItemEvent {
     @ArchipelagoEventListener
     public void onReceiveItems(io.github.archipelagomw.events.ReceiveItemEvent event) {
         if (Archipelago.server != null) {
-            Utils.sendMessage(new StringTextComponent(String.format(
+            Utils.sendMessage(new TextComponentString(String.format(
                     "Received %s from %s (%s)",
                     event.getItemName(),
                     event.getPlayerName(),
@@ -29,7 +29,7 @@ public class ReceiveItemEvent {
     }
 
     public static void parseItem(String itemType, String itemName, @Nullable Long index) {
-        for (ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
+        for (EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
             playerParseItem(player, itemType, itemName, index);
         }
         switch (itemType) {
@@ -45,7 +45,7 @@ public class ReceiveItemEvent {
         Archipelago.archipelagoPersistentState.setDirty(true);
     }
 
-    public static void playerParseItem(ServerPlayerEntity player, String itemType, String itemName, @Nullable Long index) {
+    public static void playerParseItem(EntityPlayerMP player, String itemType, String itemName, @Nullable Long index) {
         if (
             index != null &&
             Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(),0) >= index
