@@ -74,7 +74,7 @@ public class ReceiveItemEvent {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
                         if (display != null) {
-                            Utils.giveItem(player, display.getIcon().toString());
+                            Utils.giveItem(player, display.getIcon().getItem());
                         }
                     }
                 }
