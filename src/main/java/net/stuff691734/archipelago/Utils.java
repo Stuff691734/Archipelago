@@ -44,10 +44,18 @@ public class Utils {
         String item = strings[1];
         Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(item));
         if (itemValue != null) {
-            ItemStack itemStack = new ItemStack(itemValue, amount);
-            if (!player.addItem(itemStack)) {
-                player.spawnAtLocation(itemStack);
-            }
+            giveItem(player, itemValue, amount);
+        }
+    }
+
+    public static void giveItem(ServerPlayer player, Item item) {
+        giveItem(player, item, 1);
+    }
+
+    public static void giveItem(ServerPlayer player, Item item, int amount) {
+        ItemStack itemStack = new ItemStack(item, amount);
+        if (!player.addItem(itemStack)) {
+            player.spawnAtLocation(itemStack);
         }
     }
 
