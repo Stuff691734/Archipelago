@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
@@ -43,7 +44,16 @@ public class Utils {
         String[] strings = itemId.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         String item = strings[1];
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(item)), amount);
+        Item itemValue = BuiltInRegistries.ITEM.get(new ResourceLocation(item));
+        giveItem(player, itemValue, amount);
+    }
+
+    public static void giveItem(ServerPlayer player, Item item) {
+        giveItem(player, item, 1);
+    }
+
+    public static void giveItem(ServerPlayer player, Item item, int amount) {
+        ItemStack itemStack = new ItemStack(item, amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
         }
