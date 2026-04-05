@@ -65,7 +65,7 @@ public class ReceiveItemEvent {
                     if (Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(player, display.getIcon().toString())
+                            display -> Utils.giveItem(player, display.getIcon().getItem())
                         );
                     }
                 }
