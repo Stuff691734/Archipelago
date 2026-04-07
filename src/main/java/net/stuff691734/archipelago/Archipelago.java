@@ -1,10 +1,17 @@
 package net.stuff691734.archipelago;
 
+import io.github.archipelagomw.flags.ItemsHandling;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.stuff691734.archipelago.commands.ArchipelagoCommands;
+import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
 import net.stuff691734.archipelago.events.neoforge.ForgeEvents;
+import net.stuff691734.archipelago.events.neoforge.ServerStartingEvent;
+import net.stuff691734.archipelago.events.neoforge.ServerStoppingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,5 +28,15 @@ public class Archipelago {
 
     public Archipelago() {
         ForgeEvents.register(MinecraftForge.EVENT_BUS);
+    }
+
+    @Mod.EventHandler
+    public void onEvent(FMLServerStartingEvent event) {
+        ServerStartingEvent.onEvent(event);
+    }
+
+    @Mod.EventHandler
+    public void onEvent(FMLServerStoppingEvent event) {
+        ServerStoppingEvent.onEvent(event);
     }
 }

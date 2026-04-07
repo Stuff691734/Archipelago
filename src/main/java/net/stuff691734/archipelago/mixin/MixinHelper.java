@@ -3,6 +3,8 @@ package net.stuff691734.archipelago.mixin;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.client.gui.advancements.GuiAdvancement;
+import net.minecraft.client.gui.advancements.GuiAdvancementTab;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import org.objectweb.asm.tree.*;
@@ -95,5 +97,29 @@ public class MixinHelper {
             }
         }
         return true;
+    }
+
+    public static GuiAdvancement getGuiAdvancementParent(GuiAdvancement parent, DisplayInfo displayInfo ,Advancement advancement) {
+        if (parent == null) {
+            return null;
+        }
+        if (Utils.shouldAdvancementBeHidden(displayInfo, advancement)) {
+            return null;
+        }
+        return parent;
+    }
+
+    public static GuiAdvancementTab getGuiAdvancementTab(GuiAdvancementTab tab) {
+        if (tab == null) {
+            return null;
+        }
+        if (Archipelago.slotData.isInitiated && !Archipelago.slotData.activated_modules.contains("Advancements")) {
+            return tab;
+        }
+        if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(tab.getAdvancement().getId().toString(), false)) {
+            return null;
+        }
+
+        return tab;
     }
 }

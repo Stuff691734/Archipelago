@@ -2,10 +2,9 @@ package net.stuff691734.archipelago;
 
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraft.world.storage.WorldSavedDataStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,52 +24,52 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound write(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagCompound archipelagoNbt = new NBTTagCompound();
 
         NBTTagCompound advancementChecksNbt = new NBTTagCompound();
-        advancementChecks.forEach(advancementChecksNbt::putBoolean);
+        advancementChecks.forEach(advancementChecksNbt::setBoolean);
 
         NBTTagCompound ftbQuestChecksNbt = new NBTTagCompound();
-        ftbQuestChecks.forEach(ftbQuestChecksNbt::putBoolean);
+        ftbQuestChecks.forEach(ftbQuestChecksNbt::setBoolean);
 
         NBTTagCompound slotDataNbt = new NBTTagCompound();
-        slotData.forEach(slotDataNbt::putString);
+        slotData.forEach(slotDataNbt::setString);
 
         NBTTagCompound playerLastCheckDataNbt = new NBTTagCompound();
-        playerLastCheck.forEach(playerLastCheckDataNbt::putInt);
+        playerLastCheck.forEach(playerLastCheckDataNbt::setInteger);
 
         NBTTagCompound pendingChecksNbt = new NBTTagCompound();
-        pendingChecks.forEach(check -> pendingChecksNbt.putString(check, check));
+        pendingChecks.forEach(check -> pendingChecksNbt.setString(check, check));
 
-        archipelagoNbt.put("advancement_checks", advancementChecksNbt);
-        archipelagoNbt.put("ftb_quest_checks", ftbQuestChecksNbt);
-        archipelagoNbt.put("slot_data", slotDataNbt);
-        archipelagoNbt.put("player_last_check", playerLastCheckDataNbt);
-        archipelagoNbt.put("pending_checks", pendingChecksNbt);
+        archipelagoNbt.setTag("advancement_checks", advancementChecksNbt);
+        archipelagoNbt.setTag("ftb_quest_checks", ftbQuestChecksNbt);
+        archipelagoNbt.setTag("slot_data", slotDataNbt);
+        archipelagoNbt.setTag("player_last_check", playerLastCheckDataNbt);
+        archipelagoNbt.setTag("pending_checks", pendingChecksNbt);
 
-        nbt.put("archipelago", archipelagoNbt);
+        nbt.setTag("archipelago", archipelagoNbt);
 
         return nbt;
     }
 
-    public void read(NBTTagCompound tag) {
-        NBTTagCompound archipelagoNbt = tag.getCompound("archipelago");
+    public void readFromNBT(NBTTagCompound tag) {
+        NBTTagCompound archipelagoNbt = tag.getCompoundTag("archipelago");
 
-        NBTTagCompound advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
-        advancementChecksNbt.keySet().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
+        NBTTagCompound advancementChecksNbt = archipelagoNbt.getCompoundTag("advancement_checks");
+        advancementChecksNbt.getKeySet().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
 
-        NBTTagCompound ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
-        ftbQuestChecksNbt.keySet().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
+        NBTTagCompound ftbQuestChecksNbt = archipelagoNbt.getCompoundTag("ftb_quest_checks");
+        ftbQuestChecksNbt.getKeySet().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
 
-        NBTTagCompound slotDataNbt = archipelagoNbt.getCompound("slot_data");
-        slotDataNbt.keySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
+        NBTTagCompound slotDataNbt = archipelagoNbt.getCompoundTag("slot_data");
+        slotDataNbt.getKeySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
 
-        NBTTagCompound playerLastCheckDataNbt = archipelagoNbt.getCompound("player_last_check");
-        playerLastCheckDataNbt.keySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInt(key)));
+        NBTTagCompound playerLastCheckDataNbt = archipelagoNbt.getCompoundTag("player_last_check");
+        playerLastCheckDataNbt.getKeySet().forEach(key -> playerLastCheck.put(key, playerLastCheckDataNbt.getInteger(key)));
 
-        NBTTagCompound pendingChecksNbt = archipelagoNbt.getCompound("pending_checks");
-        pendingChecks.addAll(pendingChecksNbt.keySet());
+        NBTTagCompound pendingChecksNbt = archipelagoNbt.getCompoundTag("pending_checks");
+        pendingChecks.addAll(pendingChecksNbt.getKeySet());
     }
 
     public static ArchipelagoPersistentState createNew() {
@@ -84,20 +83,19 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     }
 
     public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
-        WorldSavedDataStorage persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedDataStorage();
+        MapStorage persistentStateManager = server.getWorld(DimensionType.OVERWORLD.getId()).getMapStorage();
         if (persistentStateManager == null) {
             return null;
         }
 
-        ArchipelagoPersistentState state = persistentStateManager.get(
-            DimensionType.OVERWORLD,
-            ArchipelagoPersistentState::new,
+        ArchipelagoPersistentState state = (ArchipelagoPersistentState) persistentStateManager.getOrLoadData(
+            ArchipelagoPersistentState.class,
             Archipelago.MODID
         );
 
         if (state == null) {
             state = createNew();
-            persistentStateManager.set(DimensionType.OVERWORLD, Archipelago.MODID, state);
+            persistentStateManager.setData(Archipelago.MODID, state);
         }
 
         state.setDirty(true);
