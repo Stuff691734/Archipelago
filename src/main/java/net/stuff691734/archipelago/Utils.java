@@ -52,11 +52,11 @@ public class Utils {
         }
     }
 
-    public static void giveItem(ServerPlayer player, Item item) {
+    public static void giveItem(ServerPlayerEntity player, Item item) {
         giveItem(player, item, 1);
     }
 
-    public static void giveItem(ServerPlayer player, Item item, int amount) {
+    public static void giveItem(ServerPlayerEntity player, Item item, int amount) {
         ItemStack itemStack = new ItemStack(item, amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
