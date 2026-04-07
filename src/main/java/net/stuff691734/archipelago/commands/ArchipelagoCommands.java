@@ -1,44 +1,64 @@
 package net.stuff691734.archipelago.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
-import static net.minecraft.command.Commands.argument;
-import static net.minecraft.command.Commands.literal;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
+public class ArchipelagoCommands extends CommandBase {
 
-public class ArchipelagoCommands {
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("archipelago")
-            .then(literal("connect")
-                .then(argument("Name", StringArgumentType.word())
-                    .then(argument("WSAddress", StringArgumentType.greedyString())
-                        .executes(ConnectCommand::execute)
-                    )
-                )
-            )
-            .then(literal("disconnect")
-                .executes(DisconnectCommand::execute)
-            )
-            .then(literal("generate")
-                .executes((context) -> GenerateCommand.execute(context, false))
-                .then(argument("SingleLine", BoolArgumentType.bool())
-                    .executes((context) -> GenerateCommand.execute(context, BoolArgumentType.getBool(context, "SingleLine")))
-                )
-            )
-            .then(literal("get")
-                .executes(GetCommand::execute)
-                .then(argument("check", StringArgumentType.greedyString())
-                    .executes(GetCommand::executeSpecific)
-                )
-            )
-            .then(literal("add")
-                .then(argument("check", StringArgumentType.greedyString())
-                    .executes(AddCommand::execute)
-                )
-            )
-        );
+    @Override
+    public String getName() {
+        return "archipelago";
+    }
+
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/archipelago";
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if (args.length < 1) {
+            throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get>");
+        }
+        switch (args[0]) {
+            case "add":
+                AddCommand.execute(args);
+                break;
+            case "connect":
+                ConnectCommand.execute(sender, args);
+                break;
+            case "disconnect":
+                DisconnectCommand.execute();
+                break;
+            case "generate":
+                GenerateCommand.execute(sender, args);
+                break;
+            case "get":
+                GetCommand.execute(sender, args);
+                break;
+            default:
+                throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get>");
+        }
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+        if (args.length == 1) {
+            return getListOfStringsMatchingLastWord(args, "add", "connect", "disconnect", "generate", "get");
+        }
+        if (args.length == 2 && Objects.equals(args[1], "generate")) {
+            return getListOfStringsMatchingLastWord(args, "true", "false");
+        }
+
+        return super.getTabCompletions(server, sender, args, targetPos);
     }
 }
