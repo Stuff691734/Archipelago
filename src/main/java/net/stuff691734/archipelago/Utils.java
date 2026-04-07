@@ -53,11 +53,11 @@ public class Utils {
         }
     }
 
-    public static void giveItem(ServerPlayerEntity player, Item item) {
+    public static void giveItem(EntityPlayerMP player, Item item) {
         giveItem(player, item, 1);
     }
 
-    public static void giveItem(ServerPlayerEntity player, Item item, int amount) {
+    public static void giveItem(EntityPlayerMP player, Item item, int amount) {
         ItemStack itemStack = new ItemStack(item, amount);
         if (!player.inventory.addItemStackToInventory(itemStack)) {
             player.entityDropItem(itemStack);
