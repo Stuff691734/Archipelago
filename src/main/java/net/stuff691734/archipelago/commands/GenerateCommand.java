@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.relauncher.libraries.ModList;
+import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
 import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
@@ -19,15 +22,20 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static void execute(MinecraftServer server, ICommandSender sender) {
+    public static void execute(ICommandSender sender, String[] args) throws CommandException {
+        boolean singleLine = false;
+        if (args.length > 2) {
+            singleLine = CommandBase.parseBoolean(args[1]);
+        }
         sender.sendMessage(new TextComponentString("Started writing to file."));
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
-        if (ModList.get().isLoaded("ftbquests")) {
+        if (Loader.isModLoaded("ftbquests")) {
             checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
         } else {
             checks.put("FTBQuests", new HashMap<>());
@@ -43,7 +51,7 @@ public class GenerateCommand {
             GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
                     .serializeNulls();
-            if (!singleLine) {
+            if (singleLine) {
                 builder.setPrettyPrinting();
             }
             Gson gson = builder.create();

@@ -9,10 +9,14 @@ import java.util.Map;
 @IFMLLoadingPlugin.TransformerExclusions("net.stuff691734.archipelago.core")
 @IFMLLoadingPlugin.Name("Archipelago")
 @IFMLLoadingPlugin.SortingIndex(10000)
-public class CustomPlugin implements IFMLLoadingPlugin {
+public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{CustomClassTransformer.class.getName()};
+        return new String[]{
+                PlayerAdvancementsTransformer.class.getName(),
+                GuiAdvancementTransformer.class.getName(),
+                GuiScreenAdvancementsTransformer.class.getName()
+        };
     }
 
     @Override
