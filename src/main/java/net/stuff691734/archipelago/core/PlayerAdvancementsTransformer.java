@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
@@ -87,6 +88,9 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         });
 
         classNode.methods.add(lambda$forEach());
+
+        classNode.methods.add(archipelago$ensureVisibility());
+        classNode.interfaces.add(PlayerAdvancementAccessor.class.getName().replace(".", "/"));
 
         // cleanup
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
@@ -238,5 +242,19 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         instructions.add(continueExecution);
 
         return instructions;
+    }
+
+    public MethodNode archipelago$ensureVisibility() {
+        MethodNode method = new MethodNode(ACC_PUBLIC, "archipelago$ensureVisibility", "(Lnet/minecraft/advancements/Advancement;)V", null, null);
+
+        InsnList instructions = new InsnList();
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new VarInsnNode(ALOAD, 1));
+        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "func_192742_b", "(Lnet/minecraft/advancements/Advancement;)V", false));
+        instructions.add(new InsnNode(RETURN));
+
+        method.instructions.add(instructions);
+
+        return method;
     }
 }
