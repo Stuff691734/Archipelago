@@ -13,8 +13,6 @@ logoFile="icon.png"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
 
-[[mixins]]
-config = "${mod_id}.mixins.json"
 [[dependencies."${mod_id}"]]
 modId = "forge"
 mandatory = true
@@ -26,5 +24,12 @@ side = "BOTH"
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "ftbquests"
+mandatory = false
+versionRange = "${ftb_quests_version}"
 ordering = "NONE"
 side = "BOTH"
