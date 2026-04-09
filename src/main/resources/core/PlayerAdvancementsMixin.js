@@ -38,6 +38,7 @@ var H_INVOKESTATIC = Opcodes.H_INVOKESTATIC;
 var ACC_PRIVATE = Opcodes.ACC_PRIVATE;
 var ACC_SYNTHETIC = Opcodes.ACC_SYNTHETIC;
 var ACC_STATIC = Opcodes.ACC_STATIC;
+var ACC_PUBLIC = Opcodes.ACC_PUBLIC;
 
 function initializeCoreMod() {
     return {
@@ -100,6 +101,9 @@ function initializeCoreMod() {
                 });
 
                 classNode.methods.add(lambda$forEach());
+
+                classNode.methods.add(archipelago$ensureVisibility());
+                classNode.interfaces.add("net/stuff691734/archipelago/mixin/PlayerAdvancementAccessor");
 
                 return classNode;
             }
@@ -251,4 +255,18 @@ function preventAdvancement() {
     instructions.add(continueExecution);
 
     return instructions;
+}
+
+function archipelago$ensureVisibility() {
+    var method = new MethodNode(ACC_PUBLIC, "archipelago$ensureVisibility", "(Lnet/minecraft/advancements/Advancement;)V", null, null);
+
+    var instructions = new InsnList();
+    instructions.add(new VarInsnNode(ALOAD, 0));
+    instructions.add(new VarInsnNode(ALOAD, 1));
+    instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "ensureVisibility", "(Lnet/minecraft/advancements/Advancement;)V", false));
+    instructions.add(new InsnNode(RETURN));
+
+    method.instructions.add(instructions);
+
+    return method;
 }
