@@ -22,15 +22,15 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
     public static void execute(ICommandSender sender, String[] args) throws CommandException {
-        boolean singleLine = false;
-        if (args.length > 2) {
-            singleLine = CommandBase.parseBoolean(args[1]);
+        boolean singleLine = true;
+        if (args.length >= 2) {
+            singleLine = !CommandBase.parseBoolean(args[1]);
         }
+
         sender.sendMessage(new TextComponentString("Started writing to file."));
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
