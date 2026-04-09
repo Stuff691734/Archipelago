@@ -19,7 +19,7 @@ public class ConnectionEvent {
             return;
         }
 
-        slotData.asMap().forEach((key, value) -> Archipelago.archipelagoPersistentState.slotData.put(key, value.getAsString()));
+        slotData.entrySet().forEach((entry) -> Archipelago.archipelagoPersistentState.slotData.put(entry.getKey(), entry.getValue().getAsString()));
         Archipelago.slotData = new SlotData(
                 Archipelago.archipelagoPersistentState.slotData.get("unlock_type"),
                 Archipelago.archipelagoPersistentState.slotData.get("final_goal"),
