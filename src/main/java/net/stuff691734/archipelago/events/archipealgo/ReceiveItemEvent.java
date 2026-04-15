@@ -6,8 +6,10 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 
 import javax.annotation.Nullable;
@@ -39,7 +41,11 @@ public class ReceiveItemEvent {
                 }
                 break;
             case "ftb":
-                Archipelago.LOGGER.error("Got FTB check on version without FTB Quests");
+                if (Loader.isModLoaded("ftbquests")) {
+                    if (FTBUtils.isQuestId(itemName)) {
+                        Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
+                    }
+                }
                 break;
         }
         Archipelago.archipelagoPersistentState.setDirty(true);
@@ -72,6 +78,9 @@ public class ReceiveItemEvent {
                 }
                 break;
             case "ftb":
+                if (Loader.isModLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
+                    Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
+                }
                 break;
             case "item":
                 if (Utils.isItemId(itemName)) {

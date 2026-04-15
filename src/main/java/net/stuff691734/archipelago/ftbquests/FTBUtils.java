@@ -11,7 +11,7 @@ public class FTBUtils {
     public static boolean isQuestId(String questId) {
         int id;
         try {
-            id = Integer.parseInt(questId);
+            id = Integer.parseUnsignedInt(questId, 16);
         } catch (NumberFormatException exception) {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;

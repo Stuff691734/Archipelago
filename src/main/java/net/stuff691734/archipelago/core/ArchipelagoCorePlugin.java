@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.core;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.stuff691734.archipelago.core.FTBQuests.*;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -15,7 +16,13 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
         return new String[]{
                 PlayerAdvancementsTransformer.class.getName(),
                 GuiAdvancementTransformer.class.getName(),
-                GuiScreenAdvancementsTransformer.class.getName()
+                GuiScreenAdvancementsTransformer.class.getName(),
+
+                ButtonQuestTransformer.class.getName(),
+                ButtonRewardTransformer.class.getName(),
+                MessageClaimAllRewardsTransformer.class.getName(),
+                MessageClaimRewardTransformer.class.getName(),
+                QuestTransformer.class.getName()
         };
     }
 
