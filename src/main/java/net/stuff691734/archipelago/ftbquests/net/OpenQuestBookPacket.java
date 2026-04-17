@@ -24,9 +24,9 @@ public class OpenQuestBookPacket {
         this(friendlyByteBuf.readInt());
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public boolean handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(
+            DistExecutor.runWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         if (ClientQuestFile.exists()) {
@@ -50,5 +50,6 @@ public class OpenQuestBookPacket {
             );
         });
         context.get().setPacketHandled(true);
+        return true;
     }
 }

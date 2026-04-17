@@ -16,7 +16,7 @@ public class FTBOpenBookCommand {
         } catch (NumberFormatException ex) {
             quest = 0;
         }
-        ServerPlayerEntity player = context.getSource().getPlayerOrException();
+        ServerPlayerEntity player = context.getSource().asPlayer();
         ArchipelagoPacketHandler.INSTANCE.send(
                 PacketDistributor.PLAYER.with(() -> player),
                 new OpenQuestBookPacket(quest)

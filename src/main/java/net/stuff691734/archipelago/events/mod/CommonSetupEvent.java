@@ -7,6 +7,6 @@ import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 public class CommonSetupEvent {
     @SubscribeEvent
     public void onEvent(FMLCommonSetupEvent event) {
-        event.enqueueWork(ArchipelagoPacketHandler::init);
+        ArchipelagoPacketHandler.init();
     }
 }

@@ -12,7 +12,7 @@ public class OpenBookCommand {
         if (ModList.get().isLoaded("ftbquests")) {
             return FTBOpenBookCommand.execute(context, quest_id);
         } else {
-            context.getSource().sendSuccess(new StringTextComponent("FTBQuests not installed"), false);
+            context.getSource().sendFeedback(new StringTextComponent("FTBQuests not installed"), false);
             return 1;
         }
     }
