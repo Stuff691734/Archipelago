@@ -1,9 +1,9 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.stuff691734.archipelago.ftbquests.net.OpenQuestBookPacket;
 
 public class ArchipelagoPacketHandler {
