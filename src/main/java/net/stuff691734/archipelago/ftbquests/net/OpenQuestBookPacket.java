@@ -2,10 +2,10 @@ package net.stuff691734.archipelago.ftbquests.net;
 
 import dev.ftb.mods.ftbquests.client.ClientQuestFile;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -16,11 +16,11 @@ public class OpenQuestBookPacket {
         this.quest_id = id;
     }
 
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
+    public void encode(PacketBuffer friendlyByteBuf) {
         friendlyByteBuf.writeLong(this.quest_id);
     }
 
-    public OpenQuestBookPacket(FriendlyByteBuf friendlyByteBuf) {
+    public OpenQuestBookPacket(PacketBuffer friendlyByteBuf) {
         this(friendlyByteBuf.readLong());
     }
 
