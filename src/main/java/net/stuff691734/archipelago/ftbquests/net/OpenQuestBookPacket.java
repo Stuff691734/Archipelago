@@ -10,18 +10,18 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class OpenQuestBookPacket {
-    public final Long quest_id;
+    public final Integer quest_id;
 
-    public OpenQuestBookPacket(Long id) {
+    public OpenQuestBookPacket(Integer id) {
         this.quest_id = id;
     }
 
     public void encode(PacketBuffer friendlyByteBuf) {
-        friendlyByteBuf.writeLong(this.quest_id);
+        friendlyByteBuf.writeInt(this.quest_id);
     }
 
     public OpenQuestBookPacket(PacketBuffer friendlyByteBuf) {
-        this(friendlyByteBuf.readLong());
+        this(friendlyByteBuf.readInt());
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
@@ -31,18 +31,18 @@ public class OpenQuestBookPacket {
                     () -> () -> {
                         if (ClientQuestFile.exists()) {
                             ClientQuestFile file = ClientQuestFile.INSTANCE;
-                            if (file.questScreen == null) {
+                            if (file.questTreeGui == null) {
                                 ClientQuestFile.INSTANCE.openQuestGui();
                             }
 
-                            if (quest_id != null && file.questScreen != null) {
+                            if (quest_id != null && file.questTreeGui != null) {
                                 if (quest_id != 0L) {
                                     QuestObject qo = file.get(quest_id);
                                     if (qo != null) {
-                                        file.questScreen.open(qo, true);
+                                        file.questTreeGui.open(qo, true);
                                     }
                                 } else {
-                                    file.questScreen.openGui();
+                                    file.questTreeGui.openGui();
                                 }
                             }
                         }
