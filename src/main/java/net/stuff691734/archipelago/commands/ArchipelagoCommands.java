@@ -39,6 +39,12 @@ public class ArchipelagoCommands {
                     .executes(AddCommand::execute)
                 )
             )
+            .then(literal("open_book")
+                .executes((context) -> OpenBookCommand.execute(context, null))
+                .then(argument("quest_id", StringArgumentType.string())
+                    .executes((context -> OpenBookCommand.execute(context, StringArgumentType.getString(context, "quest_id"))))
+                )
+            )
         );
     }
 }
