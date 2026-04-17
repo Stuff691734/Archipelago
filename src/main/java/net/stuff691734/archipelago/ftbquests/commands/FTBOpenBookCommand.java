@@ -10,11 +10,11 @@ import net.stuff691734.archipelago.ftbquests.net.OpenQuestBookPacket;
 
 public class FTBOpenBookCommand {
     public static int execute(CommandContext<CommandSource> context, String quest_id) throws CommandSyntaxException {
-        long quest;
+        int quest;
         try {
-            quest = Long.parseLong(quest_id, 16);
+            quest = Integer.parseInt(quest_id);
         } catch (NumberFormatException ex) {
-            quest = 0L;
+            quest = 0;
         }
         ServerPlayerEntity player = context.getSource().getPlayerOrException();
         ArchipelagoPacketHandler.INSTANCE.send(
