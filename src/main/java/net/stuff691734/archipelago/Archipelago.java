@@ -4,6 +4,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.stuff691734.archipelago.events.mod.ModEvents;
 import net.stuff691734.archipelago.events.neoforge.ForgeEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,5 +23,6 @@ public class Archipelago {
 
     public Archipelago() {
         ForgeEvents.register(MinecraftForge.EVENT_BUS);
+        ModEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }
