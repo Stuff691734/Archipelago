@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.ftbquests.net;
 
-import dev.ftb.mods.ftbquests.client.ClientQuestFile;
-import dev.ftb.mods.ftbquests.quest.QuestObject;
+import com.feed_the_beast.ftbquests.client.ClientQuestFile;
+import com.feed_the_beast.ftbquests.quest.QuestObject;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
