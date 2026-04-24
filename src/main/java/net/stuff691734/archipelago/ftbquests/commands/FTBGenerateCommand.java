@@ -13,12 +13,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FTBGenerateCommand {
-    public static Map<String, FTBQuestsCheck> generateFTBChecks() {
+    public static Map<String, FTBQuestsCheck> generateFTBChecks(boolean removePermaHidden) {
         Map<String, FTBQuestsCheck> ftbQuestsChecks = new HashMap<>();
 
         for(ChapterGroup group : ServerQuestFile.INSTANCE.chapterGroups) {
             for(Chapter chapter : group.chapters) {
                 for (Quest quest : chapter.getQuests()) {
+                    if (removePermaHidden) {
+                        if (quest.getDependants().isEmpty() && quest.invisibleUntilCompleted() && quest.getRewards().isEmpty()) {
+                            continue;
+                        }
+                    }
                     ftbQuestsChecks.put(
                         quest.getCodeString(),
                         new FTBQuestsCheck(

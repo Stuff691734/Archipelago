@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine) {
+    public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine, boolean removePermaHidden) {
         context.getSource().sendSuccess(Component.literal("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
         if (ModList.get().isLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
+            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks(removePermaHidden));
         } else {
             checks.put("FTBQuests", new HashMap<>());
         }
