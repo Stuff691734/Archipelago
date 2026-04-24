@@ -22,6 +22,14 @@ public class QuestMixin implements QuestAccessor {
         return dependencyRequirement;
     }
 
+    @Shadow
+    private boolean invisibleUntilCompleted;
+
+    @Override
+    public boolean archipelago$isInvisibleUntilCompleted() {
+        return invisibleUntilCompleted;
+    }
+
     @Inject(
             method = "onCompleted",
             at = @At("RETURN")

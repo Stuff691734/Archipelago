@@ -14,11 +14,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FTBGenerateCommand {
-    public static Map<String, FTBQuestsCheck> generateFTBChecks() {
+    public static Map<String, FTBQuestsCheck> generateFTBChecks(boolean removePermaHidden) {
         Map<String, FTBQuestsCheck> ftbQuestsChecks = new HashMap<>();
         FTBQuestsAPI.api().getQuestFile(false).forAllQuests((quest) -> {
             QuestAccessor questAccessor = (QuestAccessor) (Object) quest;
-
+            if (removePermaHidden) {
+                if (quest.getDependants().isEmpty() && questAccessor.archipelago$isInvisibleUntilCompleted() && quest.getRewards().isEmpty()) {
+                    return;
+                }
+            }
             ftbQuestsChecks.put(
                     quest.getCodeString(),
                     new FTBQuestsCheck(
