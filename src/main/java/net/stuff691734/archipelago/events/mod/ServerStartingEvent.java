@@ -1,7 +1,6 @@
-package net.stuff691734.archipelago.events.neoforge;
+package net.stuff691734.archipelago.events.mod;
 
 import io.github.archipelagomw.flags.ItemsHandling;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoClient;
@@ -11,7 +10,6 @@ import net.stuff691734.archipelago.commands.ArchipelagoCommands;
 import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
 
 public class ServerStartingEvent {
-    @Mod.EventHandler
     public static void onEvent(FMLServerStartingEvent event) {
         Archipelago.server = event.getServer();
         ArchipelagoClient client = new ArchipelagoClient();

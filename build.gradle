@@ -90,7 +90,7 @@ shadowJar {
     relocate("org.java_websocket", "shadow.archipelago.org.java_websocket")
     relocate("org.apache.hc", "shadow.archipelago.org.apache.hc")
     relocate("io.github.archipelagomw", "shadow.archipelago.io.github.archipelagomw")
-    relocate("com.google", "shadow.archipelago.com.google")
+    relocate("com.google.gson", "shadow.archipelago.com.google.gson")
     exclude 'META-INF/versions/**'
 }
 

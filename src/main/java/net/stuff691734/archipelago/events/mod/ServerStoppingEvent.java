@@ -1,13 +1,10 @@
-package net.stuff691734.archipelago.events.neoforge;
+package net.stuff691734.archipelago.events.mod;
 
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.SlotData;
 
 public class ServerStoppingEvent {
-    @Mod.EventHandler
     public static void onEvent(FMLServerStoppingEvent event) {
         Archipelago.server = null;
         Archipelago.client.close();
