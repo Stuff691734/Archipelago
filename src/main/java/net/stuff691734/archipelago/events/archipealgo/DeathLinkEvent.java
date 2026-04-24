@@ -10,8 +10,10 @@ public class DeathLinkEvent {
     @ArchipelagoEventListener
     public void onDeathLink(io.github.archipelagomw.events.DeathLinkEvent event) {
         Utils.sendMessage(new TextComponentString(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
-        for (EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.attackEntityFrom(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
-        }
+        Archipelago.server.execute(() -> {
+            for (EntityPlayerMP player : Archipelago.server.getPlayerList().getPlayers()) {
+                player.attackEntityFrom(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
+            }
+        });
     }
 }
