@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static int execute(CommandContext<CommandSource> context, boolean singleLine) {
+    public static int execute(CommandContext<CommandSource> context, boolean singleLine, boolean removePermaHidden) {
         context.getSource().sendFeedback(new StringTextComponent("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
