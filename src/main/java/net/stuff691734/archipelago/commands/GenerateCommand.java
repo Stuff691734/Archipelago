@@ -16,10 +16,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static int execute(CommandContext<CommandSourceStack> context) {
+    public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine, boolean removePermaHidden) {
         context.getSource().sendSuccess(() -> Component.literal("Started writing to file."), false);
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
@@ -33,11 +35,13 @@ public class GenerateCommand {
             new File("output/archipelago_data.json").createNewFile();
 
             Writer writer = new FileWriter("output/archipelago_data.json");
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
+            GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
-                    .serializeNulls()
-                    .create();
+                    .serializeNulls();
+            if (!singleLine) {
+                builder.setPrettyPrinting();
+            }
+            Gson gson = builder.create();
             gson.toJson(checks, writer);
             writer.close();
         } catch (IOException e) {
@@ -70,6 +74,14 @@ public class GenerateCommand {
                 }
             });
         }
-        return advancementsChecks;
+        return advancementsChecks.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1, // use first instance when dealing with conflicts
+                        LinkedHashMap::new
+                )
+        );
     }
 }
