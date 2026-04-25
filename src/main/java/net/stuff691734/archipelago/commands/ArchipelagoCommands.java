@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 
@@ -22,7 +23,13 @@ public class ArchipelagoCommands {
                 .executes(DisconnectCommand::execute)
             )
             .then(literal("generate")
-                .executes(GenerateCommand::execute)
+                .executes((context) -> GenerateCommand.execute(context, false, true))
+                .then(argument("SingleLine", BoolArgumentType.bool())
+                    .executes((context) -> GenerateCommand.execute(context, BoolArgumentType.getBool(context, "SingleLine"), true))
+                    .then(argument("RemovePermaHidden", BoolArgumentType.bool())
+                        .executes((context) -> GenerateCommand.execute(context, BoolArgumentType.getBool(context, "SingleLine"), BoolArgumentType.getBool(context, "RemovePermaHidden")))
+                    )
+                )
             )
             .then(literal("get")
                 .executes(GetCommand::execute)
