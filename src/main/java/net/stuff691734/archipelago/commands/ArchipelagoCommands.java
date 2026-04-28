@@ -55,7 +55,7 @@ public class ArchipelagoCommands extends CommandBase {
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, "add", "connect", "disconnect", "generate", "get");
         }
-        if (args.length == 2 && Objects.equals(args[1], "generate")) {
+        if ((args.length == 2 || args.length == 3) && Objects.equals(args[1], "generate")) {
             return getListOfStringsMatchingLastWord(args, "true", "false");
         }
 
