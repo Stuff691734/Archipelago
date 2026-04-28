@@ -14,11 +14,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FTBGenerateCommand {
-    public static Map<String, FTBQuestsCheck> generateFTBChecks() {
+    public static Map<String, FTBQuestsCheck> generateFTBChecks(boolean removePermaHidden) {
         Map<String, FTBQuestsCheck> ftbQuestsChecks = new HashMap<>();
 
         for(Chapter chapter : ServerQuestFile.INSTANCE.chapters) {
             for (Quest quest : chapter.quests) {
+                // no longer possible to hide quests. So no removing hidden quests here
                 ftbQuestsChecks.put(
                         quest.getCodeString(),
                         new FTBQuestsCheck(

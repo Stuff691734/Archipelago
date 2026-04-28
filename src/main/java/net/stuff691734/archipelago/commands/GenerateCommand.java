@@ -31,12 +31,17 @@ public class GenerateCommand {
             singleLine = !CommandBase.parseBoolean(args[1]);
         }
 
+        boolean removePermaHidden = true;
+        if (args.length >= 3) {
+            removePermaHidden = !CommandBase.parseBoolean(args[2]);
+        }
+
         sender.sendMessage(new TextComponentString("Started writing to file."));
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
         if (Loader.isModLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
+            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks(removePermaHidden));
         } else {
             checks.put("FTBQuests", new HashMap<>());
         }
