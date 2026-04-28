@@ -20,7 +20,7 @@ public class FTBGenerateCommand {
             for(Chapter chapter : group.chapters) {
                 for (Quest quest : chapter.quests) {
                     if (removePermaHidden) {
-                        if (quest.getDependants().isEmpty() && quest.invisibleUntilCompleted() && quest.getRewards().isEmpty()) {
+                        if (quest.getDependants().isEmpty() && quest.invisible && quest.rewards.isEmpty()) {
                             continue;
                         }
                     }
