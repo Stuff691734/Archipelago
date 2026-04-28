@@ -17,11 +17,10 @@ public class Archipelago {
     public static ArchipelagoPersistentState archipelagoPersistentState;
     public static SlotData slotData = new SlotData();
 
-    public static final DamageSource DeathLinkDamage = new DamageSource(MODID + ".death_link").bypassInvul();
+    public static final DamageSource DeathLinkDamage = new DamageSource(MODID + ".death_link").bypassInvul().bypassArmor();
 
 
     public Archipelago() {
         ForgeEvents.register(MinecraftForge.EVENT_BUS);
-        new DamageSource(MODID + ".death_link").bypassInvul();
     }
 }
