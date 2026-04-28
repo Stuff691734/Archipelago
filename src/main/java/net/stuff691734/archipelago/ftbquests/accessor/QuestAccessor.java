@@ -4,4 +4,6 @@ import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
 
 public interface QuestAccessor {
     DependencyRequirement archipelago$getDependencyRequirement();
+
+    boolean archipelago$isInvisibleUntilCompleted();
 }
