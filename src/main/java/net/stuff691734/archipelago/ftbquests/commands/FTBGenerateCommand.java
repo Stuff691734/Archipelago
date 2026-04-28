@@ -19,11 +19,7 @@ public class FTBGenerateCommand {
         for(ChapterGroup group : ServerQuestFile.INSTANCE.chapterGroups) {
             for(Chapter chapter : group.chapters) {
                 for (Quest quest : chapter.quests) {
-                    if (removePermaHidden) {
-                        if (quest.getDependants().isEmpty() && quest.invisible && quest.rewards.isEmpty()) {
-                            continue;
-                        }
-                    }
+                    // no longer possible to hide quests. So no removing hidden quests here
                     ftbQuestsChecks.put(
                         quest.getCodeString(),
                         new FTBQuestsCheck(
