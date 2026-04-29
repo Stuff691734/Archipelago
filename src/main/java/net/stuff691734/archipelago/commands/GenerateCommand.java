@@ -9,11 +9,9 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
-import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,11 +33,7 @@ public class GenerateCommand {
 
         Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
 
-        if (Loader.isModLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks());
-        } else {
-            checks.put("FTBQuests", new HashMap<>());
-        }
+        checks.put("FTBQuests", new HashMap<>());
 
         checks.put("Advancements", generateAdvancementChecks());
 
