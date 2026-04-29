@@ -43,10 +43,6 @@ dependencies {
     implementation('io.github.archipelagomw:Java-Client:0.2.1')
 
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
-
-    implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
-    implementation fg.deobf("curse.maven:ftb-library-legacy-forge-237167:2985811")
-    implementation fg.deobf("curse.maven:item-filters-309674:3003364")
 }
 
 shadowJar {
