@@ -22,7 +22,7 @@ public class QuestMixin implements QuestAccessor {
         return dependencyRequirement;
     }
 
-    @Shadow
+    @Shadow(remap = false)
     private boolean invisibleUntilCompleted;
 
     @Override
