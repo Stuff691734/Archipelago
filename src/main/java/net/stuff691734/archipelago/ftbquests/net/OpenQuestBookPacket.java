@@ -37,7 +37,7 @@ public class OpenQuestBookPacket implements IMessage {
                 if (ClientQuestFile.exists()) {
                     ClientQuestFile file = ClientQuestFile.INSTANCE;
                     if (file.questTreeGui == null) {
-                        ClientQuestFile.INSTANCE.openQuestGui(Minecraft.getMinecraft().player);
+                        ClientQuestFile.INSTANCE.openQuestGui(context.getServerHandler().player);
                     }
 
                     if (message.quest_id != null && file.questTreeGui != null) {
