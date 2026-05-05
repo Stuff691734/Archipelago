@@ -7,6 +7,7 @@ import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
 import net.minecraft.util.text.TextComponentString;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.SlotData;
 import net.stuff691734.archipelago.Utils;
 
@@ -19,36 +20,40 @@ public class ConnectionEvent {
             return;
         }
 
-        slotData.entrySet().forEach((entry) -> Archipelago.archipelagoPersistentState.slotData.put(entry.getKey(), entry.getValue().getAsString()));
-        Archipelago.slotData = new SlotData(
-                Archipelago.archipelagoPersistentState.slotData.get("unlock_type"),
-                Archipelago.archipelagoPersistentState.slotData.get("final_goal"),
-                Archipelago.archipelagoPersistentState.slotData.get("activated_modules"),
-                Archipelago.archipelagoPersistentState.slotData.get("advancement_check_difficulty"),
-                Archipelago.archipelagoPersistentState.slotData.get("ftb_quest_check_shape"),
-                Archipelago.archipelagoPersistentState.slotData.get("advancement_checks_give_items"),
-                Archipelago.archipelagoPersistentState.slotData.get("quest_checks_give_rewards"),
-                Archipelago.archipelagoPersistentState.slotData.get("death_link")
-        );
+        ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance();
 
-        if (Archipelago.slotData.death_link) {
-            Archipelago.LOGGER.info("DeathLink activated");
-            Archipelago.client.setDeathLinkEnabled(true);
-            Archipelago.client.addTag("DeathLink");
-        }
-        Archipelago.LOGGER.info(Archipelago.archipelagoPersistentState.slotData.toString());
+        if (state != null) {
+            slotData.entrySet().forEach((entry) -> state.slotData.put(entry.getKey(), entry.getValue().getAsString()));
+            Archipelago.slotData = new SlotData(
+                    state.slotData.get("unlock_type"),
+                    state.slotData.get("final_goal"),
+                    state.slotData.get("activated_modules"),
+                    state.slotData.get("advancement_check_difficulty"),
+                    state.slotData.get("ftb_quest_check_shape"),
+                    state.slotData.get("advancement_checks_give_items"),
+                    state.slotData.get("quest_checks_give_rewards"),
+                    state.slotData.get("death_link")
+            );
 
-        for (String check : Archipelago.archipelagoPersistentState.pendingChecks) {
-            Long check_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(check);
-            if (check_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(check_id);
-                if ((check).equals(Archipelago.slotData.final_goal)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+            if (Archipelago.slotData.death_link) {
+                Archipelago.LOGGER.info("DeathLink activated");
+                Archipelago.client.setDeathLinkEnabled(true);
+                Archipelago.client.addTag("DeathLink");
+            }
+            Archipelago.LOGGER.info(state.slotData.toString());
+
+            for (String check : state.pendingChecks) {
+                Long check_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(check);
+                if (check_id != null) {
+                    Archipelago.client.getLocationManager().checkLocation(check_id);
+                    if ((check).equals(Archipelago.slotData.final_goal)) {
+                        Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                    }
                 }
             }
+            // handled, remove so they aren't given again
+            state.pendingChecks.clear();
+            state.setDirty(true);
         }
-        // handled, remove so they aren't given again
-        Archipelago.archipelagoPersistentState.pendingChecks.clear();
-        Archipelago.archipelagoPersistentState.setDirty(true);
     }
 }

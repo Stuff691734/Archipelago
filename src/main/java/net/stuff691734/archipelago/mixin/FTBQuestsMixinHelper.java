@@ -9,6 +9,7 @@ import com.feed_the_beast.ftbquests.quest.task.Task;
 import com.feed_the_beast.ftbquests.quest.theme.property.ThemeProperties;
 import io.github.archipelagomw.ClientStatus;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class FTBQuestsMixinHelper {
     public static Icon getQuestIcon(Quest quest, Icon originalIcon, ClientQuestData data) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             if (
-                    Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false) &&
+                    ArchipelagoPersistentState.getFtbQuest(quest.getCodeString()) &&
                             quest.rewards.stream().anyMatch(
                                     reward -> !data.isRewardClaimedSelf(reward)
                             )
@@ -31,7 +32,7 @@ public class FTBQuestsMixinHelper {
 
     public static boolean isQuestRewardAvailable(Quest quest, QuestData data) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
-            return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
+            return ArchipelagoPersistentState.getFtbQuest(quest.getCodeString());
         }
         return quest.isComplete(data);
     }
@@ -47,14 +48,14 @@ public class FTBQuestsMixinHelper {
                 }
             }
         } else {
-            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + quest);
-            Archipelago.archipelagoPersistentState.setDirty(true);
+            ArchipelagoPersistentState.getInstance().pendingChecks.add("ftb " + quest);
+            ArchipelagoPersistentState.getInstance().setDirty(true);
         }
     }
 
     public static boolean isQuestRewardAvailable(Quest quest) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
-            return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
+            return ArchipelagoPersistentState.getFtbQuest(quest.getCodeString());
         }
         return true;
     }
@@ -71,21 +72,21 @@ public class FTBQuestsMixinHelper {
         }
 
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            if (!Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getChapter().getCodeString(), false)) {
+            if (!ArchipelagoPersistentState.getFtbQuest(quest.getChapter().getCodeString())) {
                 // if player hasn't received quest chapter check prevent them from getting the advancement
                 return false;
             }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             DependencyRequirement requirement = quest.dependencyRequirement;
-            if (quest.dependencies.isEmpty() && !Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false)) {
+            if (quest.dependencies.isEmpty() && !ArchipelagoPersistentState.getFtbQuest(quest.getCodeString())) {
                 // no dependencies, check if it has self
                 return false;
             }
             if (requirement.one) {
                 if (quest.dependencies.stream()
                         .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
-                        .noneMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
+                        .noneMatch((dependency) -> ArchipelagoPersistentState.getFtbQuest(dependency.getCodeString()))
                 ) {
                     // need one dependency, check if it has any
                     return false;
@@ -93,7 +94,7 @@ public class FTBQuestsMixinHelper {
             } else {
                 if (!quest.dependencies.stream()
                         .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
-                        .allMatch((dependency) -> Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(dependency.getCodeString(), false))
+                        .allMatch((dependency) -> ArchipelagoPersistentState.getFtbQuest(dependency.getCodeString()))
                 ) {
                     // need all dependency, check if it has all
                     return false;
@@ -101,7 +102,7 @@ public class FTBQuestsMixinHelper {
             }
         }
         else {
-            if (!Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false)) {
+            if (!ArchipelagoPersistentState.getFtbQuest(quest.getCodeString())) {
                 return false;
             }
         }

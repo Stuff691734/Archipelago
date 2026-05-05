@@ -1,9 +1,10 @@
 package net.stuff691734.archipelago.ftbquests;
 
-import com.feed_the_beast.ftbquests.client.ClientQuestFile;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.QuestObject;
+import com.feed_the_beast.ftbquests.quest.ServerQuestFile;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 import java.util.function.Function;
 
@@ -16,12 +17,12 @@ public class FTBUtils {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;
         }
-        return ClientQuestFile.INSTANCE.getQuest(id) != null;
+        return ServerQuestFile.INSTANCE.getQuest(id) != null;
     }
 
     public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
-            return Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false);
+            return ArchipelagoPersistentState.getFtbQuest(quest.getCodeString());
         }
         return action.apply(quest);
     }
