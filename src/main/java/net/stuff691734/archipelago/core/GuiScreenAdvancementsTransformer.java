@@ -40,7 +40,6 @@ public class GuiScreenAdvancementsTransformer implements IClassTransformer {
                 }
                 if (showAdvancementPageTarget != null) {
                     method.instructions.insert(showAdvancementPageTarget, showAdvancementPage());
-//                    method.instructions.remove(showAdvancementPageTarget);
                 }
             }
 
