@@ -15,7 +15,8 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
         return new String[]{
                 PlayerAdvancementsTransformer.class.getName(),
                 GuiAdvancementTransformer.class.getName(),
-                GuiScreenAdvancementsTransformer.class.getName()
+                GuiScreenAdvancementsTransformer.class.getName(),
+                DisplayInfoTransformer.class.getName(),
         };
     }
 
