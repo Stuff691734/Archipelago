@@ -5,24 +5,28 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 
-import java.util.UUID;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
+        if (Archipelago.getServer() == null) {
+            return false;
+        }
         ResourceLocation id;
         try {
             id = new ResourceLocation(advancementId);
         } catch (ResourceLocationException exception) {
             return false;
         }
-        Advancement advancement = Archipelago.server.getAdvancementManager().getAdvancement(id);
+        Advancement advancement = Archipelago.getServer().getAdvancementManager().getAdvancement(id);
         return advancement != null;
     }
 
@@ -43,24 +47,38 @@ public class Utils {
         return ForgeRegistries.ITEMS.containsKey(id);
     }
 
-    public static void giveItem(ServerPlayerEntity player, String itemId) {
-        String[] strings = itemId.split(" ", 2);
-        int amount = Integer.parseInt(strings[0]);
-        String item = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item));
-        if (itemValue != null) {
-            giveItem(player, itemValue, amount);
-        }
-    }
-
-    public static void giveItem(ServerPlayerEntity player, Item item) {
-        giveItem(player, item, 1);
-    }
-
     public static void giveItem(ServerPlayerEntity player, Item item, int amount) {
         ItemStack itemStack = new ItemStack(item, amount);
         if (!player.inventory.addItemStackToInventory(itemStack)) {
             player.entityDropItem(itemStack);
+        }
+    }
+
+    public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
+        String[] strings = item.split(" ", 2);
+        int amount = Integer.parseInt(strings[0]);
+        String itemName = strings[1];
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
+        if (itemValue != null) {
+            giveItem(server, itemValue, amount, index);
+        }
+    }
+
+    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
+        giveItem(server, item, 1, index);
+    }
+
+    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+        for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
+            if (index != null) {
+                if (ArchipelagoPersistentState.getInstance() != null) {
+                    if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
+                        giveItem(player, item, amount);
+                    }
+                }
+            } else {
+                giveItem(player, item, amount);
+            }
         }
     }
 
@@ -76,11 +94,13 @@ public class Utils {
     }
 
     public static void sendMessage(StringTextComponent message) {
-        Archipelago.server.sendMessage(message);
+        Archipelago.executeOnServer((server) -> {
+            server.sendMessage(message);
 
-        for(ServerPlayerEntity player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.sendMessage(message);
-        }
+            for(ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
+                player.sendMessage(message);
+            }
+        });
     }
 
     public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
@@ -105,13 +125,13 @@ public class Utils {
             Advancement rootAdvancement = Utils.getRoot(advancement);
             String rootAdvancementName = rootAdvancement.getId().toString();
 
-            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false);
+            return !ArchipelagoPersistentState.getAdvancement(rootAdvancementName);
         }
         // parent advancement
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             if (Utils.getRoot(advancement) == advancement) {
                 // if root check against self
-                return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
+                return !ArchipelagoPersistentState.getAdvancement(advancement.getId().toString());
             } else {
                 // otherwise check against values up tree not including self
                 Advancement checkAdvancement = advancement;
@@ -121,7 +141,7 @@ public class Utils {
 
                     if (checkAdvancement != null) {
                         String checkAdvancementName = checkAdvancement.getId().toString();
-                        if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkAdvancementName, false)) {
+                        if (!ArchipelagoPersistentState.getAdvancement(checkAdvancementName)) {
                             return true;
                         }
                     }
@@ -132,7 +152,7 @@ public class Utils {
         // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
         // to do an advancement insanity thing
         else {
-            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
+            return !ArchipelagoPersistentState.getAdvancement(advancement.getId().toString());
         }
     }
 }
