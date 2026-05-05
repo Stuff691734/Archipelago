@@ -90,6 +90,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         classNode.methods.add(lambda$forEach());
 
         classNode.methods.add(archipelago$ensureVisibility());
+        // TODO: Change how this is referenced
         classNode.interfaces.add(PlayerAdvancementAccessor.class.getName().replace(".", "/"));
 
         // cleanup
@@ -141,7 +142,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
         instructions.add(new VarInsnNode(ASTORE, 5));
 
-        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "server", "Lnet/minecraft/server/MinecraftServer;"));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Archipelago", "getServer", "()Lnet/minecraft/server/MinecraftServer;", false));
         instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/server/MinecraftServer", "func_191949_aK", "()Lnet/minecraft/advancements/AdvancementManager;", false));
         instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementManager", "func_192780_b", "()Ljava/lang/Iterable;", false));
         instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Collection", "iterator", "()Ljava/util/Iterator;", true));

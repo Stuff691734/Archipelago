@@ -9,7 +9,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
-import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
@@ -23,10 +22,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GenerateCommand {
-    public static void execute(ICommandSender sender, String[] args) throws CommandException {
+    public static void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         boolean singleLine = true;
         if (args.length >= 2) {
             singleLine = !CommandBase.parseBoolean(args[1]);
+        }
+
+        boolean removePermaHidden = true;
+        if (args.length >= 3) {
+            removePermaHidden = !CommandBase.parseBoolean(args[2]);
         }
 
         sender.sendMessage(new TextComponentString("Started writing to file."));
@@ -35,7 +39,7 @@ public class GenerateCommand {
 
         checks.put("FTBQuests", new HashMap<>());
 
-        checks.put("Advancements", generateAdvancementChecks());
+        checks.put("Advancements", generateAdvancementChecks(server));
 
         try {
             new File("output").mkdir();
@@ -57,10 +61,10 @@ public class GenerateCommand {
         sender.sendMessage(new TextComponentString("Finished writing to file."));
     }
 
-    public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
+    public static Map<String, AdvancementsCheck> generateAdvancementChecks(MinecraftServer server) {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAdvancements()) {
+        for (Advancement advancement : server.getAdvancementManager().getAdvancements()) {
 
             DisplayInfo display = advancement.getDisplay();
             if (display != null) {

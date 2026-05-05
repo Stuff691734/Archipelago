@@ -40,7 +40,7 @@ public class ArchipelagoCommands extends CommandBase {
                 DisconnectCommand.execute();
                 break;
             case "generate":
-                GenerateCommand.execute(sender, args);
+                GenerateCommand.execute(server, sender, args);
                 break;
             case "get":
                 GetCommand.execute(sender, args);
