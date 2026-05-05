@@ -6,8 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.command.CommandSource;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
-import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
 
@@ -28,7 +28,7 @@ public class GenerateCommand {
 
         checks.put("FTBQuests", new HashMap<>());
 
-        checks.put("Advancements", generateAdvancementChecks());
+        checks.put("Advancements", generateAdvancementChecks(context.getSource().getServer()));
 
         try {
             new File("output").mkdir();
@@ -52,10 +52,10 @@ public class GenerateCommand {
         return 0;
     }
 
-    public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
+    public static Map<String, AdvancementsCheck> generateAdvancementChecks(MinecraftServer server) {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (Advancement advancement : Archipelago.server.getAdvancementManager().getAllAdvancements()) {
+        for (Advancement advancement : server.getAdvancementManager().getAllAdvancements()) {
 
             DisplayInfo display = advancement.getDisplay();
             if (display != null) {
