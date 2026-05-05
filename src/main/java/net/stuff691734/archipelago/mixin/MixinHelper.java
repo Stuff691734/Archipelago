@@ -3,7 +3,10 @@ package net.stuff691734.archipelago.mixin;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.client.gui.advancements.GuiAdvancement;
+import net.minecraft.client.gui.advancements.GuiAdvancementTab;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import org.objectweb.asm.tree.*;
 
@@ -36,8 +39,8 @@ public class MixinHelper {
                 }
             }
         } else {
-            Archipelago.archipelagoPersistentState.pendingChecks.add("adv " + advancement.getId());
-            Archipelago.archipelagoPersistentState.setDirty(true);
+            ArchipelagoPersistentState.getInstance().pendingChecks.add("adv " + advancement.getId());
+            ArchipelagoPersistentState.getInstance().setDirty(true);
         }
     }
 
@@ -58,7 +61,7 @@ public class MixinHelper {
                 Advancement rootAdvancement = Utils.getRoot(advancement);
                 String rootAdvancementName = rootAdvancement.getId().toString();
 
-                if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false)) {
+                if (!ArchipelagoPersistentState.getAdvancement(rootAdvancementName)) {
                     // if player hasn't received root check prevent them from getting the advancement
                     return false;
                 }
@@ -67,7 +70,7 @@ public class MixinHelper {
             else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
                 if (Utils.getRoot(advancement) == advancement) {
                     // if root check against self
-                    if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false)) {
+                    if (!ArchipelagoPersistentState.getAdvancement(advancement.getId().toString())) {
                         return false;
                     }
                 } else {
@@ -79,7 +82,7 @@ public class MixinHelper {
 
                         if (checkAdvancement != null) {
                             String checkAdvancementName = checkAdvancement.getId().toString();
-                            if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkAdvancementName, false)) {
+                            if (!ArchipelagoPersistentState.getAdvancement(checkAdvancementName)) {
                                 return false;
                             }
                         }
@@ -89,11 +92,35 @@ public class MixinHelper {
             // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
             // to do an advancement insanity thing
             else {
-                if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false)) {
+                if (!ArchipelagoPersistentState.getAdvancement(advancement.getId().toString())) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public static GuiAdvancement getGuiAdvancementParent(GuiAdvancement parent, DisplayInfo displayInfo ,Advancement advancement) {
+        if (parent == null) {
+            return null;
+        }
+        if (Utils.shouldAdvancementBeHidden(displayInfo, advancement)) {
+            return null;
+        }
+        return parent;
+    }
+
+    public static GuiAdvancementTab getGuiAdvancementTab(GuiAdvancementTab tab) {
+        if (tab == null) {
+            return null;
+        }
+        if (Archipelago.slotData.isInitiated && !Archipelago.slotData.activated_modules.contains("Advancements")) {
+            return tab;
+        }
+        if (!ArchipelagoPersistentState.getAdvancement(tab.getAdvancement().getId().toString())) {
+            return null;
+        }
+
+        return tab;
     }
 }
