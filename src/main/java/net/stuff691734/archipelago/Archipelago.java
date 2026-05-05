@@ -13,8 +13,7 @@ public class Archipelago {
     public static final String MODID = "archipelago";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static ArchipelagoClient client;
-    public static MinecraftServer server;
-    public static ArchipelagoPersistentState archipelagoPersistentState;
+    private static MinecraftServer server;
     public static SlotData slotData = new SlotData();
 
     public static final DamageSource DeathLinkDamage = new DamageSource(MODID + ".death_link").setDamageAllowedInCreativeMode().setDamageBypassesArmor();
