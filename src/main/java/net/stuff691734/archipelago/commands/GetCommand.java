@@ -5,22 +5,28 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.TextComponentString;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 public class GetCommand {
     public static int execute(CommandContext<CommandSource> context) {
-        context.getSource().sendFeedback(new TextComponentString(Archipelago.archipelagoPersistentState.advancementChecks.toString()), true);
-        context.getSource().sendFeedback(new TextComponentString(Archipelago.archipelagoPersistentState.ftbQuestChecks.toString()), true);
-        context.getSource().sendFeedback(new TextComponentString(Archipelago.archipelagoPersistentState.slotData.toString()), true);
-        context.getSource().sendFeedback(new TextComponentString(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
-        return 0;
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            context.getSource().sendFeedback(new TextComponentString(ArchipelagoPersistentState.getInstance().advancementChecks.toString()), true);
+            context.getSource().sendFeedback(new TextComponentString(ArchipelagoPersistentState.getInstance().ftbQuestChecks.toString()), true);
+            context.getSource().sendFeedback(new TextComponentString(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
+            context.getSource().sendFeedback(new TextComponentString(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
+            return 0;
+        }
+        return 1;
     }
 
     public static int executeSpecific(CommandContext<CommandSource> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        if (checkName.startsWith("adv ")) {
-            context.getSource().sendFeedback(new TextComponentString(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkName.substring(4), false).toString()), true);
-        } else {
-            context.getSource().sendFeedback(new TextComponentString(Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            if (checkName.startsWith("adv ")) {
+                context.getSource().sendFeedback(new TextComponentString(ArchipelagoPersistentState.getInstance().advancementChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+            } else {
+                context.getSource().sendFeedback(new TextComponentString(ArchipelagoPersistentState.getInstance().ftbQuestChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+            }
         }
         return 0;
     }

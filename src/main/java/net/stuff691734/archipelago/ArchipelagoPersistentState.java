@@ -3,10 +3,10 @@ package net.stuff691734.archipelago;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraft.world.storage.WorldSavedDataStorage;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,8 @@ import java.util.Map;
 
 
 public class ArchipelagoPersistentState extends WorldSavedData {
+    private static ArchipelagoPersistentState instance;
+
     public Map<String, Boolean> advancementChecks = new HashMap<>();
     public Map<String, Boolean> ftbQuestChecks = new HashMap<>();
     public Map<String, String> slotData = new HashMap<>();
@@ -83,7 +85,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         return state;
     }
 
-    public static ArchipelagoPersistentState getServerState(MinecraftServer server) {
+    private static ArchipelagoPersistentState getServerState(MinecraftServer server) {
         WorldSavedDataStorage persistentStateManager = server.getWorld(DimensionType.OVERWORLD).getSavedDataStorage();
         if (persistentStateManager == null) {
             return null;
@@ -103,5 +105,30 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         state.setDirty(true);
 
         return state;
+    }
+
+    public static Boolean getAdvancement(String advancement) {
+        if (getInstance() != null) {
+            return getInstance().advancementChecks.getOrDefault(advancement, false);
+        }
+        return false;
+    }
+
+    public static Boolean getFtbQuest(String quest) {
+        if (getInstance() != null) {
+            return getInstance().ftbQuestChecks.getOrDefault(quest, false);
+        }
+        return false;
+    }
+
+    @Nullable
+    public static ArchipelagoPersistentState getInstance() {
+        if (Archipelago.getServer() == null) {
+            return null;
+        }
+        if (instance == null) {
+            instance = getServerState(Archipelago.getServer());
+        }
+        return instance;
     }
 }
