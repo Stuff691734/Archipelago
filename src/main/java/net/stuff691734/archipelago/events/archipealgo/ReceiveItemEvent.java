@@ -3,7 +3,6 @@ package net.stuff691734.archipelago.events.archipealgo;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +10,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 
 import javax.annotation.Nullable;
@@ -49,7 +49,7 @@ public class ReceiveItemEvent {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
                         if (display != null) {
-                            Utils.giveItem(server, display.getIcon().getItem(), index);
+                            Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index);
                         }
                     }
                 }
