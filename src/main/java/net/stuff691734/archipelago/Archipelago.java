@@ -15,6 +15,7 @@ public class Archipelago {
     public static ArchipelagoClient client;
     private static MinecraftServer server;
     public static SlotData slotData = new SlotData();
+    public static final ArchipelagoClientState clientState = new ArchipelagoClientState();
 
     public static final DamageSource DeathLinkDamage = new DamageSource(MODID + ".death_link").setDamageAllowedInCreativeMode().setDamageBypassesArmor();
 
