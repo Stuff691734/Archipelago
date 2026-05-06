@@ -1,13 +1,12 @@
 package net.stuff691734.archipelago.events.mod;
 
 import io.github.archipelagomw.flags.ItemsHandling;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ArchipelagoClient;
-import net.stuff691734.archipelago.ArchipelagoPersistentState;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelago.*;
 import net.stuff691734.archipelago.commands.ArchipelagoCommands;
 import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
+import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class ServerStartingEvent {
     public static void onEvent(FMLServerStartingEvent event) {

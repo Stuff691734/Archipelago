@@ -9,11 +9,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
+import net.stuff691734.archipelago.net.GetCheckPacket;
 
 import javax.annotation.Nullable;
 
@@ -46,6 +48,7 @@ public class ReceiveItemEvent {
                     Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(GetCheckPacket.CheckType.ADVANCEMENT, itemName), player);
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
@@ -59,6 +62,9 @@ public class ReceiveItemEvent {
             case "ftb":
                 if (Loader.isModLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
                     state.ftbQuestChecks.put(itemName, true);
+                    for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(GetCheckPacket.CheckType.FTB_QUESTS, itemName), player);
+                    }
                 }
                 break;
             case "item":
