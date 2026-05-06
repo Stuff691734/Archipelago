@@ -39,8 +39,10 @@ public class MixinHelper {
                 }
             }
         } else {
-            ArchipelagoPersistentState.getInstance().pendingChecks.add("adv " + advancement.getId());
-            ArchipelagoPersistentState.getInstance().setDirty(true);
+            if (ArchipelagoPersistentState.getInstance() != null) {
+                ArchipelagoPersistentState.getInstance().pendingChecks.add("adv " + advancement.getId());
+                ArchipelagoPersistentState.getInstance().setDirty(true);
+            }
         }
     }
 
