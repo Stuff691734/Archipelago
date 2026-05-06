@@ -1,11 +1,15 @@
 package net.stuff691734.archipelago.events.neoforge;
 
 import io.github.archipelagomw.parts.NetworkItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.events.archipealgo.ReceiveItemEvent;
+import net.stuff691734.archipelago.net.StartSyncChecksPacket;
+import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class EntityLoadEvent {
     @SubscribeEvent
@@ -22,6 +26,17 @@ public class EntityLoadEvent {
                 }
                 ArchipelagoPersistentState.getInstance().setDirty(true);
             }
+            ArchipelagoPacketHandler.INSTANCE.sendTo(
+                new StartSyncChecksPacket(
+                    ArchipelagoPersistentState.getInstance().advancementChecks.keySet().toArray(new String[0]),
+                    ArchipelagoPersistentState.getInstance().ftbQuestChecks.keySet().toArray(new String[0])
+                ),
+                (EntityPlayerMP) event.player
+            );
+            ArchipelagoPacketHandler.INSTANCE.sendTo(
+                    new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData),
+                    (EntityPlayerMP) event.player
+            );
         }
     }
 }

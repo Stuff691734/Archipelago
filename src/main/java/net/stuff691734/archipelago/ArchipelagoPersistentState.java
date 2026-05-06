@@ -110,15 +110,17 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     public static Boolean getAdvancement(String advancement) {
         if (getInstance() != null) {
             return getInstance().advancementChecks.getOrDefault(advancement, false);
+        } else {
+            return Archipelago.clientState.hasAdvancement(advancement);
         }
-        return false;
     }
 
     public static Boolean getFtbQuest(String quest) {
         if (getInstance() != null) {
             return getInstance().ftbQuestChecks.getOrDefault(quest, false);
+        } else {
+            return Archipelago.clientState.hasFtbQuest(quest);
         }
-        return false;
     }
 
     @Nullable
