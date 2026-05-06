@@ -5,11 +5,10 @@ import io.github.archipelagomw.ClientStatus;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
-import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ArchipelagoPersistentState;
-import net.stuff691734.archipelago.SlotData;
-import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.*;
+import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class ConnectionEvent {
     @ArchipelagoEventListener
@@ -22,7 +21,7 @@ public class ConnectionEvent {
 
         ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance();
 
-        if (state != null) {
+        if (Archipelago.getServer() != null && state != null) {
             slotData.entrySet().forEach((entry) -> state.slotData.put(entry.getKey(), entry.getValue().getAsString()));
             Archipelago.slotData = new SlotData(
                     state.slotData.get("unlock_type"),
@@ -34,6 +33,12 @@ public class ConnectionEvent {
                     state.slotData.get("quest_checks_give_rewards"),
                     state.slotData.get("death_link")
             );
+            for (EntityPlayerMP player : Archipelago.getServer().getPlayerList().getPlayers()) {
+                ArchipelagoPacketHandler.INSTANCE.sendTo(
+                        new SyncSlotDataPacket(state.slotData),
+                        player
+                );
+            }
 
             if (Archipelago.slotData.death_link) {
                 Archipelago.LOGGER.info("DeathLink activated");
