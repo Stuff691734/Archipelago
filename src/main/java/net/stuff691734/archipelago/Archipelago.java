@@ -4,12 +4,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.stuff691734.archipelago.events.mod.PreInitEvent;
-import net.stuff691734.archipelago.events.mod.ServerStartingEvent;
-import net.stuff691734.archipelago.events.mod.ServerStoppingEvent;
 import net.stuff691734.archipelago.events.neoforge.ForgeEvents;
+import net.stuff691734.archipelago.events.neoforge.PreInitEvent;
+import net.stuff691734.archipelago.events.neoforge.ServerStartingEvent;
+import net.stuff691734.archipelago.events.neoforge.ServerStoppingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,7 +46,6 @@ public class Archipelago {
     public void onEvent(FMLPreInitializationEvent event) {
         PreInitEvent.onEvent(event);
     }
-
 
     public static @Nullable MinecraftServer getServer() {
         return server;
