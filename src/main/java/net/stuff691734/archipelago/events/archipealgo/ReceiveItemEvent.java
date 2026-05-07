@@ -44,6 +44,9 @@ public class ReceiveItemEvent {
                 if (ModList.get().isLoaded("ftbquests")) {
                     if (FTBUtils.isQuestId(itemName)) {
                         Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
+                        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
+                            FTBUtils.checkIsCompleted(player, itemName);
+                        }
                     }
                 }
                 break;

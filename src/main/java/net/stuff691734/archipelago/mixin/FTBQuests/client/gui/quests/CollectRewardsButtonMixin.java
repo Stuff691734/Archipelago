@@ -43,9 +43,7 @@ public class CollectRewardsButtonMixin {
         questFile.forAllQuests(quest -> {
             if (
                 Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(quest.getCodeString(), false) &&
-                quest.getRewards().stream().anyMatch(
-                    reward -> !teamData.isRewardClaimed(player, reward)
-                )
+                quest.getRewards().stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))
             ) {
                 hasAvailableReward.set(true);
             }
