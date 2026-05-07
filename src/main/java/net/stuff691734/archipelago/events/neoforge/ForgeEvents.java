@@ -7,7 +7,5 @@ public class ForgeEvents {
     public static void register(EventBus eventBus) {
         eventBus.register(new EntityLoadEvent());
         eventBus.register(new PlayerDeathEvent());
-        eventBus.register(new ServerStartingEvent());
-        eventBus.register(new ServerStoppingEvent());
     }
 }
