@@ -47,7 +47,7 @@ public class FTBQuestsMixinHelper {
                     Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
                 }
             }
-        } else {
+        } else if (ArchipelagoPersistentState.getInstance() != null) {
             ArchipelagoPersistentState.getInstance().pendingChecks.add("ftb " + quest);
             ArchipelagoPersistentState.getInstance().setDirty(true);
         }
