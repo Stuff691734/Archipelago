@@ -30,10 +30,12 @@ public class EntityLoadEvent {
                 new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0])),
                 (EntityPlayerMP) event.player
             );
-            ArchipelagoPacketHandler.INSTANCE.sendTo(
+            if (!ArchipelagoPersistentState.getInstance().slotData.isEmpty()) {
+                ArchipelagoPacketHandler.INSTANCE.sendTo(
                     new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData),
                     (EntityPlayerMP) event.player
-            );
+                );
+            }
         }
     }
 }
