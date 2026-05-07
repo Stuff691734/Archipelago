@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-@Mod(modid=Archipelago.MODID, name="Archipelago", version="2.2.8")
+@Mod(modid=Archipelago.MODID, name="Archipelago", version="2.2.9")
 public class Archipelago {
     public static final String MODID = "archipelago";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
