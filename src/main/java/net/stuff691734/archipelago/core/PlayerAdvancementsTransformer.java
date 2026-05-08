@@ -91,7 +91,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
 
         classNode.methods.add(archipelago$ensureVisibility());
         // TODO: Change how this is referenced
-        classNode.interfaces.add(PlayerAdvancementAccessor.class.getName().replace(".", "/"));
+        classNode.interfaces.add("net/stuff691734/archipelago/mixin/PlayerAdvancementAccessor");
 
         // cleanup
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
