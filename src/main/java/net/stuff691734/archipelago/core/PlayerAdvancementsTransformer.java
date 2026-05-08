@@ -1,7 +1,6 @@
 package net.stuff691734.archipelago.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
@@ -90,7 +89,6 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         classNode.methods.add(lambda$forEach());
 
         classNode.methods.add(archipelago$ensureVisibility());
-        // TODO: Change how this is referenced
         classNode.interfaces.add("net/stuff691734/archipelago/mixin/PlayerAdvancementAccessor");
 
         // cleanup
