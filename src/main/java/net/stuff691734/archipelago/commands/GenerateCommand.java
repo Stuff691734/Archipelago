@@ -10,8 +10,11 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Loader;
+import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
+import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
+import net.stuff691734.archipelago.archipelagoData.DependencyNotationSerializer;
 import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
 import java.io.File;
@@ -37,15 +40,11 @@ public class GenerateCommand {
 
         sender.sendMessage(new TextComponentString("Started writing to file."));
 
-        Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
+        Map<String, Check> checks = new LinkedHashMap<>(generateAdvancementChecks(server));
 
         if (Loader.isModLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks(removePermaHidden));
-        } else {
-            checks.put("FTBQuests", new HashMap<>());
+            checks.putAll(FTBGenerateCommand.generateFTBChecks(server, removePermaHidden));
         }
-
-        checks.put("Advancements", generateAdvancementChecks(server));
 
         try {
             new File("output").mkdir();
@@ -54,6 +53,7 @@ public class GenerateCommand {
             Writer writer = new FileWriter("output/archipelago_data.json");
             GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
+                    .registerTypeAdapter(DependencyNotation.class, new DependencyNotationSerializer())
                     .serializeNulls();
             if (singleLine) {
                 builder.setPrettyPrinting();
@@ -76,13 +76,22 @@ public class GenerateCommand {
             if (display != null) {
                 Advancement parent = advancement.getParent();
                 String parent_id = null;
-                if (parent != null) {
-                    parent_id = parent.getId().toString();
+                if (parent != null && parent.getDisplay() != null) {
+                    parent_id = String.format("adv %s (%s)", parent.getId(), parent.getDisplay().getTitle().getUnformattedText());
                 }
+                Advancement root = Utils.getRoot(advancement);
+                String tab;
+                if (root.getDisplay() != null) {
+                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getUnformattedText());
+                } else {
+                    tab = String.format("adv %s (%s)", root.getId(), root.getId());
+                }
+
                 if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                    advancementsChecks.put(advancement.getId().toString(), new AdvancementsCheck(
+                    advancementsChecks.put(String.format("adv %s (%s)", advancement.getId(), display.getTitle().getUnformattedText()), new AdvancementsCheck(
                             display.getFrame().getName(),
-                            parent_id
+                            parent_id,
+                            tab
                     ));
                 }
             }
