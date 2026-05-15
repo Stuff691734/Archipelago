@@ -31,7 +31,8 @@ public class ConnectionEvent {
                     state.slotData.get("ftb_quest_check_shape"),
                     state.slotData.get("advancement_checks_give_items"),
                     state.slotData.get("quest_checks_give_rewards"),
-                    state.slotData.get("death_link")
+                    state.slotData.get("death_link"),
+                    state.slotData.get("roots_unlocked")
             );
             for (EntityPlayerMP player : Archipelago.getServer().getPlayerList().getPlayers()) {
                 ArchipelagoPacketHandler.INSTANCE.sendTo(
@@ -47,15 +48,8 @@ public class ConnectionEvent {
             }
             Archipelago.LOGGER.info(state.slotData.toString());
 
-            for (String check : state.pendingChecks) {
-                Long check_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(check);
-                if (check_id != null) {
-                    Archipelago.client.getLocationManager().checkLocation(check_id);
-                    if ((check).equals(Archipelago.slotData.final_goal)) {
-                        Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-                    }
-                }
-            }
+            state.pendingChecks.forEach(Utils::sendCheck);
+
             // handled, remove so they aren't given again
             state.pendingChecks.clear();
             state.setDirty(true);

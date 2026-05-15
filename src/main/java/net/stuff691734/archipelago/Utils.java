@@ -1,5 +1,6 @@
 package net.stuff691734.archipelago;
 
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,10 +11,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -104,55 +107,61 @@ public class Utils {
     }
 
     public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
-        if (
-            Archipelago.slotData.isInitiated &&
-            (
-                !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
-            )
-        ) {
-            if (
-                Archipelago.slotData.activated_modules.contains("Advancements") &&
-                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
-            ) {
-                return true;
+        if (display != null) {
+            if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
+                Advancement rootAdvancement = Utils.getRoot(advancement);
+                String rootAdvancementName = rootAdvancement.getId().toString();
+
+                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(rootAdvancementName));
             }
-
-            return display.isHidden();
-        }
-
-        if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            Advancement rootAdvancement = Utils.getRoot(advancement);
-            String rootAdvancementName = rootAdvancement.getId().toString();
-
-            return !ArchipelagoPersistentState.getAdvancement(rootAdvancementName);
-        }
-        // parent advancement
-        else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (Utils.getRoot(advancement) == advancement) {
-                // if root check against self
-                return !ArchipelagoPersistentState.getAdvancement(advancement.getId().toString());
-            } else {
-                // otherwise check against values up tree not including self
-                Advancement checkAdvancement = advancement;
-                // exits when all advancements up the tree have been checked
-                while (checkAdvancement != null) {
-                    checkAdvancement = checkAdvancement.getParent();
-
-                    if (checkAdvancement != null) {
+            else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
+                if (Utils.getRoot(advancement) == advancement) {
+                    if (Archipelago.slotData.roots_unlocked) {
+                        return false;
+                    }
+                    return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
+                } else {
+                    Advancement checkAdvancement = advancement.getParent();
+                    while (checkAdvancement != null) {
                         String checkAdvancementName = checkAdvancement.getId().toString();
-                        if (!ArchipelagoPersistentState.getAdvancement(checkAdvancementName)) {
+                        if (!ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(checkAdvancementName))) {
                             return true;
                         }
+                        checkAdvancement = checkAdvancement.getParent();
                     }
+                    return false;
                 }
-                return false;
+            }
+            // not either, probably uninitiated
+            else {
+                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
             }
         }
-        // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
-        // to do an advancement insanity thing
-        else {
-            return !ArchipelagoPersistentState.getAdvancement(advancement.getId().toString());
+        return false;
+    }
+
+    public static Long getLocationId(String locationName) {
+        return Archipelago.client.getDataPackage().getGame("Modded Minecraft")
+                .locationNameToId.keySet()
+                .stream().filter(
+                    (key) -> locationName.equals(String.format("%s %s", (Object[]) key.split(" ")))
+                ).findFirst().map(
+                    (value) -> Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(value)
+                ).orElse(null);
+    }
+
+    public static void sendCheck(String checkName) {
+        if (Archipelago.client.isConnected()) {
+            Long check_id = Utils.getLocationId(checkName);
+            if (check_id != null) {
+                Archipelago.client.getLocationManager().checkLocation(check_id);
+                if (Archipelago.slotData.isCheckFinalGoal(checkName)) {
+                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                }
+            }
+        } else if (ArchipelagoPersistentState.getInstance() != null) {
+            ArchipelagoPersistentState.getInstance().pendingChecks.add(checkName);
+            ArchipelagoPersistentState.getInstance().setDirty(true);
         }
     }
 }

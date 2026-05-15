@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago.mixin;
 
-import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.advancements.GuiAdvancement;
@@ -8,7 +7,7 @@ import net.minecraft.client.gui.advancements.GuiAdvancementTab;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
-import org.objectweb.asm.tree.*;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import java.util.Objects;
 
@@ -30,81 +29,25 @@ public class MixinHelper {
     }
 
     public static void sendArchipelagoAdvancement(Advancement advancement) {
-        if (Archipelago.client.isConnected()) {
-            Long advancement_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("adv " + advancement.getId());
-            if (advancement_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(advancement_id);
-                if (("adv " + advancement.getId()).equals(Archipelago.slotData.final_goal)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-                }
-            }
-        } else {
-            if (ArchipelagoPersistentState.getInstance() != null) {
-                ArchipelagoPersistentState.getInstance().pendingChecks.add("adv " + advancement.getId());
-                ArchipelagoPersistentState.getInstance().setDirty(true);
-            }
-        }
+        Utils.sendCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
     }
 
-    public static boolean preventAdvancement(Advancement advancement) {
-        DisplayInfo display = advancement.getDisplay();
-        if (display != null) {
+    public static boolean allowAdvancementCompletion(Advancement advancement) {
+        return !Utils.shouldAdvancementBeHidden(advancement.getDisplay(), advancement);
+    }
+
+    public static GuiAdvancement getGuiAdvancementParent(GuiAdvancement parent, DisplayInfo displayInfo, Advancement advancement) {
+        if (parent == null) return null;
+        if (Archipelago.slotData.isInitiated) {
             if (
-                Archipelago.slotData.isInitiated &&
-                (
-                    !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
-                )
+                Archipelago.slotData.activated_modules.contains("Advancements") &&
+                !Archipelago.slotData.advancement_difficulty.contains(displayInfo.getFrame().getName())
             ) {
-                return true;
+                return null;
             }
-
-            if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-                Advancement rootAdvancement = Utils.getRoot(advancement);
-                String rootAdvancementName = rootAdvancement.getId().toString();
-
-                if (!ArchipelagoPersistentState.getAdvancement(rootAdvancementName)) {
-                    // if player hasn't received root check prevent them from getting the advancement
-                    return false;
-                }
+            else if (!Archipelago.slotData.activated_modules.contains("Advancements")) {
+                return displayInfo.isHidden() ? null : parent;
             }
-            // parent advancement
-            else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-                if (Utils.getRoot(advancement) == advancement) {
-                    // if root check against self
-                    if (!ArchipelagoPersistentState.getAdvancement(advancement.getId().toString())) {
-                        return false;
-                    }
-                } else {
-                    // otherwise check against values up tree not including self
-                    Advancement checkAdvancement = advancement;
-                    // exits when all advancements up the tree have been checked
-                    while (checkAdvancement != null) {
-                        checkAdvancement = checkAdvancement.getParent();
-
-                        if (checkAdvancement != null) {
-                            String checkAdvancementName = checkAdvancement.getId().toString();
-                            if (!ArchipelagoPersistentState.getAdvancement(checkAdvancementName)) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-            // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
-            // to do an advancement insanity thing
-            else {
-                if (!ArchipelagoPersistentState.getAdvancement(advancement.getId().toString())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static GuiAdvancement getGuiAdvancementParent(GuiAdvancement parent, DisplayInfo displayInfo ,Advancement advancement) {
-        if (parent == null) {
-            return null;
         }
         if (Utils.shouldAdvancementBeHidden(displayInfo, advancement)) {
             return null;
@@ -116,10 +59,15 @@ public class MixinHelper {
         if (tab == null) {
             return null;
         }
-        if (Archipelago.slotData.isInitiated && !Archipelago.slotData.activated_modules.contains("Advancements")) {
+        if (Archipelago.slotData.isInitiated &&
+            (
+                !Archipelago.slotData.activated_modules.contains("Advancements") ||
+                (Objects.equals(Archipelago.slotData.unlock_type, "tree") && Archipelago.slotData.roots_unlocked)
+            )
+        ) {
             return tab;
         }
-        if (!ArchipelagoPersistentState.getAdvancement(tab.getAdvancement().getId().toString())) {
+        if (!ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(tab.getAdvancement().getId().toString()))) {
             return null;
         }
 
