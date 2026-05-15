@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ import java.util.Map;
 public class ArchipelagoPersistentState extends WorldSavedData {
     private static ArchipelagoPersistentState instance;
 
-    public Map<String, Boolean> advancementChecks = new HashMap<>();
-    public Map<String, Boolean> ftbQuestChecks = new HashMap<>();
+    public Map<String, Boolean> checks = new HashMap<>();
     public Map<String, String> slotData = new HashMap<>();
     public Map<String, Integer> playerLastCheck = new HashMap<>();
     public List<String> pendingChecks = new ArrayList<>();
@@ -30,11 +30,8 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         NBTTagCompound archipelagoNbt = new NBTTagCompound();
 
-        NBTTagCompound advancementChecksNbt = new NBTTagCompound();
-        advancementChecks.forEach(advancementChecksNbt::setBoolean);
-
-        NBTTagCompound ftbQuestChecksNbt = new NBTTagCompound();
-        ftbQuestChecks.forEach(ftbQuestChecksNbt::setBoolean);
+        NBTTagCompound checksNbt = new NBTTagCompound();
+        checks.forEach(checksNbt::setBoolean);
 
         NBTTagCompound slotDataNbt = new NBTTagCompound();
         slotData.forEach(slotDataNbt::setString);
@@ -45,8 +42,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         NBTTagCompound pendingChecksNbt = new NBTTagCompound();
         pendingChecks.forEach(check -> pendingChecksNbt.setString(check, check));
 
-        archipelagoNbt.setTag("advancement_checks", advancementChecksNbt);
-        archipelagoNbt.setTag("ftb_quest_checks", ftbQuestChecksNbt);
+        archipelagoNbt.setTag("checks", checksNbt);
         archipelagoNbt.setTag("slot_data", slotDataNbt);
         archipelagoNbt.setTag("player_last_check", playerLastCheckDataNbt);
         archipelagoNbt.setTag("pending_checks", pendingChecksNbt);
@@ -59,11 +55,19 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     public void readFromNBT(NBTTagCompound tag) {
         NBTTagCompound archipelagoNbt = tag.getCompoundTag("archipelago");
 
+        NBTTagCompound checksNbt = archipelagoNbt.getCompoundTag("checks");
+        checksNbt.getKeySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
+
+
+        // ************************************************************************************
+        // Backwards compat
+        // should make it so you can load a world from 2.2.x and it shouldn't break
         NBTTagCompound advancementChecksNbt = archipelagoNbt.getCompoundTag("advancement_checks");
-        advancementChecksNbt.getKeySet().forEach(key -> advancementChecks.put(key, advancementChecksNbt.getBoolean(key)));
+        advancementChecksNbt.getKeySet().forEach(key -> checks.put(CheckType.ADVANCEMENT.addPrefix(key), advancementChecksNbt.getBoolean(key)));
 
         NBTTagCompound ftbQuestChecksNbt = archipelagoNbt.getCompoundTag("ftb_quest_checks");
-        ftbQuestChecksNbt.getKeySet().forEach(key -> ftbQuestChecks.put(key, ftbQuestChecksNbt.getBoolean(key)));
+        ftbQuestChecksNbt.getKeySet().forEach(key -> checks.put(CheckType.FTB_QUEST.addPrefix(key), ftbQuestChecksNbt.getBoolean(key)));
+        // ************************************************************************************
 
         NBTTagCompound slotDataNbt = archipelagoNbt.getCompoundTag("slot_data");
         slotDataNbt.getKeySet().forEach(key -> slotData.put(key, slotDataNbt.getString(key)));
@@ -77,8 +81,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
 
     public static ArchipelagoPersistentState createNew() {
         ArchipelagoPersistentState state = new ArchipelagoPersistentState(Archipelago.MODID);
-        state.advancementChecks = new HashMap<>();
-        state.ftbQuestChecks = new HashMap<>();
+        state.checks = new HashMap<>();
         state.slotData = new HashMap<>();
         state.playerLastCheck = new HashMap<>();
         state.pendingChecks = new ArrayList<>();
@@ -106,22 +109,6 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         return state;
     }
 
-    public static Boolean getAdvancement(String advancement) {
-        if (getInstance() != null) {
-            return getInstance().advancementChecks.getOrDefault(advancement, false);
-        } else {
-            return Archipelago.clientState.hasAdvancement(advancement);
-        }
-    }
-
-    public static Boolean getFtbQuest(String quest) {
-        if (getInstance() != null) {
-            return getInstance().ftbQuestChecks.getOrDefault(quest, false);
-        } else {
-            return Archipelago.clientState.hasFtbQuest(quest);
-        }
-    }
-
     @Nullable
     public static ArchipelagoPersistentState getInstance() {
         if (Archipelago.getServer() == null) {
@@ -131,5 +118,17 @@ public class ArchipelagoPersistentState extends WorldSavedData {
             instance = getServerState(Archipelago.getServer());
         }
         return instance;
+    }
+
+    public static void clearInstance() {
+        instance = null;
+    }
+
+    public static boolean getCheck(String checkName) {
+        if (getInstance() != null) {
+            return getInstance().checks.getOrDefault(checkName, false);
+        } else {
+            return Archipelago.clientState.hasCheck(checkName);
+        }
     }
 }

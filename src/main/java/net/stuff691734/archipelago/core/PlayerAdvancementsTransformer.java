@@ -215,7 +215,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         LabelNode continueExecution = new LabelNode();
 
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "preventAdvancement", "(Lnet/minecraft/advancements/Advancement;)Z", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
         instructions.add(new JumpInsnNode(IFEQ, continueExecution));
 
         instructions.add(new VarInsnNode(ALOAD, 1));
@@ -232,7 +232,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         LabelNode continueExecution = new LabelNode();
 
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "preventAdvancement", "(Lnet/minecraft/advancements/Advancement;)Z", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
         instructions.add(new JumpInsnNode(IFNE, continueExecution));
 
         instructions.add(new InsnNode(ICONST_0));
