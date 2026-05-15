@@ -9,43 +9,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.stuff691734.archipelago.Archipelago;
 
 public class StartSyncChecksPacket implements IMessage {
-    private String[] advancements;
-    private String[] quests;
+    private String[] checks;
 
     public StartSyncChecksPacket() {
-        this(new String[0], new String[0]);
+        this(new String[0]);
     }
 
-    public StartSyncChecksPacket(String[] advancements, String[] quests) {
-        this.advancements = advancements;
-        this.quests = quests;
+    public StartSyncChecksPacket(String[] checks) {
+        this.checks = checks;
     }
 
     @Override
     public void fromBytes(ByteBuf friendlyByteBuf) {
-        int advancementLength = friendlyByteBuf.readInt();
-        advancements = new String[advancementLength];
-        for (int i = 0; i < advancementLength; i++) {
-            advancements[i] = ByteBufUtils.readUTF8String(friendlyByteBuf);
-        }
-
-        int questLength = friendlyByteBuf.readInt();
-        quests = new String[questLength];
-        for (int i = 0; i < questLength; i++) {
-            quests[i] = ByteBufUtils.readUTF8String(friendlyByteBuf);
+        int checksLength = friendlyByteBuf.readInt();
+        checks = new String[checksLength];
+        for (int i = 0; i < checksLength; i++) {
+            checks[i] = ByteBufUtils.readUTF8String(friendlyByteBuf);
         }
     }
 
     @Override
     public void toBytes(ByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeInt(advancements.length);
-        for (String advancement : advancements) {
-            ByteBufUtils.writeUTF8String(friendlyByteBuf, advancement);
-        }
-
-        friendlyByteBuf.writeInt(quests.length);
-        for (String quest : quests) {
-            ByteBufUtils.writeUTF8String(friendlyByteBuf, quest);
+        friendlyByteBuf.writeInt(checks.length);
+        for (String check : checks) {
+            ByteBufUtils.writeUTF8String(friendlyByteBuf, check);
         }
     }
 
@@ -56,8 +43,7 @@ public class StartSyncChecksPacket implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 Archipelago.LOGGER.info("Got archipelago check data from server.");
 
-                Archipelago.clientState.setAdvancements(message.advancements);
-                Archipelago.clientState.setQuests(message.quests);
+                Archipelago.clientState.addAllChecks(message.checks);
             });
             return null;
         }

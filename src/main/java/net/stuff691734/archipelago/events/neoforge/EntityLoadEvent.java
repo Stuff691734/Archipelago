@@ -21,16 +21,13 @@ public class EntityLoadEvent {
                 ArchipelagoPersistentState.getInstance().playerLastCheck.put(event.getPlayer().getCachedUniqueIdString(), serverLastCheck);
 
                 for (NetworkItem item : Archipelago.client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
-                    String[] itemName = item.itemName.split(" ", 2);
+                    String[] itemName = item.itemName.split(" ", 3);
                     ReceiveItemEvent.serverParseItem(Archipelago.getServer(), ArchipelagoPersistentState.getInstance(), itemName[0], itemName[1], null);
                 }
                 ArchipelagoPersistentState.getInstance().setDirty(true);
             }
             ArchipelagoPacketHandler.INSTANCE.sendTo(
-                new StartSyncChecksPacket(
-                    ArchipelagoPersistentState.getInstance().advancementChecks.keySet().toArray(new String[0]),
-                    ArchipelagoPersistentState.getInstance().ftbQuestChecks.keySet().toArray(new String[0])
-                ),
+                new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0])),
                 (EntityPlayerMP) event.player
             );
             ArchipelagoPacketHandler.INSTANCE.sendTo(
