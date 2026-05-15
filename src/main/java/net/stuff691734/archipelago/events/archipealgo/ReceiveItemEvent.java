@@ -12,6 +12,7 @@ import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
@@ -28,7 +29,7 @@ public class ReceiveItemEvent {
                 event.getPlayerName(),
                 event.getLocationName()
         )));
-        String[] itemName = event.getItemName().split(" ",2);
+        String[] itemName = event.getItemName().split(" ",3);
 
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
     }
@@ -41,14 +42,15 @@ public class ReceiveItemEvent {
     }
 
     public static void serverParseItem(MinecraftServer server, ArchipelagoPersistentState state, String itemType, String itemName, @Nullable Long index) {
-        switch (itemType) {
-            case "adv":
+        CheckType checkType = CheckType.getCheckType(itemType);
+        switch (checkType) {
+            case ADVANCEMENT:
                 if (Utils.isAdvancementId(itemName)) {
-                    state.advancementChecks.put(itemName, true);
+                    state.checks.put(checkType.addPrefix(itemName), true);
                     Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
-                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(GetCheckPacket.CheckType.ADVANCEMENT, itemName), player);
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(checkType.addPrefix(itemName)), player);
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
@@ -59,18 +61,24 @@ public class ReceiveItemEvent {
                     }
                 }
                 break;
-            case "ftb":
+            case FTB_QUEST:
                 if (Loader.isModLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
-                    state.ftbQuestChecks.put(itemName, true);
+                    state.checks.put(checkType.addPrefix(itemName), true);
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
-                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(GetCheckPacket.CheckType.FTB_QUESTS, itemName), player);
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(itemName), player);
                     }
                 }
                 break;
-            case "item":
+            case ITEM:
                 if (Utils.isItemId(itemName)) {
                     Utils.giveItem(server, itemName, index);
                 }
+                break;
+            case DEFAULT:
+                Archipelago.LOGGER.info(
+                        "Received item: '{}' with type signature: '{}'. it did not match any known types",
+                        itemName, itemType
+                );
                 break;
         }
         if (index != null) {

@@ -2,14 +2,14 @@ package net.stuff691734.archipelago.mixin;
 
 import com.feed_the_beast.ftblib.lib.icon.Icon;
 import com.feed_the_beast.ftbquests.client.ClientQuestData;
-import com.feed_the_beast.ftbquests.quest.DependencyRequirement;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.QuestData;
-import com.feed_the_beast.ftbquests.quest.task.Task;
 import com.feed_the_beast.ftbquests.quest.theme.property.ThemeProperties;
-import io.github.archipelagomw.ClientStatus;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
+import net.stuff691734.archipelago.ftbquests.FTBUtils;
 
 import java.util.Objects;
 
@@ -18,10 +18,10 @@ public class FTBQuestsMixinHelper {
     public static Icon getQuestIcon(Quest quest, Icon originalIcon, ClientQuestData data) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             if (
-                    ArchipelagoPersistentState.getFtbQuest(quest.getCodeString()) &&
-                            quest.rewards.stream().anyMatch(
-                                    reward -> !data.isRewardClaimedSelf(reward)
-                            )
+                    ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
+                    quest.rewards.stream().anyMatch(
+                        reward -> !data.isRewardClaimedSelf(reward)
+                    )
             ) {
                 // got this check but haven't claimed yet
                 return ThemeProperties.ALERT_ICON.get(quest);
@@ -32,30 +32,18 @@ public class FTBQuestsMixinHelper {
 
     public static boolean isQuestRewardAvailable(Quest quest, QuestData data) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
-            return ArchipelagoPersistentState.getFtbQuest(quest.getCodeString());
+            return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
         }
         return quest.isComplete(data);
     }
 
     public static void sendArchipelagoQuest(Quest quest) {
-        Archipelago.LOGGER.info("Quest Completed.");
-        if (Archipelago.client.isConnected()) {
-            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + quest);
-            if (quest_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(quest_id);
-                if (("ftb " + quest).equals(Archipelago.slotData.final_goal)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-                }
-            }
-        } else if (ArchipelagoPersistentState.getInstance() != null) {
-            ArchipelagoPersistentState.getInstance().pendingChecks.add("ftb " + quest);
-            ArchipelagoPersistentState.getInstance().setDirty(true);
-        }
+        Utils.sendCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
     }
 
     public static boolean isQuestRewardAvailable(Quest quest) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
-            return ArchipelagoPersistentState.getFtbQuest(quest.getCodeString());
+            return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
         }
         return true;
     }
@@ -72,37 +60,45 @@ public class FTBQuestsMixinHelper {
         }
 
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            if (!ArchipelagoPersistentState.getFtbQuest(quest.getChapter().getCodeString())) {
+            if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getChapter().getCodeString()))) {
                 // if player hasn't received quest chapter check prevent them from getting the advancement
                 return false;
             }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            DependencyRequirement requirement = quest.dependencyRequirement;
-            if (quest.dependencies.isEmpty() && !ArchipelagoPersistentState.getFtbQuest(quest.getCodeString())) {
-                // no dependencies, check if it has self
-                return false;
-            }
-            if (requirement.one) {
-                if (quest.dependencies.stream()
-                        .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
-                        .noneMatch((dependency) -> ArchipelagoPersistentState.getFtbQuest(dependency.getCodeString()))
-                ) {
-                    // need one dependency, check if it has any
-                    return false;
+            if (quest.dependencies.isEmpty()) {
+                if (!Archipelago.slotData.roots_unlocked) {
+                    if (!FTBUtils.hasRequiredChecks(quest)) {
+                        return false;
+                    }
+                    if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()))) {
+                        // no dependencies, check if it has self
+                        return false;
+                    }
                 }
-            } else {
-                if (!quest.dependencies.stream()
-                        .map((dependency) -> dependency instanceof Task ? ((Task)dependency).quest : dependency)
-                        .allMatch((dependency) -> ArchipelagoPersistentState.getFtbQuest(dependency.getCodeString()))
-                ) {
-                    // need all dependency, check if it has all
-                    return false;
+            }
+            else {
+                if (quest.minRequiredDependencies != 0) {
+                    if (quest.dependencies.stream().filter(FTBUtils::hasRequiredChecks).count() < quest.minRequiredDependencies) {
+                        // checks if it has less than the minimum required
+                        return false;
+                    }
+                }
+                else if (quest.dependencyRequirement.one) {
+                    if (quest.dependencies.stream().noneMatch(FTBUtils::hasRequiredChecks)) {
+                        // need one dependency, check if it has any
+                        return false;
+                    }
+                } else {
+                    if (!quest.dependencies.stream().allMatch(FTBUtils::hasRequiredChecks)) {
+                        // need all dependencies, check if it has all
+                        return false;
+                    }
                 }
             }
         }
         else {
-            if (!ArchipelagoPersistentState.getFtbQuest(quest.getCodeString())) {
+            if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()))) {
                 return false;
             }
         }

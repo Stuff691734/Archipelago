@@ -5,35 +5,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ArchipelagoClientState {
-    public Set<String> advancements;
-    public Set<String> quests;
+    private final Set<String> checks;
 
     public ArchipelagoClientState() {
-        this.advancements = new HashSet<>();
-        this.quests = new HashSet<>();
+        this.checks = new HashSet<>();
     }
 
-    public void setAdvancements(String[] advancements) {
-        this.advancements.addAll(Arrays.asList(advancements));
+    public boolean hasCheck(String checkName) {
+        return this.checks.contains(checkName);
     }
 
-    public void setQuests(String[] quests) {
-        this.quests.addAll(Arrays.asList(quests));
+    public void addCheck(String checkName) {
+        this.checks.add(checkName);
     }
 
-    public void addAdvancement(String advancement) {
-        this.advancements.add(advancement);
+    public void addAllChecks(String[] checks) {
+        this.checks.addAll(Arrays.asList(checks));
     }
 
-    public void addQuest(String quest) {
-        this.quests.add(quest);
-    }
-
-    public boolean hasAdvancement(String advancement) {
-        return this.advancements.contains(advancement);
-    }
-
-    public boolean hasFtbQuest(String quest) {
-        return this.quests.contains(quest);
+    public void clear() {
+        this.checks.clear();
     }
 }

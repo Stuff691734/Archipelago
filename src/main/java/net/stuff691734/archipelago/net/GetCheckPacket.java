@@ -9,27 +9,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.stuff691734.archipelago.Archipelago;
 
 public class GetCheckPacket implements IMessage {
-    public CheckType type;
     public String check;
 
     public GetCheckPacket() {
-        this(CheckType.ADVANCEMENT, "");
+        this("");
     }
 
-    public GetCheckPacket(CheckType type, String check) {
-        this.type = type;
+    public GetCheckPacket(String check) {
         this.check = check;
     }
 
     @Override
     public void fromBytes(ByteBuf friendlyByteBuf) {
-        type = CheckType.values()[friendlyByteBuf.readByte()];
         check = ByteBufUtils.readUTF8String(friendlyByteBuf);
     }
 
     @Override
     public void toBytes(ByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeByte(type.ordinal());
         ByteBufUtils.writeUTF8String(friendlyByteBuf, check);
     }
 
@@ -39,21 +35,9 @@ public class GetCheckPacket implements IMessage {
         public IMessage onMessage(GetCheckPacket message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 Archipelago.LOGGER.info("Received archipelago check from server.");
-                switch (message.type) {
-                    case ADVANCEMENT:
-                        Archipelago.clientState.addAdvancement(message.check);
-                        break;
-                    case FTB_QUESTS:
-                        Archipelago.clientState.addQuest(message.check);
-                        break;
-                }
+                Archipelago.clientState.addCheck(message.check);
             });
             return null;
         }
-    }
-
-    public enum CheckType {
-        ADVANCEMENT,
-        FTB_QUESTS;
     }
 }
