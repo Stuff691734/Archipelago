@@ -33,7 +33,8 @@ public class ServerStartingEvent {
                     state.slotData.get("ftb_quest_check_shape"),
                     state.slotData.get("advancement_checks_give_items"),
                     state.slotData.get("quest_checks_give_rewards"),
-                    state.slotData.get("death_link")
+                    state.slotData.get("death_link"),
+                    state.slotData.get("roots_unlocked")
             );
         }
 
