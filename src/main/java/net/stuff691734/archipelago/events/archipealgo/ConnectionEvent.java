@@ -7,6 +7,7 @@ import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.stuff691734.archipelago.*;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
@@ -34,10 +35,10 @@ public class ConnectionEvent {
                     state.slotData.get("death_link"),
                     state.slotData.get("roots_unlocked")
             );
-            for (EntityPlayerMP player : Archipelago.getServer().getPlayerList().getPlayers()) {
-                ArchipelagoPacketHandler.INSTANCE.sendTo(
-                        new SyncSlotDataPacket(state.slotData),
-                        player
+            for (ServerPlayerEntity player : Archipelago.getServer().getPlayerList().getPlayers()) {
+                ArchipelagoPacketHandler.INSTANCE.send(
+                        PacketDistributor.PLAYER.with(() -> player),
+                        new SyncSlotDataPacket(state.slotData)
                 );
             }
 
