@@ -27,7 +27,7 @@ public class GenerateCommand {
     public static int execute(CommandContext<CommandSource> context, boolean singleLine, boolean removePermaHidden) {
         context.getSource().sendFeedback(new StringTextComponent("Started writing to file."), false);
 
-        Map<String, Check> checks = new LinkedHashMap<>(generateAdvancementChecks(server));
+        Map<String, Check> checks = new LinkedHashMap<>(generateAdvancementChecks(context.getSource().getServer()));
 
 
         try {
@@ -63,18 +63,18 @@ public class GenerateCommand {
                 Advancement parent = advancement.getParent();
                 String parent_id = null;
                 if (parent != null && parent.getDisplay() != null) {
-                    parent_id = String.format("adv %s (%s)", parent.getId(), parent.getDisplay().getTitle().getUnformattedText());
+                    parent_id = String.format("adv %s (%s)", parent.getId(), parent.getDisplay().getTitle().getUnformattedComponentText());
                 }
                 Advancement root = Utils.getRoot(advancement);
                 String tab;
                 if (root.getDisplay() != null) {
-                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getUnformattedText());
+                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getUnformattedComponentText());
                 } else {
                     tab = String.format("adv %s (%s)", root.getId(), root.getId());
                 }
 
                 if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                    advancementsChecks.put(String.format("adv %s (%s)", advancement.getId(), display.getTitle().getUnformattedText()), new AdvancementsCheck(
+                    advancementsChecks.put(String.format("adv %s (%s)", advancement.getId(), display.getTitle().getUnformattedComponentText()), new AdvancementsCheck(
                             display.getFrame().getName(),
                             parent_id,
                             tab
