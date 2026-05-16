@@ -6,17 +6,11 @@ var InsnList = Java.type('org.objectweb.asm.tree.InsnList');
 var MethodInsnNode = Java.type('org.objectweb.asm.tree.MethodInsnNode');
 var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode');
 var FieldInsnNode = Java.type('org.objectweb.asm.tree.FieldInsnNode');
-var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode');
-var JumpInsnNode = Java.type('org.objectweb.asm.tree.JumpInsnNode');
-var LabelNode = Java.type('org.objectweb.asm.tree.LabelNode');
 
 var ALOAD = Opcodes.ALOAD;
 var INVOKEVIRTUAL = Opcodes.INVOKEVIRTUAL;
 var GETFIELD = Opcodes.GETFIELD;
 var INVOKESTATIC = Opcodes.INVOKESTATIC;
-var ACONST_NULL = Opcodes.ACONST_NULL;
-var GOTO = Opcodes.GOTO;
-var IFEQ = Opcodes.IFEQ;
 
 
 function initializeCoreMod() {
@@ -73,7 +67,6 @@ function initializeCoreMod() {
                         }
                         if (drawConnectivityTarget != null) {
                             method.instructions.insert(drawConnectivityTarget, DrawConnectivitySetHidden());
-                            method.instructions.remove(drawConnectivityTarget);
                         }
                     }
                 });
@@ -97,29 +90,11 @@ function SetHidden() {
 function DrawConnectivitySetHidden() {
     var instructions = new InsnList();
 
-    var getParent = new LabelNode();
-    var end = new LabelNode();
-
+    instructions.add(new VarInsnNode(ALOAD, 0));
     instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "displayInfo", "Lnet/minecraft/advancements/DisplayInfo;"));
     instructions.add(new VarInsnNode(ALOAD, 0));
     instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "advancement", "Lnet/minecraft/advancements/Advancement;"));
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Utils", "shouldAdvancementBeHidden", "(Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Z", false));
-
-    instructions.add(new JumpInsnNode(IFEQ, getParent));
-    instructions.add(new InsnNode(ACONST_NULL));
-
-    instructions.add(new JumpInsnNode(GOTO, end));
-
-    instructions.add(getParent);
-    instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/AdvancementEntryGui", "parent", "Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;"));
-
-    instructions.add(end);
-
-
-
-
-
+    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "getGuiAdvancementParent", "(Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;", false));
 
     return instructions;
 }

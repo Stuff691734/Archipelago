@@ -1,5 +1,6 @@
 {
   "archipelago$PlayerAdvancementsMixin": "core/PlayerAdvancementsMixin.js",
   "archipelago$AdvancementsScreenMixin": "core/AdvancementsScreenMixin.js",
-  "archipelago$AdvancementEntryGuiMixin": "core/AdvancementEntryGuiMixin.js"
+  "archipelago$AdvancementEntryGuiMixin": "core/AdvancementEntryGuiMixin.js",
+  "archipelago$DisplayInfoMixin": "core/DisplayInfoMixin.js"
 }

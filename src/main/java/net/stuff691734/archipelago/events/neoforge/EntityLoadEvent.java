@@ -4,6 +4,7 @@ import io.github.archipelagomw.parts.NetworkItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
@@ -26,14 +27,14 @@ public class EntityLoadEvent {
                 }
                 ArchipelagoPersistentState.getInstance().setDirty(true);
             }
-            ArchipelagoPacketHandler.INSTANCE.sendTo(
-                new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0])),
-                (EntityPlayerMP) event.player
+            ArchipelagoPacketHandler.INSTANCE.send(
+                    PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) event.getPlayer()),
+                    new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0]))
             );
             if (!ArchipelagoPersistentState.getInstance().slotData.isEmpty()) {
-                ArchipelagoPacketHandler.INSTANCE.sendTo(
-                    new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData),
-                    (EntityPlayerMP) event.player
+                ArchipelagoPacketHandler.INSTANCE.send(
+                        PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) event.getPlayer()),
+                        new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData)
                 );
             }
         }
