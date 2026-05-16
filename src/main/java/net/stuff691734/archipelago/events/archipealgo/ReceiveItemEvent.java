@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
@@ -48,7 +49,10 @@ public class ReceiveItemEvent {
                     Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
-                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(checkType.addPrefix(itemName)), player);
+                        ArchipelagoPacketHandler.INSTANCE.send(
+                                PacketDistributor.PLAYER.with(() -> player),
+                                new GetCheckPacket(checkType.addPrefix(itemName))
+                        );
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId

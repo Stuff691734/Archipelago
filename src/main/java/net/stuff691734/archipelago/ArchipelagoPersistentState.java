@@ -55,7 +55,7 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     public void read(NBTTagCompound tag) {
         NBTTagCompound archipelagoNbt = tag.getCompound("archipelago");
 
-        NBTTagCompound checksNbt = archipelagoNbt.getCompoundTag("checks");
+        NBTTagCompound checksNbt = archipelagoNbt.getCompound("checks");
         checksNbt.keySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
 
