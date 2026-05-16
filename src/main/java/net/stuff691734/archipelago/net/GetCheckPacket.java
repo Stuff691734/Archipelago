@@ -1,43 +1,38 @@
 package net.stuff691734.archipelago.net;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
 
-public class GetCheckPacket implements IMessage {
-    public String check;
+import java.util.function.Supplier;
 
-    public GetCheckPacket() {
-        this("");
-    }
+public class GetCheckPacket {
+    public String check;
 
     public GetCheckPacket(String check) {
         this.check = check;
     }
 
-    @Override
-    public void fromBytes(ByteBuf friendlyByteBuf) {
-        check = ByteBufUtils.readUTF8String(friendlyByteBuf);
+    public GetCheckPacket(PacketBuffer friendlyByteBuf) {
+        this.check = friendlyByteBuf.readString(Short.MAX_VALUE);
     }
 
-    @Override
-    public void toBytes(ByteBuf friendlyByteBuf) {
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, check);
+    public void encode(PacketBuffer friendlyByteBuf) {
+        friendlyByteBuf.writeString(this.check);
     }
 
-    public static class Handler implements IMessageHandler<GetCheckPacket, IMessage> {
-
-        @Override
-        public IMessage onMessage(GetCheckPacket message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Archipelago.LOGGER.info("Received archipelago check from server.");
-                Archipelago.clientState.addCheck(message.check);
-            });
-            return null;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> {
+            DistExecutor.runWhenOn(
+                    Dist.CLIENT,
+                    () -> () -> {
+                        Archipelago.LOGGER.info("Received archipelago check from server.");
+                        Archipelago.clientState.addCheck(this.check);
+                    }
+            );
+        });
+        context.get().setPacketHandled(true);
     }
 }

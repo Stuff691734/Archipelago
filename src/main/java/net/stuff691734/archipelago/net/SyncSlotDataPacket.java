@@ -1,73 +1,67 @@
 package net.stuff691734.archipelago.net;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.SlotData;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public class SyncSlotDataPacket implements IMessage {
+public class SyncSlotDataPacket {
     private final Map<String, String> slotData;
-
-    public SyncSlotDataPacket() {
-        this(new HashMap<>());
-    }
 
     public SyncSlotDataPacket(Map<String, String> slotData) {
         this.slotData = slotData;
     }
 
-    @Override
-    public void fromBytes(ByteBuf friendlyByteBuf) {
-        slotData.put("unlock_type", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("final_goal", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("activated_modules", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("advancement_check_difficulty", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("ftb_quest_check_shape", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("advancement_checks_give_items", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("quest_checks_give_rewards", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("death_link", ByteBufUtils.readUTF8String(friendlyByteBuf));
-        slotData.put("roots_unlocked", ByteBufUtils.readUTF8String(friendlyByteBuf));
+    public SyncSlotDataPacket(PacketBuffer friendlyByteBuf) {
+        this.slotData = new HashMap<>();
+        slotData.put("unlock_type", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("final_goal", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("activated_modules", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("advancement_check_difficulty", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("ftb_quest_check_shape", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("advancement_checks_give_items", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("quest_checks_give_rewards", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("death_link", friendlyByteBuf.readString(Short.MAX_VALUE));
+        slotData.put("roots_unlocked", friendlyByteBuf.readString(Short.MAX_VALUE));
     }
 
-    @Override
-    public void toBytes(ByteBuf friendlyByteBuf) {
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("unlock_type"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("final_goal"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("activated_modules"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("advancement_check_difficulty"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("ftb_quest_check_shape"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("advancement_checks_give_items"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("quest_checks_give_rewards"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("death_link"));
-        ByteBufUtils.writeUTF8String(friendlyByteBuf, slotData.get("roots_unlocked"));
+    public void encode(PacketBuffer friendlyByteBuf) {
+        friendlyByteBuf.writeString(slotData.get("unlock_type"));
+        friendlyByteBuf.writeString(slotData.get("final_goal"));
+        friendlyByteBuf.writeString(slotData.get("activated_modules"));
+        friendlyByteBuf.writeString(slotData.get("advancement_check_difficulty"));
+        friendlyByteBuf.writeString(slotData.get("ftb_quest_check_shape"));
+        friendlyByteBuf.writeString(slotData.get("advancement_checks_give_items"));
+        friendlyByteBuf.writeString(slotData.get("quest_checks_give_rewards"));
+        friendlyByteBuf.writeString(slotData.get("death_link"));
+        friendlyByteBuf.writeString(slotData.get("roots_unlocked"));
     }
 
-    public static class Handler implements IMessageHandler<SyncSlotDataPacket, IMessage> {
-
-        @Override
-        public IMessage onMessage(SyncSlotDataPacket message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Archipelago.LOGGER.info("Got archipelago slot data from server.");
-                Archipelago.slotData = new SlotData(
-                        message.slotData.get("unlock_type"),
-                        message.slotData.get("final_goal"),
-                        message.slotData.get("activated_modules"),
-                        message.slotData.get("advancement_check_difficulty"),
-                        message.slotData.get("ftb_quest_check_shape"),
-                        message.slotData.get("advancement_checks_give_items"),
-                        message.slotData.get("quest_checks_give_rewards"),
-                        message.slotData.get("death_link"),
-                        message.slotData.get("roots_unlocked")
-                );
-            });
-            return null;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> {
+            DistExecutor.runWhenOn(
+                Dist.CLIENT,
+                () -> () -> {
+                    Archipelago.LOGGER.info("Got archipelago slot data from server.");
+                    Archipelago.slotData = new SlotData(
+                            this.slotData.get("unlock_type"),
+                            this.slotData.get("final_goal"),
+                            this.slotData.get("activated_modules"),
+                            this.slotData.get("advancement_check_difficulty"),
+                            this.slotData.get("ftb_quest_check_shape"),
+                            this.slotData.get("advancement_checks_give_items"),
+                            this.slotData.get("quest_checks_give_rewards"),
+                            this.slotData.get("death_link"),
+                            this.slotData.get("roots_unlocked")
+                    );
+                }
+            );
+        });
     }
 }
