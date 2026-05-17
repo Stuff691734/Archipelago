@@ -21,7 +21,8 @@ function initializeCoreMod() {
                 "name": "net/minecraft/advancements/DisplayInfo"
             },
             "transformer": function(classNode) {
-                classNode.methods.add(archipelago$getIcon())
+                classNode.methods.add(archipelago$getIcon());
+                classNode.interfaces.add("net/stuff691734/archipelago/mixin/DisplayInfoAccessor");
 
                 return classNode;
             }
