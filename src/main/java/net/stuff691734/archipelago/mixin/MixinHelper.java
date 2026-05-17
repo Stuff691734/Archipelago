@@ -2,8 +2,8 @@ package net.stuff691734.archipelago.mixin;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.gui.advancements.GuiAdvancement;
-import net.minecraft.client.gui.advancements.GuiAdvancementTab;
+import net.minecraft.client.gui.advancements.AdvancementEntryGui;
+import net.minecraft.client.gui.advancements.AdvancementTabGui;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
@@ -36,7 +36,7 @@ public class MixinHelper {
         return !Utils.shouldAdvancementBeHidden(advancement.getDisplay(), advancement);
     }
 
-    public static GuiAdvancement getGuiAdvancementParent(GuiAdvancement parent, DisplayInfo displayInfo, Advancement advancement) {
+    public static AdvancementEntryGui getGuiAdvancementParent(AdvancementEntryGui parent, DisplayInfo displayInfo, Advancement advancement) {
         if (parent == null) return null;
         if (Archipelago.slotData.isInitiated) {
             if (
@@ -55,7 +55,7 @@ public class MixinHelper {
         return parent;
     }
 
-    public static GuiAdvancementTab getGuiAdvancementTab(GuiAdvancementTab tab) {
+    public static AdvancementTabGui getGuiAdvancementTab(AdvancementTabGui tab) {
         if (tab == null) {
             return null;
         }

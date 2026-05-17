@@ -43,7 +43,7 @@ function initializeCoreMod() {
 function showAdvancementPage() {
     var instructions = new InsnList();
 
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "getGuiAdvancementTab", "(Lnet/minecraft/client/gui/advancements/GuiAdvancementTab;)Lnet/minecraft/client/gui/advancements/GuiAdvancementTab;", false))
+    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "getGuiAdvancementTab", "(Lnet/minecraft/client/gui/advancements/AdvancementTabGui;)Lnet/minecraft/client/gui/advancements/AdvancementTabGui;", false))
 
     return instructions;
 }
