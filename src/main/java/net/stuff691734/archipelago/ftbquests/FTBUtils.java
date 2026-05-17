@@ -20,7 +20,7 @@ public class FTBUtils {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;
         }
-        return ServerQuestFile.INSTANCE.getQuest(id) != null;
+        return ServerQuestFile.INSTANCE.get(id) != null;
     }
 
     public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
