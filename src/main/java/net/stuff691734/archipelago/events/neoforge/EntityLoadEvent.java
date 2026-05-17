@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.events.neoforge;
 
 import io.github.archipelagomw.parts.NetworkItem;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -28,12 +28,12 @@ public class EntityLoadEvent {
                 ArchipelagoPersistentState.getInstance().setDirty(true);
             }
             ArchipelagoPacketHandler.INSTANCE.send(
-                    PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) event.getPlayer()),
+                    PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                     new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0]))
             );
             if (!ArchipelagoPersistentState.getInstance().slotData.isEmpty()) {
                 ArchipelagoPacketHandler.INSTANCE.send(
-                        PacketDistributor.PLAYER.with(() -> (EntityPlayerMP) event.getPlayer()),
+                        PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                         new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData)
                 );
             }

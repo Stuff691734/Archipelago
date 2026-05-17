@@ -55,17 +55,17 @@ public class ArchipelagoPersistentState extends WorldSavedData {
     public void read(CompoundNBT tag) {
         CompoundNBT archipelagoNbt = tag.getCompound("archipelago");
 
-        NBTTagCompound checksNbt = archipelagoNbt.getCompound("checks");
+        CompoundNBT checksNbt = archipelagoNbt.getCompound("checks");
         checksNbt.keySet().forEach(key -> checks.put(key, checksNbt.getBoolean(key)));
 
 
         // ************************************************************************************
         // Backwards compat
         // should make it so you can load a world from 2.2.x and it shouldn't break
-        NBTTagCompound advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
+        CompoundNBT advancementChecksNbt = archipelagoNbt.getCompound("advancement_checks");
         advancementChecksNbt.keySet().forEach(key -> checks.put(CheckType.ADVANCEMENT.addPrefix(key), advancementChecksNbt.getBoolean(key)));
 
-        NBTTagCompound ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
+        CompoundNBT ftbQuestChecksNbt = archipelagoNbt.getCompound("ftb_quest_checks");
         ftbQuestChecksNbt.keySet().forEach(key -> checks.put(CheckType.FTB_QUEST.addPrefix(key), ftbQuestChecksNbt.getBoolean(key)));
         // ************************************************************************************
 

@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.events.neoforge;
 
 import io.github.archipelagomw.flags.ItemsHandling;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.stuff691734.archipelago.*;
