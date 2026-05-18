@@ -5,22 +5,24 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 public class GetCommand {
     public static int execute(CommandContext<CommandSource> context) {
-        context.getSource().sendSuccess(new StringTextComponent(Archipelago.archipelagoPersistentState.advancementChecks.toString()), true);
-        context.getSource().sendSuccess(new StringTextComponent(Archipelago.archipelagoPersistentState.ftbQuestChecks.toString()), true);
-        context.getSource().sendSuccess(new StringTextComponent(Archipelago.archipelagoPersistentState.slotData.toString()), true);
-        context.getSource().sendSuccess(new StringTextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
-        return 0;
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            context.getSource().sendSuccess(new StringTextComponent(ArchipelagoPersistentState.getInstance().checks.toString()), true);
+            context.getSource().sendSuccess(new StringTextComponent(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
+            context.getSource().sendSuccess(new StringTextComponent(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
+            return 0;
+        }
+        return 1;
     }
 
     public static int executeSpecific(CommandContext<CommandSource> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        if (checkName.startsWith("adv ")) {
-            context.getSource().sendSuccess(new StringTextComponent(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkName.substring(4), false).toString()), true);
-        } else {
-            context.getSource().sendSuccess(new StringTextComponent(Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+        String[] check = checkName.split(" ", 3);
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            context.getSource().sendSuccess(new StringTextComponent(String.valueOf(ArchipelagoPersistentState.getCheck(check[0] + " " + check[1]))), true);
         }
         return 0;
     }
