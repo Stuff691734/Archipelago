@@ -7,8 +7,8 @@
     "AdvancementMixin",
     "AdvancementMixin$DataMixin",
     "AdvancementVisibilityEvaluatorMixin",
-    "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
+    "PlayerAdvancementsMixin",
     "FTBQuests.quest.task.AdvancementTaskMixin",
     "FTBQuests.net.ClaimAllRewardsMessageMixin",
     "FTBQuests.net.ClaimRewardMessageMixin",
@@ -21,8 +21,8 @@
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
-    "AdvancementsScreenMixin",
-    "AdvancementWidgetMixin"
+    "AdvancementEntryGuiMixin",
+    "AdvancementsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
