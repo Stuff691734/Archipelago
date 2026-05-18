@@ -6,9 +6,9 @@ import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.task.Task;
-import io.github.archipelagomw.ClientStatus;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
+import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,19 +49,20 @@ public abstract class QuestMixin implements QuestAccessor {
             remap = false
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
-        Archipelago.LOGGER.info("Quest Completed.");
-        if (Archipelago.client.isConnected()) {
-            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
-            if (quest_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(quest_id);
-                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-                }
-            }
-        } else {
-            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
-            Archipelago.archipelagoPersistentState.setDirty();
-        }
+        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+//        Archipelago.LOGGER.info("Quest Completed.");
+//        if (Archipelago.client.isConnected()) {
+//            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
+//            if (quest_id != null) {
+//                Archipelago.client.getLocationManager().checkLocation(quest_id);
+//                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
+//                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+//                }
+//            }
+//        } else {
+//            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
+//            Archipelago.archipelagoPersistentState.setDirty();
+//        }
     }
 
     @Inject(method = "lambda$checkForDependantCompletion$1", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;"), remap = false, cancellable = true)
