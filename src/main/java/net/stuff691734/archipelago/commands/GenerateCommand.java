@@ -7,10 +7,13 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
-import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
+import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
+import net.stuff691734.archipelago.archipelagoData.DependencyNotationSerializer;
 import net.stuff691734.archipelago.ftbquests.commands.FTBGenerateCommand;
 
 import java.io.File;
@@ -26,15 +29,11 @@ public class GenerateCommand {
     public static int execute(CommandContext<CommandSourceStack> context, boolean singleLine, boolean removePermaHidden) {
         context.getSource().sendSuccess(() -> Component.literal("Started writing to file."), false);
 
-        Map<String, Map<String, ? extends Check>> checks = new HashMap<>();
+        Map<String, Check> checks = new LinkedHashMap<>(generateAdvancementChecks(context.getSource().getServer()));
 
         if (ModList.get().isLoaded("ftbquests")) {
-            checks.put("FTBQuests", FTBGenerateCommand.generateFTBChecks(removePermaHidden));
-        } else {
-            checks.put("FTBQuests", new HashMap<>());
+            checks.putAll(FTBGenerateCommand.generateFTBChecks(context.getSource().getServer(), removePermaHidden));
         }
-
-        checks.put("Advancements", generateAdvancementChecks());
 
         try {
             new File("output").mkdir();
@@ -43,6 +42,7 @@ public class GenerateCommand {
             Writer writer = new FileWriter("output/archipelago_data.json");
             GsonBuilder builder = new GsonBuilder()
                     .disableHtmlEscaping()
+                    .registerTypeAdapter(DependencyNotation.class, new DependencyNotationSerializer())
                     .serializeNulls();
             if (!singleLine) {
                 builder.setPrettyPrinting();
@@ -58,23 +58,32 @@ public class GenerateCommand {
         return 0;
     }
 
-    public static Map<String, AdvancementsCheck> generateAdvancementChecks() {
+    public static Map<String, AdvancementsCheck> generateAdvancementChecks(MinecraftServer server) {
         Map<String, AdvancementsCheck> advancementsChecks = new HashMap<>();
 
-        for (AdvancementHolder advancement : Archipelago.server.getAdvancements().getAllAdvancements()) {
+        for (AdvancementHolder advancement : server.getAdvancements().getAllAdvancements()) {
 
             advancement.value().display().ifPresent(display -> {
                 AdvancementNode placedAdvancement = Archipelago.server.getAdvancements().tree().get(advancement);
                 if (placedAdvancement != null) {
                     AdvancementNode parent = placedAdvancement.parent();
                     String parent_id = null;
-                    if (parent != null) {
-                        parent_id = parent.holder().id().toString();
-                    }
+                    if (parent != null&& parent.getDisplay() != null) {
+                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.getDisplay().getTitle().getContents());
+                }
+                Advancement root = Utils.getRoot(advancement);
+                String tab;
+                if (root.getDisplay() != null) {
+                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getContents());
+                } else {
+                    tab = String.format("adv %s (%s)", root.getId(), root.getId());
+                }
+
                     if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                        advancementsChecks.put(advancement.id().toString(), new AdvancementsCheck(
+                        advancementsChecks.put(String.format("adv %s (%s)", advancement.id(), display.getTitle().getContents()), new AdvancementsCheck(
                                 display.getType().getSerializedName(),
-                                parent_id
+                                parent_id,
+                            tab
                         ));
                     }
                 }

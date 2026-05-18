@@ -4,91 +4,92 @@ import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
+import net.minecraftforge.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPacketHandler;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
+import net.stuff691734.archipelago.mixinHelper.DisplayInfoAccessor;
+import net.stuff691734.archipelago.net.GetCheckPacket;
 
 import javax.annotation.Nullable;
 
 public class ReceiveItemEvent {
     @ArchipelagoEventListener
     public void onReceiveItems(io.github.archipelagomw.events.ReceiveItemEvent event) {
-        if (Archipelago.server != null) {
-            Utils.sendMessage(Component.literal(String.format(
-                    "Received %s from %s (%s)",
-                    event.getItemName(),
-                    event.getPlayerName(),
-                    event.getLocationName()
-            )));
-            String[] itemName = event.getItemName().split(" ",2);
+        Utils.sendMessage(Component.literal(String.format(
+                "Received %s from %s (%s)",
+                event.getItemName(),
+                event.getPlayerName(),
+                event.getLocationName()
+        )));
+        String[] itemName = event.getItemName().split(" ",3);
 
-            ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
-        }
+        ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
     }
 
     public static void parseItem(String itemType, String itemName, @Nullable Long index) {
-        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
-            playerParseItem(player, itemType, itemName, index);
+        if (Archipelago.getServer() != null && ArchipelagoPersistentState.getInstance() != null) {
+            serverParseItem(Archipelago.getServer(), ArchipelagoPersistentState.getInstance(), itemType, itemName, index);
+            ArchipelagoPersistentState.getInstance().setDirty(true);
         }
-        switch (itemType) {
-            case "adv":
-                if (Utils.isAdvancementId(itemName)) {
-                    Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                }
-                break;
-            case "ftb":
-                if (ModList.get().isLoaded("ftbquests")) {
-                    if (FTBUtils.isQuestId(itemName)) {
-                        Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
-                        for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
-                            FTBUtils.checkIsCompleted(player, itemName);
-                        }
-                    }
-                }
-                break;
-        }
-        Archipelago.archipelagoPersistentState.setDirty();
     }
 
-    public static void playerParseItem(ServerPlayer player, String itemType, String itemName, @Nullable Long index) {
-        if (
-            index != null &&
-            Archipelago.archipelagoPersistentState.playerLastCheck.getOrDefault(player.getStringUUID(),0) >= index
-        ) {
-            return;
-        }
-        if (index != null) {
-            Archipelago.archipelagoPersistentState.playerLastCheck.put(player.getStringUUID(), index.intValue());
-        }
-
-        switch (itemType) {
-            case "adv":
+    public static void serverParseItem(MinecraftServer server, ArchipelagoPersistentState state, String itemType, String itemName, @Nullable Long index) {
+        CheckType checkType = CheckType.getCheckType(itemType);
+        switch (checkType) {
+            case ADVANCEMENT:
                 if (Utils.isAdvancementId(itemName)) {
-                    Archipelago.archipelagoPersistentState.advancementChecks.put(itemName, true);
-                    AdvancementHolder advancement = Archipelago.server.getAdvancements().get(ResourceLocation.parse(itemName));
-                    PlayerAdvancementAccessor playerAdvancements = ((PlayerAdvancementAccessor)Archipelago.server.getPlayerList().getPlayerAdvancements(player));
-                    playerAdvancements.archipelago$markForVisibilityUpdate(advancement);
+                    state.checks.put(checkType.addPrefix(itemName), true);
+                    AdvancementHolder advancement = server.getAdvancements().get(ResourceLocation.parse(itemName));
+                    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                        ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
+                        ArchipelagoPacketHandler.INSTANCE.send(
+                                PacketDistributor.PLAYER.with(() -> player),
+                                new GetCheckPacket(checkType.addPrefix(itemName))
+                        );
+                    }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(player, display.getIcon().getItem())
+                            display -> Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index)
                         );
                     }
                 }
                 break;
-            case "ftb":
+            case FTB_QUEST:
                 if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
-                    Archipelago.archipelagoPersistentState.ftbQuestChecks.put(itemName, true);
+                    state.checks.put(checkType.addPrefix(itemName), true);
+                    for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                        ArchipelagoPacketHandler.INSTANCE.send(
+                                PacketDistributor.PLAYER.with(() -> player),
+                                new GetCheckPacket(checkType.addPrefix(itemName))
+                        );
+                    }
                 }
                 break;
-            case "item":
+            case ITEM:
                 if (Utils.isItemId(itemName)) {
-                    Utils.giveItem(player, itemName);
+                    Utils.giveItem(server, itemName, index);
                 }
                 break;
+            case DEFAULT:
+                Archipelago.LOGGER.info(
+                        "Received item: '{}' with type signature: '{}'. it did not match any known types",
+                        itemName, itemType
+                );
+                break;
+        }
+        if (index != null) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                state.playerLastCheck.put(player.getStringUUID(), index.intValue());
+            }
         }
     }
 }

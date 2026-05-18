@@ -1,11 +1,13 @@
 package net.stuff691734.archipelago.archipelagoData;
 
 public class Check {
+    public String page;
     public String type;
-    public String[] parent_id;
+    public DependencyNotation dependencies;
 
-    public Check(String type, String[] parent_id) {
+    public Check(String type, DependencyNotation dependencies, String page) {
         this.type = type;
-        this.parent_id = parent_id;
+        this.dependencies = dependencies;
+        this.page = page;
     }
 }
