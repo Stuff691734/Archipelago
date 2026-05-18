@@ -4,9 +4,9 @@
   "package": "net.stuff691734.archipelago.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AdvancementMixin",
     "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
+    "PlayerAdvancementsMixin",
     "FTBQuests.net.ClaimAllRewardsMessageMixin",
     "FTBQuests.net.ClaimRewardMessageMixin",
     "FTBQuests.gui.quests.CollectRewardsButtonMixin",
@@ -18,8 +18,8 @@
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
-    "AdvancementsScreenMixin",
-    "AdvancementWidgetMixin"
+    "AdvancementEntryGuiMixin",
+    "AdvancementsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
