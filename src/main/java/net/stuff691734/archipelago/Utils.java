@@ -1,21 +1,30 @@
 package net.stuff691734.archipelago;
 
+import net.minecraft.ResourceLocationException;
+import io.github.archipelagomw.ClientStatus;
 import com.mojang.serialization.DataResult;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
+        if (Archipelago.getServer() == null) {
+            return false;
+        }
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         AtomicBoolean result = new AtomicBoolean(false);
         id.result().ifPresent(identifier -> {
@@ -39,24 +48,38 @@ public class Utils {
         return result.get();
     }
 
-    public static void giveItem(ServerPlayer player, String itemId) {
-        String[] strings = itemId.split(" ", 2);
-        int amount = Integer.parseInt(strings[0]);
-        String item = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(item));
-        if (itemValue != null) {
-            giveItem(player, itemValue, amount);
-        }
-    }
-
-    public static void giveItem(ServerPlayer player, Item item) {
-        giveItem(player, item, 1);
-    }
-
     public static void giveItem(ServerPlayer player, Item item, int amount) {
         ItemStack itemStack = new ItemStack(item, amount);
         if (!player.addItem(itemStack)) {
             player.spawnAtLocation(itemStack);
+        }
+    }
+
+    public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
+        String[] strings = item.split(" ", 2);
+        int amount = Integer.parseInt(strings[0]);
+        String itemName = strings[1];
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
+        if (itemValue != null) {
+            giveItem(server, itemValue, amount, index);
+        }
+    }
+
+    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
+        giveItem(server, item, 1, index);
+    }
+
+    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+        for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
+            if (index != null) {
+                if (ArchipelagoPersistentState.getInstance() != null) {
+                    if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
+                        giveItem(player, item, amount);
+                    }
+                }
+            } else {
+                giveItem(player, item, amount);
+            }
         }
     }
 
@@ -72,63 +95,71 @@ public class Utils {
     }
 
     public static void sendMessage(Component message) {
-        Archipelago.server.sendMessage(message, UUID.randomUUID());
+        Archipelago.executeOnServer((server) -> {
+            server.sendMessage(message, UUID.randomUUID());
 
-        for(ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
-            player.sendMessage(message, UUID.randomUUID());
-        }
+            for(ServerPlayer player : server.getPlayerList().getPlayers()) {
+                player.sendMessage(message, UUID.randomUUID());
+            }
+        });
     }
 
     public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
-        if (
-            Archipelago.slotData.isInitiated &&
-            (
-                !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
-            )
-        ) {
-            if (
-                Archipelago.slotData.activated_modules.contains("Advancements") &&
-                !Archipelago.slotData.advancement_difficulty.contains(display.getFrame().getName())
-            ) {
-                return true;
+        if (display != null) {
+            if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
+                Advancement rootAdvancement = Utils.getRoot(advancement);
+                String rootAdvancementName = rootAdvancement.getId().toString();
+
+                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(rootAdvancementName));
             }
-
-            return display.isHidden();
-        }
-
-        if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            Advancement rootAdvancement = Utils.getRoot(advancement);
-            String rootAdvancementName = rootAdvancement.getId().toString();
-
-            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(rootAdvancementName, false);
-        }
-        // parent advancement
-        else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (Utils.getRoot(advancement) == advancement) {
-                // if root check against self
-                return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
-            } else {
-                // otherwise check against values up tree not including self
-                Advancement checkAdvancement = advancement;
-                // exits when all advancements up the tree have been checked
-                while (checkAdvancement != null) {
-                    checkAdvancement = checkAdvancement.getParent();
-
-                    if (checkAdvancement != null) {
+            else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
+                if (Utils.getRoot(advancement) == advancement) {
+                    if (Archipelago.slotData.roots_unlocked) {
+                        return false;
+                    }
+                    return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
+                } else {
+                    Advancement checkAdvancement = advancement.getParent();
+                    while (checkAdvancement != null) {
                         String checkAdvancementName = checkAdvancement.getId().toString();
-                        if (!Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkAdvancementName, false)) {
+                        if (!ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(checkAdvancementName))) {
                             return true;
                         }
+                        checkAdvancement = checkAdvancement.getParent();
                     }
+                    return false;
                 }
-                return false;
+            }
+            // not either, probably uninitiated
+            else {
+                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
             }
         }
-        // not either tab or tree... invalid/notstarted, going to check against self as I eventually want
-        // to do an advancement insanity thing
-        else {
-            return !Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(advancement.getId().toString(), false);
+        return false;
+    }
+
+    public static Long getLocationId(String locationName) {
+        return Archipelago.client.getDataPackage().getGame("Modded Minecraft")
+                .locationNameToId.keySet()
+                .stream().filter(
+                    (key) -> locationName.equals(String.format("%s %s", (Object[]) key.split(" ")))
+                ).findFirst().map(
+                    (value) -> Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(value)
+                ).orElse(null);
+    }
+
+    public static void sendCheck(String checkName) {
+        if (Archipelago.client.isConnected()) {
+            Long check_id = Utils.getLocationId(checkName);
+            if (check_id != null) {
+                Archipelago.client.getLocationManager().checkLocation(check_id);
+                if (Archipelago.slotData.isCheckFinalGoal(checkName)) {
+                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                }
+            }
+        } else if (ArchipelagoPersistentState.getInstance() != null) {
+            ArchipelagoPersistentState.getInstance().pendingChecks.add(checkName);
+            ArchipelagoPersistentState.getInstance().setDirty(true);
         }
     }
 }

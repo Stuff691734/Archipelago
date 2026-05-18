@@ -2,8 +2,7 @@ package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 
 import dev.ftb.mods.ftbquests.events.QuestProgressEventData;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import io.github.archipelagomw.ClientStatus;
-import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,18 +16,19 @@ public class QuestMixin {
             remap = false
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
-        Archipelago.LOGGER.info("Quest Completed.");
-        if (Archipelago.client.isConnected()) {
-            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
-            if (quest_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(quest_id);
-                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-                }
-            }
-        } else {
-            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
-            Archipelago.archipelagoPersistentState.setDirty();
-        }
+        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+//        Archipelago.LOGGER.info("Quest Completed.");
+//        if (Archipelago.client.isConnected()) {
+//            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
+//            if (quest_id != null) {
+//                Archipelago.client.getLocationManager().checkLocation(quest_id);
+//                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
+//                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+//                }
+//            }
+//        } else {
+//            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
+//            Archipelago.archipelagoPersistentState.setDirty();
+//        }
     }
 }
