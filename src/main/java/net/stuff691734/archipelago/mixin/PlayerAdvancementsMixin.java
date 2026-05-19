@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public abstract class PlayerAdvancementsMixin {
 
     @Shadow
-    public abstract AdvancementProgress getProgress(Advancement advancement);
+    public abstract AdvancementProgress getOrStartProgress(Advancement advancement);
 
     @Shadow
     @Final
@@ -35,7 +35,7 @@ public abstract class PlayerAdvancementsMixin {
     protected abstract void startProgress(Advancement p_135986_, AdvancementProgress p_135987_);
 
     @Inject(
-            method = "grantCriterion",
+            method = "award",
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
@@ -45,7 +45,7 @@ public abstract class PlayerAdvancementsMixin {
     }
 
     @Inject(
-            method = "grantCriterion",
+            method = "award",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/AdvancementProgress;isDone()Z"),
             cancellable = true
     )
@@ -65,8 +65,8 @@ public abstract class PlayerAdvancementsMixin {
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
     private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
         if (Archipelago.getServer() != null) {
-            Map<ResourceLocation, AdvancementProgress> list = Archipelago.getServer().getAdvancementManager().getAllAdvancements().stream().map(
-                    (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getProgress(advancement))).collect(Collectors.toMap(
+            Map<ResourceLocation, AdvancementProgress> list = Archipelago.getServer().getAdvancements().getAllAdvancements().stream().map(
+                    (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,
                             (e1, e2) -> e1
