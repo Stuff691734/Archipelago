@@ -20,32 +20,32 @@ public class SyncSlotDataPacket {
 
     public SyncSlotDataPacket(PacketBuffer friendlyByteBuf) {
         this.slotData = new HashMap<>();
-        slotData.put("unlock_type", friendlyByteBuf.readString());
-        slotData.put("final_goal", friendlyByteBuf.readString());
-        slotData.put("activated_modules", friendlyByteBuf.readString());
-        slotData.put("advancement_check_difficulty", friendlyByteBuf.readString());
-        slotData.put("ftb_quest_check_shape", friendlyByteBuf.readString());
-        slotData.put("advancement_checks_give_items", friendlyByteBuf.readString());
-        slotData.put("quest_checks_give_rewards", friendlyByteBuf.readString());
-        slotData.put("death_link", friendlyByteBuf.readString());
-        slotData.put("roots_unlocked", friendlyByteBuf.readString());
+        slotData.put("unlock_type", friendlyByteBuf.readUtf());
+        slotData.put("final_goal", friendlyByteBuf.readUtf());
+        slotData.put("activated_modules", friendlyByteBuf.readUtf());
+        slotData.put("advancement_check_difficulty", friendlyByteBuf.readUtf());
+        slotData.put("ftb_quest_check_shape", friendlyByteBuf.readUtf());
+        slotData.put("advancement_checks_give_items", friendlyByteBuf.readUtf());
+        slotData.put("quest_checks_give_rewards", friendlyByteBuf.readUtf());
+        slotData.put("death_link", friendlyByteBuf.readUtf());
+        slotData.put("roots_unlocked", friendlyByteBuf.readUtf());
     }
 
     public void encode(PacketBuffer friendlyByteBuf) {
-        friendlyByteBuf.writeString(slotData.get("unlock_type"));
-        friendlyByteBuf.writeString(slotData.get("final_goal"));
-        friendlyByteBuf.writeString(slotData.get("activated_modules"));
-        friendlyByteBuf.writeString(slotData.get("advancement_check_difficulty"));
-        friendlyByteBuf.writeString(slotData.get("ftb_quest_check_shape"));
-        friendlyByteBuf.writeString(slotData.get("advancement_checks_give_items"));
-        friendlyByteBuf.writeString(slotData.get("quest_checks_give_rewards"));
-        friendlyByteBuf.writeString(slotData.get("death_link"));
-        friendlyByteBuf.writeString(slotData.get("roots_unlocked"));
+        friendlyByteBuf.writeUtf(slotData.get("unlock_type"));
+        friendlyByteBuf.writeUtf(slotData.get("final_goal"));
+        friendlyByteBuf.writeUtf(slotData.get("activated_modules"));
+        friendlyByteBuf.writeUtf(slotData.get("advancement_check_difficulty"));
+        friendlyByteBuf.writeUtf(slotData.get("ftb_quest_check_shape"));
+        friendlyByteBuf.writeUtf(slotData.get("advancement_checks_give_items"));
+        friendlyByteBuf.writeUtf(slotData.get("quest_checks_give_rewards"));
+        friendlyByteBuf.writeUtf(slotData.get("death_link"));
+        friendlyByteBuf.writeUtf(slotData.get("roots_unlocked"));
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.runWhenOn(
+            DistExecutor.unsafeRunWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Got archipelago slot data from server.");
