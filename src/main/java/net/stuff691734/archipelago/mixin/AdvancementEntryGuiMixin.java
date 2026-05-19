@@ -40,6 +40,6 @@ public class AdvancementEntryGuiMixin {
 
     @Redirect(method = "drawConnectivity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;parent:Lnet/minecraft/client/gui/advancements/AdvancementEntryGui;", opcode = Opcodes.GETFIELD))
     public AdvancementEntryGui parent(AdvancementEntryGui thisWidget) {
-        return MixinHelper.getGuiAdvancementParent(thisWidget, this.displayInfo, this.advancement);
+        return MixinHelper.getGuiAdvancementParent(this.parent, this.displayInfo, this.advancement);
     }
 }
