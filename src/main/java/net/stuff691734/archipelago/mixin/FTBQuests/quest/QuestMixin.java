@@ -20,18 +20,5 @@ public class QuestMixin {
     )
     public void sendArchipelagoQuest(PlayerData data, List<ServerPlayerEntity> onlineMembers, List<ServerPlayerEntity> notifiedPlayers, CallbackInfo ci) {
         FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
-//        Archipelago.LOGGER.info("Quest Completed.");
-//        if (Archipelago.client.isConnected()) {
-//            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
-//            if (quest_id != null) {
-//                Archipelago.client.getLocationManager().checkLocation(quest_id);
-//                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
-//                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-//                }
-//            }
-//        } else {
-//            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
-//            Archipelago.archipelagoPersistentState.setDirty(true);
-//        }
     }
 }
