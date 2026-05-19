@@ -5,6 +5,8 @@ import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.reward.Reward;
 import dev.ftb.mods.ftbquests.quest.reward.RewardClaimType;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,7 +32,7 @@ public class TeamDataMixin {
     @Inject(method = "getClaimType", at = @At(value = "RETURN"), cancellable = true, remap = false)
     private void preventRewardAccess(UUID player, Reward reward, CallbackInfoReturnable<RewardClaimType> cir) {
         if (!cir.getReturnValue().isClaimed() && Archipelago.slotData.isFTBQuestRewardRandomized(reward.getQuest().getShape())) {
-            if (ArchipelagoPersistentState.getCheck(reward.getQuest().getCodeString())) {
+            if (ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(reward.getQuest().getCodeString()))) {
                 cir.setReturnValue(RewardClaimType.CAN_CLAIM);
             } else {
                 cir.setReturnValue(RewardClaimType.CANT_CLAIM);
