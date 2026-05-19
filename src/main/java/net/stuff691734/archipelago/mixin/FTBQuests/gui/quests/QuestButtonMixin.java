@@ -23,20 +23,5 @@ public class QuestButtonMixin {
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
         return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player));
-//        if (Archipelago.slotData.isFTBQuestRewardRandomized(this.quest.getShape())) {
-//            // only modify if it is a quest and it is randomized and we randomized rewards
-//            assert Minecraft.getInstance().player != null; // would've already errored in QuestButton.draw
-//            if (
-//                Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(this.quest.getCodeString(), false) &&
-//                // sadly this undoes some of the optimization done by the ftb team, but teamData.hasUnclaimedRewards returns false when not having access
-//                this.quest.rewards.stream().anyMatch(
-//                    reward -> !TeamData.get(Minecraft.getInstance().player).isRewardClaimed(Minecraft.getInstance().player.getUUID(), reward)
-//                )
-//            ) {
-//                // got this check but haven't claimed yet
-//                return ThemeProperties.ALERT_ICON.get(this.quest);
-//            }
-//        }
-//        return questIcon;
     }
 }
