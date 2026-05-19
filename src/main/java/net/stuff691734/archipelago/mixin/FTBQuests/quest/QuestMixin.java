@@ -49,19 +49,6 @@ public abstract class QuestMixin implements QuestAccessor {
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
         FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
-//        Archipelago.LOGGER.info("Quest Completed.");
-//        if (Archipelago.client.isConnected()) {
-//            Long quest_id = Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get("ftb " + this);
-//            if (quest_id != null) {
-//                Archipelago.client.getLocationManager().checkLocation(quest_id);
-//                if (("ftb " + this).equals(Archipelago.slotData.final_goal)) {
-//                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
-//                }
-//            }
-//        } else {
-//            Archipelago.archipelagoPersistentState.pendingChecks.add("ftb " + this);
-//            Archipelago.archipelagoPersistentState.setDirty();
-//        }
     }
 
     @Inject(method = "lambda$checkForDependantCompletion$1", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;"), remap = false, cancellable = true)
