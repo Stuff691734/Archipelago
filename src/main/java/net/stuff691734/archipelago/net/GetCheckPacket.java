@@ -25,7 +25,7 @@ public class GetCheckPacket {
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.runWhenOn(
+            DistExecutor.unsafeRunWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Received archipelago check from server.");

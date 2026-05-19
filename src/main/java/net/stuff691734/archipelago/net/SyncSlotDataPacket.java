@@ -45,7 +45,7 @@ public class SyncSlotDataPacket {
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.runWhenOn(
+            DistExecutor.unsafeRunWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Got archipelago slot data from server.");
