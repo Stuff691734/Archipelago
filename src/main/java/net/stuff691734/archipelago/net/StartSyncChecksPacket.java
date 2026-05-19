@@ -19,24 +19,23 @@ public class StartSyncChecksPacket {
         int checksLength = friendlyByteBuf.readInt();
         checks = new String[checksLength];
         for (int i = 0; i < checksLength; i++) {
-            checks[i] = friendlyByteBuf.readString();
+            checks[i] = friendlyByteBuf.readUtf();
         }
     }
 
     public void encode(PacketBuffer friendlyByteBuf) {
         friendlyByteBuf.writeInt(checks.length);
         for (String check : checks) {
-            friendlyByteBuf.writeString(check);
+            friendlyByteBuf.writeUtf(check);
         }
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.runWhenOn(
+            DistExecutor.unsafeRunWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Got archipelago check data from server.");
-
                         Archipelago.clientState.addAllChecks(this.checks);
                     }
             );
