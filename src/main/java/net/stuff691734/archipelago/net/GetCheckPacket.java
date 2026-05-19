@@ -16,16 +16,16 @@ public class GetCheckPacket {
     }
 
     public GetCheckPacket(FriendlyByteBuf friendlyByteBuf) {
-        this.check = friendlyByteBuf.readString();
+        this.check = friendlyByteBuf.readUtf();
     }
 
     public void encode(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeString(check);
+        friendlyByteBuf.writeUtf(check);
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            DistExecutor.runWhenOn(
+            DistExecutor.unsafeRunWhenOn(
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Received archipelago check from server.");
