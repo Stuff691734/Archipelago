@@ -74,7 +74,7 @@ public class Utils {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
-                    if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
+                    if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
                         giveItem(player, item, amount);
                     }
                 }
