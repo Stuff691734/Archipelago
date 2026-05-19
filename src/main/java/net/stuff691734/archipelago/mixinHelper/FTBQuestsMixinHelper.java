@@ -15,7 +15,7 @@ import java.util.Objects;
 // methods used by Mixin to make code more consistent between coremods and mixins
 public class FTBQuestsMixinHelper {
     public static Icon getQuestIcon(Quest quest, Icon originalIcon, PlayerData data) {
-        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape().id)) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             if (
                 ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
                 quest.rewards.stream().anyMatch(
@@ -30,7 +30,7 @@ public class FTBQuestsMixinHelper {
     }
 
     public static boolean isQuestRewardAvailable(Quest quest, PlayerData data) {
-        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape().id)) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
         }
         return data.isComplete(quest);
@@ -41,7 +41,7 @@ public class FTBQuestsMixinHelper {
     }
 
     public static boolean isQuestRewardAvailable(Quest quest) {
-        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape().id)) {
+        if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
         }
         return true;
