@@ -40,10 +40,10 @@ public class FTBGenerateCommand {
                     if (task.getType() == FTBQuestsTasks.ADVANCEMENT) {
                         String adv = ((AdvancementTask) task).advancement;
                         if (Utils.isAdvancementId(adv)) {
-                            Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(adv));
+                            Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation(adv));
                             assert advancement != null;
                             if (advancement.getDisplay() != null) {
-                                dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getUnformattedComponentText()));
+                                dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getContents()));
                             }
                         }
                     }
