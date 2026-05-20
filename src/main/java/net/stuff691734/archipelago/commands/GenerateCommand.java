@@ -69,18 +69,18 @@ public class GenerateCommand {
                     AdvancementNode parent = placedAdvancement.parent();
                     String parent_id = null;
                     if (parent != null&& parent.getDisplay() != null) {
-                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.getDisplay().getTitle().getContents());
+                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.getDisplay().getTitle().getString());
                 }
                 Advancement root = Utils.getRoot(advancement);
                 String tab;
                 if (root.getDisplay() != null) {
-                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getContents());
+                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getString());
                 } else {
                     tab = String.format("adv %s (%s)", root.getId(), root.getId());
                 }
 
                     if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                        advancementsChecks.put(String.format("adv %s (%s)", advancement.id(), display.getTitle().getContents()), new AdvancementsCheck(
+                        advancementsChecks.put(String.format("adv %s (%s)", advancement.id(), display.getTitle().getString()), new AdvancementsCheck(
                                 display.getType().getSerializedName(),
                                 parent_id,
                             tab
