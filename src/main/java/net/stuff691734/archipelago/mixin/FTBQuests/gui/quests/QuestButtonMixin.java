@@ -22,6 +22,6 @@ public class QuestButtonMixin {
     @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/GuiHelper;setupDrawing()V"), remap = false, name = "questIcon")
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
-        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player));
+        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player), Minecraft.getInstance().player.getUUID());
     }
 }
