@@ -20,6 +20,6 @@ public class QuestButtonMixin {
     @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/QuestShape;get(Ljava/lang/String;)Ldev/ftb/mods/ftbquests/quest/QuestShape;"), remap = false, name = "qicon")
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
-        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player));
+        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player), Minecraft.getInstance().player.getUUID());
     }
 }
