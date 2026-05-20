@@ -27,36 +27,35 @@ public class FTBGenerateCommand {
                 for (Quest quest : chapter.quests) {
                     DependencyNotation dependencies = new DependencyNotation();
                     // this uses nested in case it is also with advancements
-                        DependencyNotation questDependencies =
-                        new DependencyNotation();
-                            if (quest.minRequiredDependencies > 0) {
-                                questDependencies.setMinimum(quest.minRequiredDependencies);
-                            } else if (quest.dependencyRequirement.one) {
-                                questDependencies.setMinimum(1);
-                            } else {
-                                questDependencies.setMinimum(0);
-                            }
-                           getDependencies(questDependencies, quest);
-                            dependencies.addNested(questDependencies);
-                           for (Task task : quest.tasks) {
-                                    if (task.getType() == TaskTypes.ADVANCEMENT) {
-                                    String adv = ((AdvancementTask) task).advancement;
-                                    if (Utils.isAdvancementId(adv)) {
-                            Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation(adv));
-                            assert advancement != null;
-                            if (advancement.getDisplay() != null) {
-                                dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getContents()));
+                    DependencyNotation questDependencies = new DependencyNotation();
+                    if (quest.minRequiredDependencies > 0) {
+                        questDependencies.setMinimum(quest.minRequiredDependencies);
+                    } else if (quest.dependencyRequirement.one) {
+                        questDependencies.setMinimum(1);
+                    } else {
+                        questDependencies.setMinimum(0);
+                    }
+                    getDependencies(questDependencies, quest);
+                    dependencies.addNested(questDependencies);
+                    for (Task task : quest.tasks) {
+                        if (task.getType() == TaskTypes.ADVANCEMENT) {
+                            String adv = ((AdvancementTask) task).advancement;
+                            if (Utils.isAdvancementId(adv)) {
+                                Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation(adv));
+                                assert advancement != null;
+                                if (advancement.getDisplay() != null) {
+                                    dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getContents()));
+                                }
                             }
                         }
                     }
-                }
 
-                ftbQuestsChecks.put(
+                    ftbQuestsChecks.put(
                         String.format("ftb %s (%s)", quest.getCodeString(), quest.getTitle()),
                         new FTBQuestsCheck(
-                                quest.getShape(),
-                                dependencies,
-                                String.format("ftb %s (%s)", quest.getChapter().getCodeString(), quest.getChapter().getTitle())
+                            quest.getShape(),
+                            dependencies,
+                            String.format("ftb %s (%s)", quest.getChapter().getCodeString(), quest.getChapter().getTitle())
                         )
                     );
                 }
@@ -77,15 +76,6 @@ public class FTBGenerateCommand {
 
     private static void getDependencies(DependencyNotation input, Quest quest) {
         for (QuestObject questObject : quest.dependencies) {
-            if (questObject instanceof ChapterGroup) {
-                DependencyNotation chapterGroupDependency = new DependencyNotation();
-                for (Chapter chapter : ((ChapterGroup) questObject).chapters) {
-                    for (Quest chapterGroupQuest : (chapter.quests)) {
-                        chapterGroupDependency.addCheck(String.format("ftb %s (%s)", chapterGroupQuest.getCodeString(), chapterGroupQuest.getTitle()));
-                    }
-                }
-                input.addNested(chapterGroupDependency);
-            }
             if (questObject instanceof Chapter) {
                 DependencyNotation chapterDependency = new DependencyNotation();
                 for (Quest chapterQuest : ((Chapter) questObject).quests) {
