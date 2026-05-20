@@ -1,9 +1,10 @@
 package net.stuff691734.archipelago.mixinHelper;
 
-import com.feed_the_beast.ftbquests.quest.PlayerData;
-import com.feed_the_beast.mods.ftbguilibrary.icon.Icon;
-import com.feed_the_beast.ftbquests.quest.Quest;
-import com.feed_the_beast.ftbquests.quest.theme.property.ThemeProperties;
+import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.TeamData;
+import dev.ftb.mods.ftbquests.quest.theme.property.ThemeProperties;
+import net.minecraft.world.storage.PlayerData;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
@@ -11,15 +12,16 @@ import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 
 import java.util.Objects;
+import java.util.UUID;
 
 // methods used by Mixin to make code more consistent between coremods and mixins
 public class FTBQuestsMixinHelper {
-    public static Icon getQuestIcon(Quest quest, Icon originalIcon, PlayerData data) {
+    public static Icon getQuestIcon(Quest quest, Icon originalIcon, TeamData data, UUID uuid) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             if (
                 ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
                 quest.rewards.stream().anyMatch(
-                    reward -> !data.isRewardClaimed(reward.id)
+                    reward -> !data.isRewardClaimed(uuid, reward)
                 )
             ) {
                 // got this check but haven't claimed yet
@@ -29,11 +31,11 @@ public class FTBQuestsMixinHelper {
         return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : Icon.EMPTY;
     }
 
-    public static boolean isQuestRewardAvailable(Quest quest, PlayerData data) {
+    public static boolean isQuestRewardAvailable(Quest quest, TeamData data) {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()));
         }
-        return data.isComplete(quest);
+        return data.isCompleted(quest);
     }
 
     public static void sendArchipelagoQuest(Quest quest) {
