@@ -7,7 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
+import net.stuff691734.archipelago.events.mod.ModEvents;
 import net.stuff691734.archipelago.events.neoforge.NeoForgeEvents;
 import org.slf4j.Logger;
 
@@ -30,6 +32,7 @@ public class Archipelago {
 
     public Archipelago() {
         NeoForgeEvents.register(NeoForge.EVENT_BUS);
+        ModEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
 
