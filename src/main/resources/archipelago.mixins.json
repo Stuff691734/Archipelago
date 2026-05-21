@@ -12,7 +12,8 @@
     "FTBQuests.net.MessageClaimAllRewardsMixin",
     "FTBQuests.net.MessageClaimRewardMixin",
     "FTBQuests.quest.PlayerDataMixin",
-    "FTBQuests.quest.QuestMixin"
+    "FTBQuests.quest.QuestMixin",
+    "FTBQuests.quest.TaskTypeAccessor"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [

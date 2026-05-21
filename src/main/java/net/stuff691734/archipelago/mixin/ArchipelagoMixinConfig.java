@@ -24,6 +24,7 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
             put("net.stuff691734.archipelago.mixin.FTBQuests.quest.task.AdvancementTaskMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.quest.QuestMixin", FTB_QUESTS_CONDITION);
             put("net.stuff691734.archipelago.mixin.FTBQuests.quest.PlayerDataMixin", FTB_QUESTS_CONDITION);
+            put("net.stuff691734.archipelago.mixin.FTBQuests.quest.TaskTypeAccessor", FTB_QUESTS_CONDITION);
         }
     };
 
