@@ -3,20 +3,18 @@ package net.stuff691734.archipelago.events.archipealgo;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
-import net.stuff691734.archipelago.mixinHelper.DisplayInfoAccessor;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 
@@ -61,7 +59,7 @@ public class ReceiveItemEvent {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
                         if (display != null) {
-                            Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index);
+                            Utils.giveItem(server, display.getIcon().getItem(), index);
                         }
                     }
                 }

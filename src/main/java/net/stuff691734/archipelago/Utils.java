@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.ResourceLocationException;
 import io.github.archipelagomw.ClientStatus;
+import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
@@ -9,16 +9,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -70,7 +68,7 @@ public class Utils {
     }
 
     public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
-        for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
                     if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
