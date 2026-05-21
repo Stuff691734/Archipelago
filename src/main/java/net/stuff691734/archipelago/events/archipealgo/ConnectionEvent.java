@@ -1,12 +1,11 @@
 package net.stuff691734.archipelago.events.archipealgo;
 
 import com.google.gson.JsonObject;
-import io.github.archipelagomw.ClientStatus;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.stuff691734.archipelago.*;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
@@ -35,7 +34,7 @@ public class ConnectionEvent {
                     state.slotData.get("death_link"),
                     state.slotData.get("roots_unlocked")
             );
-            for (ServerPlayerEntity player : Archipelago.getServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
                 ArchipelagoPacketHandler.INSTANCE.send(
                         PacketDistributor.PLAYER.with(() -> player),
                         new SyncSlotDataPacket(state.slotData)

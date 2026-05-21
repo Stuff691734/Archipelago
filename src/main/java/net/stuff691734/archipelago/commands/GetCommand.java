@@ -8,7 +8,7 @@ import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 public class GetCommand {
-    public static int execute(CommandContext<CommandSource> context) {
+    public static int execute(CommandContext<CommandSourceStack> context) {
         if (ArchipelagoPersistentState.getInstance() != null) {
             context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().checks.toString()), true);
             context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
