@@ -1,8 +1,7 @@
 package net.stuff691734.archipelago;
 
-import io.github.archipelagomw.ClientStatus;
-import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.network.chat.Component;
@@ -17,6 +16,7 @@ import net.stuff691734.archipelago.archipelagoData.CheckType;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -26,7 +26,7 @@ public class Utils {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         AtomicBoolean result = new AtomicBoolean(false);
         id.result().ifPresent(identifier -> {
-            Advancement advancement = Archipelago.server.getAdvancements().getAdvancement(identifier);
+            Advancement advancement = Archipelago.getServer().getAdvancements().getAdvancement(identifier);
             result.set(advancement != null);
         });
         return result.get();
@@ -57,7 +57,7 @@ public class Utils {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
+        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemName));
         if (itemValue != null) {
             giveItem(server, itemValue, amount, index);
         }
