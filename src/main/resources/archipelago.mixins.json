@@ -4,14 +4,14 @@
   "package": "net.stuff691734.archipelago.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AdvancementMixin",
     "DisplayInfoMixin",
-    "PlayerAdvancementAccessor"
+    "PlayerAdvancementAccessor",
+    "PlayerAdvancementsMixin"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
-    "AdvancementsScreenMixin",
-    "AdvancementWidgetMixin"
+    "AdvancementWidgetMixin",
+    "AdvancementsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
