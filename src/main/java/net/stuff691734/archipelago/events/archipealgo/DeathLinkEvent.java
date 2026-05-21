@@ -9,11 +9,13 @@ import net.stuff691734.archipelago.Utils;
 public class DeathLinkEvent {
     @ArchipelagoEventListener
     public void onDeathLink(io.github.archipelagomw.events.DeathLinkEvent event) {
-        Utils.sendMessage(Component.literal(String.format("[DeathLink] %s died: %s",event.source, event.cause)));
-        Archipelago.server.execute(() -> {
-            for (ServerPlayer player : Archipelago.server.getPlayerList().getPlayers()) {
-                player.hurt(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
-            }
-        });
+        if (Archipelago.getServer() != null) {
+            Utils.sendMessage(Component.literal(String.format("[DeathLink] %s died: %s", event.source, event.cause)));
+            Archipelago.getServer().execute(() -> {
+                for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
+                    player.hurt(Archipelago.DeathLinkDamage, Float.MAX_VALUE);
+                }
+            });
+        }
     }
 }
