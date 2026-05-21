@@ -4,7 +4,6 @@
   "package": "net.stuff691734.archipelago.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
     "PlayerAdvancementsMixin"
   ],
