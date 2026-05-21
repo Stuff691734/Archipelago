@@ -66,7 +66,7 @@ public class FTBQuestsMixinHelper {
             }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (quest.dependencies.isEmpty()) {
+            if (quest.hasDependencies()) {
                 if (!Archipelago.slotData.roots_unlocked) {
                     if (!FTBUtils.hasRequiredChecks(quest)) {
                         return false;
@@ -79,18 +79,18 @@ public class FTBQuestsMixinHelper {
             }
             else {
                 if (quest.minRequiredDependencies != 0) {
-                    if (quest.dependencies.stream().filter(FTBUtils::hasRequiredChecks).count() < quest.minRequiredDependencies) {
+                    if (quest.getDependencies().filter(FTBUtils::hasRequiredChecks).count() < quest.minRequiredDependencies) {
                         // checks if it has less than the minimum required
                         return false;
                     }
                 }
                 else if (quest.dependencyRequirement.one) {
-                    if (quest.dependencies.stream().noneMatch(FTBUtils::hasRequiredChecks)) {
+                    if (quest.getDependencies().noneMatch(FTBUtils::hasRequiredChecks)) {
                         // need one dependency, check if it has any
                         return false;
                     }
                 } else {
-                    if (!quest.dependencies.stream().allMatch(FTBUtils::hasRequiredChecks)) {
+                    if (!quest.getDependencies().allMatch(FTBUtils::hasRequiredChecks)) {
                         // need all dependencies, check if it has all
                         return false;
                     }

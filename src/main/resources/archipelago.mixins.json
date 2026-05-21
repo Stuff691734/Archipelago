@@ -16,6 +16,7 @@
     "FTBQuests.client.gui.quests.RewardButtonMixin",
     "FTBQuests.quest.TeamDataMixin",
     "FTBQuests.client.gui.quests.ViewQuestPanelMixin"
+    "FTBQuests.quest.task.StructureTaskAccessor"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
