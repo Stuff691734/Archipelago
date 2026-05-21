@@ -5,22 +5,24 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
 
 public class GetCommand {
-    public static int execute(CommandContext<CommandSourceStack> context) {
-        context.getSource().sendSuccess(Component.literal(Archipelago.archipelagoPersistentState.advancementChecks.toString()), true);
-        context.getSource().sendSuccess(Component.literal(Archipelago.archipelagoPersistentState.ftbQuestChecks.toString()), true);
-        context.getSource().sendSuccess(Component.literal(Archipelago.archipelagoPersistentState.slotData.toString()), true);
-        context.getSource().sendSuccess(Component.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
-        return 0;
+    public static int execute(CommandContext<CommandSource> context) {
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().checks.toString()), true);
+            context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
+            context.getSource().sendSuccess(Component.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
+            return 0;
+        }
+        return 1;
     }
 
     public static int executeSpecific(CommandContext<CommandSourceStack> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        if (checkName.startsWith("adv ")) {
-            context.getSource().sendSuccess(Component.literal(Archipelago.archipelagoPersistentState.advancementChecks.getOrDefault(checkName.substring(4), false).toString()), true);
-        } else {
-            context.getSource().sendSuccess(Component.literal(Archipelago.archipelagoPersistentState.ftbQuestChecks.getOrDefault(checkName.substring(4), false).toString()), true);
+        String[] check = checkName.split(" ", 3);
+        if (ArchipelagoPersistentState.getInstance() != null) {
+            context.getSource().sendSuccess(Component.literal(String.valueOf(ArchipelagoPersistentState.getCheck(check[0] + " " + check[1]))), true);
         }
         return 0;
     }
