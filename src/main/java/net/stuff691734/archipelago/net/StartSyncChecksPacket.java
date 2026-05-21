@@ -1,9 +1,9 @@
 package net.stuff691734.archipelago.net;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
 
 import java.util.function.Supplier;
@@ -15,7 +15,7 @@ public class StartSyncChecksPacket {
         this.checks = checks;
     }
 
-    public StartSyncChecksPacket(PacketBuffer friendlyByteBuf) {
+    public StartSyncChecksPacket(FriendlyByteBuf friendlyByteBuf) {
         int checksLength = friendlyByteBuf.readInt();
         checks = new String[checksLength];
         for (int i = 0; i < checksLength; i++) {
@@ -23,7 +23,7 @@ public class StartSyncChecksPacket {
         }
     }
 
-    public void encode(PacketBuffer friendlyByteBuf) {
+    public void encode(FriendlyByteBuf friendlyByteBuf) {
         friendlyByteBuf.writeInt(checks.length);
         for (String check : checks) {
             friendlyByteBuf.writeUtf(check);

@@ -1,9 +1,9 @@
 package net.stuff691734.archipelago.net;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.SlotData;
 
@@ -18,7 +18,7 @@ public class SyncSlotDataPacket {
         this.slotData = slotData;
     }
 
-    public SyncSlotDataPacket(PacketBuffer friendlyByteBuf) {
+    public SyncSlotDataPacket(FriendlyByteBuf friendlyByteBuf) {
         this.slotData = new HashMap<>();
         slotData.put("unlock_type", friendlyByteBuf.readUtf());
         slotData.put("final_goal", friendlyByteBuf.readUtf());
@@ -31,7 +31,7 @@ public class SyncSlotDataPacket {
         slotData.put("roots_unlocked", friendlyByteBuf.readUtf());
     }
 
-    public void encode(PacketBuffer friendlyByteBuf) {
+    public void encode(FriendlyByteBuf friendlyByteBuf) {
         friendlyByteBuf.writeUtf(slotData.get("unlock_type"));
         friendlyByteBuf.writeUtf(slotData.get("final_goal"));
         friendlyByteBuf.writeUtf(slotData.get("activated_modules"));
