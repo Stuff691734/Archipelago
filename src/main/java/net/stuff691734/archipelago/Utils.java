@@ -1,8 +1,7 @@
 package net.stuff691734.archipelago;
 
-import io.github.archipelagomw.ClientStatus;
-import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.advancements.DisplayInfo;
@@ -19,6 +18,7 @@ import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -28,7 +28,7 @@ public class Utils {
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         AtomicBoolean result = new AtomicBoolean(false);
         id.result().ifPresent(identifier -> {
-            AdvancementTree advancementManager = Archipelago.server.getAdvancements().tree();
+            AdvancementTree advancementManager = Archipelago.getServer().getAdvancements().tree();
             AdvancementNode advancement = advancementManager.get(identifier);
             result.set(advancement != null);
         });
