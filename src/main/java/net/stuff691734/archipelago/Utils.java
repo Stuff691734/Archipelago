@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.ResourceLocationException;
 import io.github.archipelagomw.ClientStatus;
+import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
@@ -17,7 +17,7 @@ import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
