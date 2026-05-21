@@ -13,6 +13,7 @@ public class SlotData {
     public boolean advancement_checks_give_items;
     public boolean quest_checks_give_rewards;
     public boolean death_link;
+    public boolean roots_unlocked;
 
     public boolean isInitiated = false;
 
@@ -24,7 +25,8 @@ public class SlotData {
             String ftb_quest_shape,
             String advancement_checks_give_items,
             String quest_checks_give_rewards,
-            String death_link
+            String death_link,
+            String roots_unlocked
     ) {
         this.unlock_type = unlock_type;
         this.final_goal = final_goal;
@@ -34,6 +36,7 @@ public class SlotData {
         this.advancement_checks_give_items = advancement_checks_give_items.equals("1");
         this.quest_checks_give_rewards = quest_checks_give_rewards.equals("1");
         this.death_link = death_link.equals("1");
+        this.roots_unlocked = roots_unlocked.equals("1");
 
         this.isInitiated = true;
     }
@@ -50,5 +53,9 @@ public class SlotData {
                     this.ftb_quest_shape.contains(shape) &&
                     this.quest_checks_give_rewards
                 );
+    }
+
+    public boolean isCheckFinalGoal(String checkName) {
+        return this.isInitiated && checkName.equals(String.format("%s %s", (Object[]) this.final_goal.split(" ")));
     }
 }
