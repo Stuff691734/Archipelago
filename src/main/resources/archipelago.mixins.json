@@ -6,7 +6,6 @@
   "mixins": [
     "AdvancementMixin$DataMixin",
     "AdvancementVisibilityEvaluatorMixin",
-    "DisplayInfoMixin",
     "PlayerAdvancementAccessor",
     "PlayerAdvancementsMixin"
   ],

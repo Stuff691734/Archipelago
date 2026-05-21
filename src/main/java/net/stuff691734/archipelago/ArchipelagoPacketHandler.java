@@ -1,8 +1,8 @@
 package net.stuff691734.archipelago;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 import net.stuff691734.archipelago.net.StartSyncChecksPacket;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
