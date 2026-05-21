@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.ResourceLocationException;
 import io.github.archipelagomw.ClientStatus;
+import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
@@ -9,15 +9,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
