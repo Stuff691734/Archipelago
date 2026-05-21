@@ -16,7 +16,6 @@ import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
-import net.stuff691734.archipelago.mixinHelper.DisplayInfoAccessor;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 
 import javax.annotation.Nullable;
@@ -60,7 +59,7 @@ public class ReceiveItemEvent {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
                         if (display != null) {
-                            Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index);
+                            Utils.giveItem(server, display.getIcon().getItem(), index);
                         }
                     }
                 }
