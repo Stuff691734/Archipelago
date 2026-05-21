@@ -2,10 +2,7 @@ package net.stuff691734.archipelago.ftbquests;
 
 import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
 import dev.ftb.mods.ftbquests.client.ClientQuestFile;
-import dev.ftb.mods.ftbquests.quest.Chapter;
-import dev.ftb.mods.ftbquests.quest.Quest;
-import dev.ftb.mods.ftbquests.quest.QuestObject;
-import dev.ftb.mods.ftbquests.quest.TeamData;
+import dev.ftb.mods.ftbquests.quest.*;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.minecraft.server.level.ServerPlayer;
 import net.stuff691734.archipelago.Archipelago;
@@ -49,6 +46,10 @@ public class FTBUtils {
         if (questObject instanceof Task) {
             // operate on quest that the task belongs to
             return ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(((Task) questObject).getQuest().getCodeString()));
+        }
+
+        if (questObject instanceof ChapterGroup) {
+            return ((ChapterGroup) questObject).getChapters().stream().allMatch(FTBUtils::hasRequiredChecks);
         }
 
         if (questObject instanceof Chapter) {
