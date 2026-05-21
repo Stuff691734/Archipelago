@@ -4,7 +4,6 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftbquests.quest.*;
 import dev.ftb.mods.ftbquests.quest.task.*;
 import dev.ftb.mods.ftbquests.quest.task.forge.ForgeEnergyTask;
-import dev.ftb.mods.ftbquests.quest.task.forge.ForgeFluidTask;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -14,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
 import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
+import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.StructureTaskAccessor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,7 +75,7 @@ public class FTBGenerateCommand {
     }
 
     private static void getDependencies(DependencyNotation input, Quest quest, MinecraftServer server) {
-        for (QuestObject questObject : quest.dependencies) {
+        quest.getDependencies().forEach((questObject) -> {
             if (questObject instanceof ChapterGroup) {
                 DependencyNotation chapterGroupDependency = new DependencyNotation();
                 for (Chapter chapter : ((ChapterGroup) questObject).chapters) {
@@ -97,7 +97,7 @@ public class FTBGenerateCommand {
                 }
                 input.addCheck(String.format("ftb %s (%s)", questObject.getCodeString(), getName(questObject, server)));
             }
-        }
+        });
     }
 
     private static String getName(QuestObject questObject, MinecraftServer server) {
@@ -164,7 +164,8 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.STRUCTURE) {
                 StructureTask task1 = (StructureTask) task;
-                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.structure")).append(": ").append(task1.structure.location().toString());
+                StructureTaskAccessor structureTaskAccessor = (StructureTaskAccessor) task1;
+                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.structure")).append(": ").append(structureTaskAccessor.archipelago$getStructure());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.XP) {
@@ -172,9 +173,9 @@ public class FTBGenerateCommand {
                 Component text = (new TranslatableComponent("ftbquests.reward.ftbquests.xp_levels")).append(": ").append(task1.formatMaxProgress());
                 return text.getString();
             }
-            if (task.getType() == ForgeFluidTask.TYPE) {
-                ForgeFluidTask task1 = (ForgeFluidTask) task;
-                Component text = (new TextComponent(ForgeFluidTask.getVolumeString(task1.amount) + " of ")).append(task1.createFluidStack().getName());
+            if (task.getType() == TaskTypes.FLUID) {
+                FluidTask task1 = (FluidTask) task;
+                Component text = (new TextComponent(FluidTask.getVolumeString(task1.amount) + " of ")).append(task1.createFluidStack().getName());
                 return text.getString();
             }
             if (task.getType() == ForgeEnergyTask.TYPE) {
