@@ -6,13 +6,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
-import net.stuff691734.archipelago.mixinHelper.DisplayInfoAccessor;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 
@@ -56,7 +55,7 @@ public class ReceiveItemEvent {
                     if (Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index)
+                            display -> Utils.giveItem(server,  display.getIcon().getItem(), index)
                         );
                     }
                 }
