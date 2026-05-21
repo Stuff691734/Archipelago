@@ -21,8 +21,8 @@
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
-    "AdvancementEntryGuiMixin",
-    "AdvancementsScreenMixin"
+    "AdvancementsScreenMixin",
+    "AdvancementWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

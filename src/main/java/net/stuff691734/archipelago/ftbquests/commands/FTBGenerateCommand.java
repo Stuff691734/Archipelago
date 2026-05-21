@@ -6,11 +6,9 @@ import dev.ftb.mods.ftbquests.quest.*;
 import dev.ftb.mods.ftbquests.quest.task.*;
 import dev.ftb.mods.ftbquests.quest.task.forge.ForgeEnergyTask;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
 import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
@@ -118,7 +116,7 @@ public class FTBGenerateCommand {
                 if (Utils.isAdvancementId(task1.advancement.toString())) {
                     Advancement advancement = server.getAdvancements().getAdvancement(task1.advancement);
                     if (advancement != null && advancement.getDisplay() != null) {
-                        ITextComponent text = (new TranslationTextComponent("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getDisplay().getTitle());
+                        Component text = (new TranslatableComponent("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getDisplay().getTitle());
                         return text.getString();
                     }
                 }
@@ -126,7 +124,7 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.BIOME) {
                 BiomeTask task1 = (BiomeTask) task;
-                ITextComponent text = (new TranslationTextComponent("ftbquests.task.ftbquests.biome")).append(": ").append(task1.biome.location().toString());
+                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.biome")).append(": ").append(task1.biome.location().toString());
                 return text.getString();
 
             }
@@ -138,17 +136,17 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.DIMENSION) {
                 DimensionTask task1 = (DimensionTask) task;
-                ITextComponent text = (new TranslationTextComponent("ftbquests.task.ftbquests.dimension")).append(": ").append(task1.dimension.location().toString());
+                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.dimension")).append(": ").append(task1.dimension.location().toString());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.ITEM) {
                 ItemTask task1 = (ItemTask) task;
-                ITextComponent text = task1.count > 1L ? (new StringTextComponent(task1.count + "x ")).append(task1.item.getHoverName()) : (new StringTextComponent("")).append(task1.item.getHoverName());
+                Component text = task1.count > 1L ? (new TextComponent(task1.count + "x ")).append(task1.item.getHoverName()) : (new TextComponent("")).append(task1.item.getHoverName());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.KILL) {
                 KillTask task1 = (KillTask) task;
-                ITextComponent text = new TranslationTextComponent("ftbquests.task.ftbquests.kill.title", new Object[]{task1.formatMaxProgress(), new TranslationTextComponent("entity." + task1.entity.getNamespace() + "." + task1.entity.getPath())});
+                Component text = new TranslatableComponent("ftbquests.task.ftbquests.kill.title", new Object[]{task1.formatMaxProgress(), new TranslatableComponent("entity." + task1.entity.getNamespace() + "." + task1.entity.getPath())});
                 return text.getString();
             }
             if (task.getType() == TaskTypes.LOCATION) {
@@ -159,36 +157,36 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.STAGE) {
                 StageTask task1 = (StageTask) task;
-                ITextComponent text = (new TranslationTextComponent("ftbquests.task.ftbquests.gamestage")).append(": ").append(task1.stage);
+                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.gamestage")).append(": ").append(task1.stage);
                 return text.getString();
             }
             if (task.getType() == TaskTypes.STAT) {
                 StatTask task1 = (StatTask) task;
-                ITextComponent text = new TranslationTextComponent("stat." + task1.stat.getNamespace() + "." + task1.stat.getPath());
+                Component text = new TranslatableComponent("stat." + task1.stat.getNamespace() + "." + task1.stat.getPath());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.STRUCTURE) {
                 StructureTask task1 = (StructureTask) task;
-                ITextComponent text = (new TranslationTextComponent("ftbquests.task.ftbquests.structure")).append(": ").append(task1.structure.location().toString());
+                Component text = (new TranslatableComponent("ftbquests.task.ftbquests.structure")).append(": ").append(task1.structure.location().toString());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.XP) {
                 XPTask task1 = (XPTask) task;
-                ITextComponent text = (new TranslationTextComponent("ftbquests.reward.ftbquests.xp_levels")).append(": ").append(task1.formatMaxProgress());
+                Component text = (new TranslatableComponent("ftbquests.reward.ftbquests.xp_levels")).append(": ").append(task1.formatMaxProgress());
                 return text.getString();
             }
             if (task.getType() == ForgeFluidTask.TYPE) {
                 ForgeFluidTask task1 = (ForgeFluidTask) task;
-                ITextComponent text = (new StringTextComponent(ForgeFluidTask.getVolumeString(task1.amount) + " of ")).append(task1.createFluidStack().getName());
+                Component text = (new TextComponent(ForgeFluidTask.getVolumeString(task1.amount) + " of ")).append(task1.createFluidStack().getName());
                 return text.getString();
             }
             if (task.getType() == ForgeEnergyTask.TYPE) {
                 ForgeEnergyTask task1 = (ForgeEnergyTask) task;
-                ITextComponent text = new TranslationTextComponent("ftbquests.task.ftbquests.forge_energy.text", new Object[]{StringUtils.formatDouble((double)task1.value, true)});
+                Component text = new TranslatableComponent("ftbquests.task.ftbquests.forge_energy.text", new Object[]{StringUtils.formatDouble((double)task1.value, true)});
                 return text.getString();
             }
             return task.getType().getDisplayName().getString();
         }
-        return new TranslationTextComponent("ftbquests.unnamed").getString();
+        return new TranslatableComponent("ftbquests.unnamed").getString();
     }
 }

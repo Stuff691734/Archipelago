@@ -4,7 +4,6 @@ import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.theme.property.ThemeProperties;
-import net.minecraft.world.storage.PlayerData;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
