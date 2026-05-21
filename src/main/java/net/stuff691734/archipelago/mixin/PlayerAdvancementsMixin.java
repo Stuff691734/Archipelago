@@ -3,14 +3,16 @@ package net.stuff691734.archipelago.mixin;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.mixinHelper.MixinHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
@@ -78,7 +80,7 @@ public abstract class PlayerAdvancementsMixin {
         return instance.collect(arCollector);
     }
 
-    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
     public void showThings(PlayerAdvancements instance, Advancement advancement, AdvancementProgress progress) {
         this.startProgress(advancement, progress);
         this.progressChanged.add(advancement);

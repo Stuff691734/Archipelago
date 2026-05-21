@@ -1,9 +1,9 @@
 package net.stuff691734.archipelago.net;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
 
 import java.util.function.Supplier;
@@ -15,11 +15,11 @@ public class GetCheckPacket {
         this.check = check;
     }
 
-    public GetCheckPacket(PacketBuffer friendlyByteBuf) {
+    public GetCheckPacket(FriendlyByteBuf friendlyByteBuf) {
         this.check = friendlyByteBuf.readUtf();
     }
 
-    public void encode(PacketBuffer friendlyByteBuf) {
+    public void encode(FriendlyByteBuf friendlyByteBuf) {
         friendlyByteBuf.writeUtf(check);
     }
 
