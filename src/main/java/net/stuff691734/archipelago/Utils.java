@@ -1,8 +1,7 @@
 package net.stuff691734.archipelago;
 
-import io.github.archipelagomw.ClientStatus;
-import net.minecraft.ResourceLocationException;
 import com.mojang.serialization.DataResult;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.advancements.DisplayInfo;
@@ -26,7 +25,7 @@ public class Utils {
         }
         DataResult<ResourceLocation> id = ResourceLocation.read(advancementId);
         if (id.isSuccess()) {
-            AdvancementTree advancementManager = Archipelago.server.getAdvancements().tree();
+            AdvancementTree advancementManager = Archipelago.getServer().getAdvancements().tree();
             AdvancementNode advancement = advancementManager.get(id.getOrThrow());
             return advancement != null;
         }

@@ -23,6 +23,7 @@
     "FTBQuests.quest.QuestMixin",
     "FTBQuests.quest.TeamDataMixin",
     "FTBQuests.quest.task.AdvancementTaskMixin"
+    "FTBQuests.quest.task.StructureTaskAccessor"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
