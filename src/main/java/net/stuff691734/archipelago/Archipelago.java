@@ -30,9 +30,9 @@ public class Archipelago {
         new ResourceLocation(MODID, "death_link")
     );
 
-    public Archipelago(FMLJavaModLoadingContext context) {
+    public Archipelago() {
         ForgeEvents.register(MinecraftForge.EVENT_BUS);
-        ModEvents.register(context.getModEventBus());
+        ModEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
 
