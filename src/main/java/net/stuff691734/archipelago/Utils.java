@@ -15,9 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
