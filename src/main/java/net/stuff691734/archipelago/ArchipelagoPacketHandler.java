@@ -12,7 +12,7 @@ public class ArchipelagoPacketHandler {
     private static final String PROTOCOL_VERSION = "1";
 
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(Archipelago.MODID, "main"),
+            ResourceLocation.fromNamespaceAndPath(Archipelago.MODID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
