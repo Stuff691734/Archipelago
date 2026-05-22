@@ -30,9 +30,9 @@ public class Archipelago {
         new ResourceLocation(MODID, "death_link")
     );
 
-    public Archipelago() {
+    public Archipelago(FMLJavaModLoadingContext context) {
         NeoForgeEvents.register(NeoForge.EVENT_BUS);
-        ModEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModEvents.register(context.getModEventBus());
     }
 
 

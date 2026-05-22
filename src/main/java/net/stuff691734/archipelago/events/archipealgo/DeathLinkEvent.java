@@ -16,7 +16,7 @@ public class DeathLinkEvent {
             Archipelago.getServer().execute(() -> {
                 for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
                     DamageSource damageSource = new DamageSource(
-                        Archipelago.server.registryAccess()
+                        Archipelago.getServer().registryAccess()
                                 .lookupOrThrow(Registries.DAMAGE_TYPE)
                                 .getOrThrow(Archipelago.DeathLinkDamage)
                 );
