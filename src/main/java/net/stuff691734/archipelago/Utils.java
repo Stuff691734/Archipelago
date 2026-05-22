@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago;
 
-import io.github.archipelagomw.ClientStatus;
 import com.mojang.serialization.DataResult;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.advancements.DisplayInfo;
@@ -15,11 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -62,7 +60,7 @@ public class Utils {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemName));
+        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
         if (itemValue != null) {
             giveItem(server, itemValue, amount, index);
         }
