@@ -14,6 +14,7 @@
     "FTBQuests.net.ClaimRewardMessageMixin",
     "FTBQuests.quest.QuestMixin",
     "FTBQuests.quest.TeamDataMixin",
+    "FTBQuests.quest.task.BiomeTaskAccessor",
     "FTBQuests.quest.task.StructureTaskAccessor"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",

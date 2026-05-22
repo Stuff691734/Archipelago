@@ -50,7 +50,7 @@ public class FTBUtils {
 
         if (questObject instanceof Chapter) {
             // if chapter check that we have all quests from chapter
-            return ((Chapter) questObject).quests.stream().allMatch(FTBUtils::hasRequiredChecks);
+            return ((Chapter) questObject).getQuests().stream().allMatch(FTBUtils::hasRequiredChecks);
         }
 
         if (questObject instanceof Quest) {

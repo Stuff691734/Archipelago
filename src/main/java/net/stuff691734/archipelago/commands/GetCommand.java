@@ -10,9 +10,9 @@ import net.stuff691734.archipelago.ArchipelagoPersistentState;
 public class GetCommand {
     public static int execute(CommandContext<CommandSourceStack> context) {
         if (ArchipelagoPersistentState.getInstance() != null) {
-            context.getSource().sendSuccess(new Component.literal(ArchipelagoPersistentState.getInstance().checks.toString()), true);
-            context.getSource().sendSuccess(new Component.literal(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
-            context.getSource().sendSuccess(new Component.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
+            context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().checks.toString()), true);
+            context.getSource().sendSuccess(Component.literal(ArchipelagoPersistentState.getInstance().slotData.toString()), true);
+            context.getSource().sendSuccess(Component.literal(Archipelago.client.getItemManager().getReceivedItemIDs().toString()), true);
             return 0;
         }
         return 1;
@@ -22,7 +22,7 @@ public class GetCommand {
         final String checkName = StringArgumentType.getString(context, "check");
         String[] check = checkName.split(" ", 3);
         if (ArchipelagoPersistentState.getInstance() != null) {
-            context.getSource().sendSuccess(new Component.literal(String.valueOf(ArchipelagoPersistentState.getCheck(check[0] + " " + check[1]))), true);
+            context.getSource().sendSuccess(Component.literal(String.valueOf(ArchipelagoPersistentState.getCheck(check[0] + " " + check[1]))), true);
         }
         return 0;
     }

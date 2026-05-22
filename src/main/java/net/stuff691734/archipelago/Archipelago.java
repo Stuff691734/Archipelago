@@ -24,9 +24,9 @@ public class Archipelago {
 
     public static final DamageSource DeathLinkDamage = new DamageSource(MODID + ".death_link").bypassInvul().bypassArmor();
 
-    public Archipelago() {
+    public Archipelago(FMLJavaModLoadingContext context) {
         ForgeEvents.register(MinecraftForge.EVENT_BUS);
-        ModEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModEvents.register(context.getModEventBus());
     }
 
 
