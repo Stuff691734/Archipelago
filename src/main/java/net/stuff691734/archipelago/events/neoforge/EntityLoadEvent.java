@@ -17,9 +17,9 @@ public class EntityLoadEvent {
     public void onEvent(PlayerEvent.PlayerLoggedInEvent event) {
         if (Archipelago.getServer() != null && ArchipelagoPersistentState.getInstance() != null) {
             int serverLastCheck = Archipelago.client.getItemManager().getIndex();
-            int playerLastCheck = ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(event.getPlayer().getStringUUID(), 0);
+            int playerLastCheck = ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(event.getEntity().getStringUUID(), 0);
             if (serverLastCheck > playerLastCheck) {
-                ArchipelagoPersistentState.getInstance().playerLastCheck.put(event.getPlayer().getStringUUID(), serverLastCheck);
+                ArchipelagoPersistentState.getInstance().playerLastCheck.put(event.getEntity().getStringUUID(), serverLastCheck);
 
                 for (NetworkItem item : Archipelago.client.getItemManager().getReceivedItems().subList(playerLastCheck, serverLastCheck)) {
                     String[] itemName = item.itemName.split(" ", 3);
@@ -28,12 +28,12 @@ public class EntityLoadEvent {
                 ArchipelagoPersistentState.getInstance().setDirty();
             }
             ArchipelagoPacketHandler.INSTANCE.send(
-                PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()),
+                PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
                 new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0]))
             );
             if (!ArchipelagoPersistentState.getInstance().slotData.isEmpty()) {
                 ArchipelagoPacketHandler.INSTANCE.send(
-                    PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()),
+                    PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntity()),
                     new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData)
                 );
             }
