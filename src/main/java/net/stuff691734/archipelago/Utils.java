@@ -14,9 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Utils {
