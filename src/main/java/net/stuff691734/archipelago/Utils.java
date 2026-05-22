@@ -16,7 +16,6 @@ import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.UUID;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {

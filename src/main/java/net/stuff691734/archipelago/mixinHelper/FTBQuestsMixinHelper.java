@@ -1,5 +1,6 @@
 package net.stuff691734.archipelago.mixinHelper;
 
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
@@ -27,7 +28,7 @@ public class FTBQuestsMixinHelper {
                 return ThemeProperties.ALERT_ICON.get(quest);
             }
         }
-        return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : Icon.EMPTY;
+        return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : Color4I.EMPTY;
     }
 
     public static boolean isQuestRewardAvailable(Quest quest, TeamData data) {
