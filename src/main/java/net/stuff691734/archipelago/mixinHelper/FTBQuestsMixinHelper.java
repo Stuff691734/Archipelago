@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago.mixinHelper;
 
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
@@ -10,6 +9,7 @@ import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.ftbquests.FTBUtils;
+import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class FTBQuestsMixinHelper {
         if (Archipelago.slotData.isFTBQuestRewardRandomized(quest.getShape())) {
             if (
                 ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
-                quest.rewards.stream().anyMatch(
+                quest.getRewards().stream().anyMatch(
                     reward -> !data.isRewardClaimed(uuid, reward)
                 )
             ) {
@@ -28,7 +28,7 @@ public class FTBQuestsMixinHelper {
                 return ThemeProperties.ALERT_ICON.get(quest);
             }
         }
-        return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : Color4I.EMPTY;
+        return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : ThemeProperties.QUEST_NOT_STARTED_COLOR.get(quest);
     }
 
     public static boolean isQuestRewardAvailable(Quest quest, TeamData data) {
@@ -67,7 +67,7 @@ public class FTBQuestsMixinHelper {
             }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
-            if (quest.hasDependencies()) {
+            if (!quest.hasDependencies()) {
                 if (!Archipelago.slotData.roots_unlocked) {
                     if (!FTBUtils.hasRequiredChecks(quest)) {
                         return false;
@@ -79,19 +79,19 @@ public class FTBQuestsMixinHelper {
                 }
             }
             else {
-                if (quest.minRequiredDependencies != 0) {
-                    if (quest.getDependencies().filter(FTBUtils::hasRequiredChecks).count() < quest.minRequiredDependencies) {
+                if (quest.getMinRequiredDependencies() != 0) {
+                    if (quest.streamDependencies().filter(FTBUtils::hasRequiredChecks).count() < quest.getMinRequiredDependencies()) {
                         // checks if it has less than the minimum required
                         return false;
                     }
                 }
-                else if (quest.dependencyRequirement.one) {
-                    if (quest.getDependencies().noneMatch(FTBUtils::hasRequiredChecks)) {
+                else if (((QuestAccessor)(Object) quest).archipelago$getDependencyRequirement().needOnlyOne()) {
+                    if (quest.streamDependencies().noneMatch(FTBUtils::hasRequiredChecks)) {
                         // need one dependency, check if it has any
                         return false;
                     }
                 } else {
-                    if (!quest.getDependencies().allMatch(FTBUtils::hasRequiredChecks)) {
+                    if (!quest.streamDependencies().allMatch(FTBUtils::hasRequiredChecks)) {
                         // need all dependencies, check if it has all
                         return false;
                     }

@@ -12,10 +12,8 @@ import net.minecraft.server.MinecraftServer;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
 import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
-import net.stuff691734.archipelago.ftbquests.accessor.AdvancementTaskAccessor;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
-import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.BiomeTaskAccessor;
-import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.StructureTaskAccessor;
+import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,9 +39,9 @@ public class FTBGenerateCommand {
             } else {
                 questDependencies.setMinimum(0);
             }
-           getDependencies(questDependencies, quest, server);
-           dependencies.addNested(questDependencies);
-           for (Task task : quest.getTasks()) {
+            getDependencies(questDependencies, quest, server);
+            dependencies.addNested(questDependencies);
+            for (Task task : quest.getTasks()) {
                 if (task.getType() == TaskTypes.ADVANCEMENT) {
                     ResourceLocation adv = ((AdvancementTaskAccessor) task).archipelago$advancement();
                     if (Utils.isAdvancementId(adv.toString())) {
@@ -57,11 +55,11 @@ public class FTBGenerateCommand {
             }
 
             ftbQuestsChecks.put(
-                String.format("ftb %s (%s)", quest.getCodeString(), quest.getTitle()),
+                String.format("ftb %s (%s)", quest.getCodeString(), getName(quest, server)),
                 new FTBQuestsCheck(
                         quest.getShape(),
                         dependencies,
-                        String.format("ftb %s (%s)", quest.getChapter().getCodeString(), quest.getChapter().getTitle())
+                        String.format("ftb %s (%s)", quest.getChapter().getCodeString(), getName(quest.getChapter(), server))
                 )
             );
         });
@@ -108,15 +106,16 @@ public class FTBGenerateCommand {
     private static String getName(QuestObject questObject, MinecraftServer server) {
         // getAltTitle (used for default quest names) is client side only, so I have reimplemented them here *sigh*
         // This is mostly copy and pasted code from
-        if (!questObject.title.isEmpty()) {
-            return questObject.title;
+        if (!questObject.getRawTitle().isEmpty()) {
+            return questObject.getRawTitle();
         }
-        if (questObject instanceof Quest && !((Quest) questObject).tasks.isEmpty()) {
-            Task task = ((Quest)questObject).tasks.get(0);
+        if (questObject instanceof Quest && !((Quest) questObject).getTasks().isEmpty()) {
+            Task task = ((Quest)questObject).getTasksAsList().get(0);
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
-                if (Utils.isAdvancementId(task1.advancement.toString())) {
-                    Advancement advancement = server.getAdvancements().getAdvancement(task1.advancement);
+                AdvancementTaskAccessor accessor = (AdvancementTaskAccessor) task1;
+                if (Utils.isAdvancementId(accessor.archipelago$advancement().toString())) {
+                    Advancement advancement = server.getAdvancements().getAdvancement(accessor.archipelago$advancement());
                     if (advancement != null && advancement.getDisplay() != null) {
                         Component text = (Component.translatable("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getDisplay().getTitle());
                         return text.getString();
@@ -126,8 +125,8 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.BIOME) {
                 BiomeTask task1 = (BiomeTask) task;
-                BiomeTaskAccessor biomeTaskAccessor = (BiomeTaskAccessor) task1;
-                Component text = (Component.translatable("ftbquests.task.ftbquests.biome")).append(": ").append(biomeTaskAccessor.archipelago$getBiome());
+                BiomeTaskAccessor accessor = (BiomeTaskAccessor) task1;
+                Component text = (Component.translatable("ftbquests.task.ftbquests.biome")).append(": ").append(accessor.archipelago$getBiome());
                 return text.getString();
 
             }
@@ -139,17 +138,19 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.DIMENSION) {
                 DimensionTask task1 = (DimensionTask) task;
-                Component text = (Component.translatable("ftbquests.task.ftbquests.dimension")).append(": ").append(task1.dimension.location().toString());
+                DimensionTaskAccessor accessor = (DimensionTaskAccessor) task1;
+                Component text = (Component.translatable("ftbquests.task.ftbquests.dimension")).append(": ").append(accessor.archipelago$dimension().location().toString());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.ITEM) {
                 ItemTask task1 = (ItemTask) task;
-                Component text = task1.count > 1L ? (Component.literal(task1.count + "x ")).append(task1.item.getHoverName()) : (Component.literal("")).append(task1.item.getHoverName());
+                Component text = task1.getMaxProgress() > 1L ? (Component.literal(task1.getMaxProgress() + "x ")).append(task1.getItemStack().getHoverName()) : (Component.literal("")).append(task1.getItemStack().getHoverName());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.KILL) {
                 KillTask task1 = (KillTask) task;
-                Component text = Component.translatable("ftbquests.task.ftbquests.kill.title", new Object[]{task1.formatMaxProgress(), Component.translatable("entity." + task1.entity.getNamespace() + "." + task1.entity.getPath())});
+                KillTaskAccessor accessor = (KillTaskAccessor) task1;
+                Component text = Component.translatable("ftbquests.task.ftbquests.kill.title", new Object[]{task1.formatMaxProgress(), Component.translatable("entity." + accessor.archipelago$entity().getNamespace() + "." + accessor.archipelago$entity().getPath())});
                 return text.getString();
             }
             if (task.getType() == TaskTypes.LOCATION) {
@@ -157,17 +158,20 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.OBSERVATION) {
                 ObservationTask task1 = (ObservationTask) task;
-                Component text = Component.translatable("ftbquests.task.ftbquests.observation").append(": ").append(task1.toObserve);
+                ObservationTaskAccessor accessor = (ObservationTaskAccessor) task1;
+                Component text = Component.translatable("ftbquests.task.ftbquests.observation").append(": ").append(accessor.archipelago$toObserve());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.STAGE) {
                 StageTask task1 = (StageTask) task;
-                Component text = (Component.translatable("ftbquests.task.ftbquests.gamestage")).append(": ").append(task1.stage);
+                StageTaskAccessor accessor = (StageTaskAccessor) task1;
+                Component text = (Component.translatable("ftbquests.task.ftbquests.gamestage")).append(": ").append(accessor.archipelago$stage());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.STAT) {
                 StatTask task1 = (StatTask) task;
-                Component text = Component.translatable("stat." + task1.stat.getNamespace() + "." + task1.stat.getPath());
+                StatTaskAccessor accessor = (StatTaskAccessor) task1;
+                Component text = Component.translatable("stat." + accessor.archipelago$stat().getNamespace() + "." + accessor.archipelago$stat().getPath());
                 return text.getString();
             }
             if (task.getType() == TaskTypes.STRUCTURE) {
@@ -183,12 +187,12 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.FLUID) {
                 FluidTask task1 = (FluidTask) task;
-                Component text = (Component.literal(FluidTask.getVolumeString(task1.amount) + " of ")).append(task1.createFluidStack().getName());
+                Component text = (Component.literal(FluidTask.getVolumeString(task1.getMaxProgress()) + " of ")).append(task1.createFluidStack().getName());
                 return text.getString();
             }
             if (task.getType() == ForgeEnergyTask.TYPE) {
                 ForgeEnergyTask task1 = (ForgeEnergyTask) task;
-                Component text = Component.translatable("ftbquests.task.ftbquests.forge_energy.text", new Object[]{StringUtils.formatDouble((double)task1.value, true)});
+                Component text = Component.translatable("ftbquests.task.ftbquests.forge_energy.text", new Object[]{StringUtils.formatDouble((double)task1.getValue(), true)});
                 return text.getString();
             }
             return task.getType().getDisplayName().getString();
