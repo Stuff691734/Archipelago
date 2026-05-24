@@ -1,9 +1,10 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
 import dev.ftb.mods.ftblibrary.icon.Icon;
+import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
+import dev.ftb.mods.ftbquests.client.ClientQuestFile;
 import dev.ftb.mods.ftbquests.client.gui.quests.QuestButton;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.minecraft.client.Minecraft;
 import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -22,6 +23,6 @@ public class QuestButtonMixin {
     @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/GuiHelper;setupDrawing()V"), remap = false, name = "questIcon")
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
-        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, TeamData.get(Minecraft.getInstance().player), Minecraft.getInstance().player.getUUID());
+        return FTBQuestsMixinHelper.getQuestIcon(this.quest, questIcon, ((ClientQuestFile) FTBQuestsAPI.api().getQuestFile(true)).selfTeamData, Minecraft.getInstance().player.getUUID());
     }
 }
