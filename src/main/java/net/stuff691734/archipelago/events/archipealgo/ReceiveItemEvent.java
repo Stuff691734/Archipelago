@@ -48,7 +48,7 @@ public class ReceiveItemEvent {
                     state.checks.put(checkType.addPrefix(itemName), true);
                     AdvancementHolder advancement = server.getAdvancements().get(ResourceLocation.parse(itemName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                        ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
+                        ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
                         ArchipelagoPacketHandler.INSTANCE.send(
                                 PacketDistributor.PLAYER.with(() -> player),
                                 new GetCheckPacket(checkType.addPrefix(itemName))
