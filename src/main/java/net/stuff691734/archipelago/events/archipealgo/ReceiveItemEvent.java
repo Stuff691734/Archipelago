@@ -68,6 +68,7 @@ public class ReceiveItemEvent {
                 if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
                     state.checks.put(checkType.addPrefix(itemName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                        FTBUtils.checkIsCompleted(player, itemName);
                         ArchipelagoPacketHandler.INSTANCE.send(
                                 PacketDistributor.PLAYER.with(() -> player),
                                 new GetCheckPacket(checkType.addPrefix(itemName))
