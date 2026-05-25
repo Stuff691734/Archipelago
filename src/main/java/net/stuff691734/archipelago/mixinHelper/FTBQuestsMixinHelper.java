@@ -80,18 +80,19 @@ public class FTBQuestsMixinHelper {
             }
             else {
                 if (quest.getMinRequiredDependencies() != 0) {
-                    if (quest.streamDependencies().filter(FTBUtils::hasRequiredChecks).count() < quest.getMinRequiredDependencies()) {
+                    if (quest.streamDependencies().filter((q) -> FTBUtils.hasRequiredChecks(q)).count() < quest.getMinRequiredDependencies()) {
                         // checks if it has less than the minimum required
                         return false;
                     }
                 }
                 else if (((QuestAccessor)(Object) quest).archipelago$getDependencyRequirement().needOnlyOne()) {
-                    if (quest.streamDependencies().noneMatch(FTBUtils::hasRequiredChecks)) {
+                    if (quest.streamDependencies().noneMatch((q) -> FTBUtils.hasRequiredChecks(q))) {
                         // need one dependency, check if it has any
                         return false;
                     }
                 } else {
-                    if (!quest.streamDependencies().allMatch(FTBUtils::hasRequiredChecks)) {
+                    // using a method reference here results in a IllegalAccessException
+                    if (!quest.streamDependencies().allMatch((q) -> FTBUtils.hasRequiredChecks(q))) {
                         // need all dependencies, check if it has all
                         return false;
                     }

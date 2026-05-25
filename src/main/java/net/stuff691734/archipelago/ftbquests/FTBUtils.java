@@ -49,12 +49,12 @@ public class FTBUtils {
         }
 
         if (questObject instanceof ChapterGroup) {
-            return ((ChapterGroup) questObject).getChapters().stream().allMatch(FTBUtils::hasRequiredChecks);
+            return ((ChapterGroup) questObject).getChapters().stream().allMatch((q) -> FTBUtils.hasRequiredChecks(q));
         }
 
         if (questObject instanceof Chapter) {
             // if chapter check that we have all quests from chapter
-            return ((Chapter) questObject).getQuests().stream().allMatch(FTBUtils::hasRequiredChecks);
+            return ((Chapter) questObject).getQuests().stream().allMatch((q) -> FTBUtils.hasRequiredChecks(q));
         }
 
         if (questObject instanceof Quest) {
