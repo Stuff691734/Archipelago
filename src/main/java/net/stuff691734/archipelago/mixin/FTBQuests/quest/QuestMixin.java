@@ -50,7 +50,7 @@ public abstract class QuestMixin implements QuestAccessor {
 
     @Inject(method = "lambda$checkForDependantCompletion$1", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;"), remap = false, cancellable = true)
     private static void checkIsCompleted(TeamData data, QuestObject questObject, CallbackInfo ci) {
-        if (!FTBQuestsMixinHelper.isQuestStartable(false, (Quest) questObject)) {
+        if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) questObject)) {
             ci.cancel();
         }
     }
