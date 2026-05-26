@@ -1,8 +1,7 @@
 package net.stuff691734.archipelago.events.neoforge;
 
-
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.stuff691734.archipelago.Archipelago;
 
 public class EntityExitEvent {
