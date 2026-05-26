@@ -20,7 +20,7 @@ public class MixinHelper {
             if (Archipelago.slotData.isInitiated &&
                 (
                     !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                    !Archipelago.slotData.advancement_difficulty.contains(advancement.display().get().getFrame().getName())
+                    !Archipelago.slotData.advancement_difficulty.contains(advancement.display().get().getType().getSerializedName())
                 )
             ) {
                 return false;
@@ -46,7 +46,7 @@ public class MixinHelper {
         if (Archipelago.slotData.isInitiated) {
             if (
                 Archipelago.slotData.activated_modules.contains("Advancements") &&
-                !Archipelago.slotData.advancement_difficulty.contains(displayInfo.getFrame().getName())
+                !Archipelago.slotData.advancement_difficulty.contains(displayInfo.getType().getSerializedName())
             ) {
                 return null;
             }
