@@ -6,8 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
@@ -62,15 +62,15 @@ public class GenerateCommand {
                 if (placedAdvancement != null) {
                     AdvancementNode parent = placedAdvancement.parent();
                     String parent_id = null;
-                    if (parent != null && parent.getDisplay() != null) {
-                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.getDisplay().getTitle().getString());
+                    if (parent != null && parent.holder().value().display().isPresent()) {
+                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.holder().value().display().get().getTitle().getString());
                     }
-                    Advancement root = Utils.getRoot(advancement);
+                    AdvancementNode root = Utils.getRoot(placedAdvancement);
                     String tab;
-                    if (root.getDisplay() != null) {
-                        tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getString());
+                    if (root.advancement().display().isPresent()) {
+                        tab = String.format("adv %s (%s)", root.holder().id(), root.advancement().display().get().getTitle().getString());
                     } else {
-                        tab = String.format("adv %s (%s)", root.getId(), root.getId());
+                        tab = String.format("adv %s (%s)", root.holder().id(), root.holder().id());
                     }
 
                     if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {

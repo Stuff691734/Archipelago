@@ -1,7 +1,7 @@
 package net.stuff691734.archipelago.events.mod;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 
 public class CommonSetupEvent {

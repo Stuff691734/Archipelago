@@ -1,12 +1,10 @@
 package net.stuff691734.archipelago.net;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.simple.MessageFunctions;
 import net.stuff691734.archipelago.Archipelago;
-
-import java.util.function.Supplier;
 
 public class GetCheckPacket {
     public String check;
@@ -15,24 +13,32 @@ public class GetCheckPacket {
         this.check = check;
     }
 
-    public GetCheckPacket(FriendlyByteBuf friendlyByteBuf) {
-        this.check = friendlyByteBuf.readUtf();
+    public static class Encoder implements MessageFunctions.MessageEncoder<GetCheckPacket> {
+        @Override
+        public void encode(GetCheckPacket message, FriendlyByteBuf buffer) {
+            buffer.writeUtf(message.check);
+        }
     }
 
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeUtf(check);
+    public static class Decoder implements MessageFunctions.MessageDecoder<GetCheckPacket> {
+        @Override
+        public GetCheckPacket decode(FriendlyByteBuf buffer) {
+            String check = buffer.readUtf();
+
+            return new GetCheckPacket(check);
+        }
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(
-                    Dist.CLIENT,
-                    () -> () -> {
-                        Archipelago.LOGGER.info("Received archipelago check from server.");
-                        Archipelago.clientState.addCheck(this.check);
-                    }
-            );
-        });
-        context.get().setPacketHandled(true);
+    public static class Handler implements MessageFunctions.MessageConsumer<GetCheckPacket> {
+        @Override
+        public void handle(GetCheckPacket packet, NetworkEvent.Context context) {
+            context.enqueueWork(() -> {
+                if (FMLEnvironment.dist.isClient()) {
+                    Archipelago.LOGGER.info("Received archipelago check from server.");
+                    Archipelago.clientState.addCheck(packet.check);
+                }
+            });
+            context.setPacketHandled(true);
+        }
     }
 }
