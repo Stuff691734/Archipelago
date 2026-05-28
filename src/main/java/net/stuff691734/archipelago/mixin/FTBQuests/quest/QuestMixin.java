@@ -24,11 +24,11 @@ public abstract class QuestMixin implements QuestAccessor {
     }
 
     @Shadow
-    private boolean invisibleUntilCompleted;
+    private boolean invisible;
 
     @Override
     public boolean archipelago$isInvisibleUntilCompleted() {
-        return invisibleUntilCompleted;
+        return invisible;
     }
 
     @Shadow(remap = false)

@@ -6,8 +6,11 @@ import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
-import net.stuff691734.archipelago.*;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class ConnectionEvent {
@@ -35,10 +38,7 @@ public class ConnectionEvent {
                     state.slotData.get("roots_unlocked")
             );
             for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
-                ArchipelagoPacketHandler.INSTANCE.send(
-                        PacketDistributor.PLAYER.with(() -> player),
-                        new SyncSlotDataPacket(state.slotData)
-                );
+                PacketDistributor.PLAYER.with(player).send(new SyncSlotDataPacket(state.slotData));
             }
 
             if (Archipelago.slotData.death_link) {

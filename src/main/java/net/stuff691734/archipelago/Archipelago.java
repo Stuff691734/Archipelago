@@ -6,9 +6,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageType;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.stuff691734.archipelago.events.mod.ModEvents;
 import net.stuff691734.archipelago.events.neoforge.NeoForgeEvents;
 import org.slf4j.Logger;
@@ -30,9 +30,9 @@ public class Archipelago {
         new ResourceLocation(MODID, "death_link")
     );
 
-    public Archipelago(FMLJavaModLoadingContext context) {
+    public Archipelago(IEventBus eventBus) {
         NeoForgeEvents.register(NeoForge.EVENT_BUS);
-        ModEvents.register(context.getModEventBus());
+        ModEvents.register(eventBus);
     }
 
 
