@@ -1,27 +1,36 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 import net.stuff691734.archipelago.net.StartSyncChecksPacket;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class ArchipelagoPacketHandler {
+    @SubscribeEvent
+    public void init(final RegisterPayloadHandlerEvent event) {
+        IPayloadRegistrar registrar = event.registrar(Archipelago.MODID);
 
-    private static final String PROTOCOL_VERSION = "1";
+        registrar.play(
+                StartSyncChecksPacket.ID,
+                StartSyncChecksPacket::new,
+                (handler) -> handler.client(StartSyncChecksPacket.Handler::handle)
+        );
+        registrar.play(
+                GetCheckPacket.ID,
+                GetCheckPacket::new,
+                (handler) -> handler.client(GetCheckPacket.Handler::handle)
+        );
+        registrar.play(
+                SyncSlotDataPacket.ID,
+                SyncSlotDataPacket::new,
+                (handler) -> handler.client(SyncSlotDataPacket.Handler::handle)
+        );
 
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            ResourceLocation.fromNamespaceAndPath(Archipelago.MODID, "main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );
-
-    public static void init() {
-        int index = 0;
-        INSTANCE.registerMessage(index++, StartSyncChecksPacket.class, StartSyncChecksPacket::encode, StartSyncChecksPacket::new, StartSyncChecksPacket::handle);
-        INSTANCE.registerMessage(index++, GetCheckPacket.class, GetCheckPacket::encode, GetCheckPacket::new, GetCheckPacket::handle);
-        INSTANCE.registerMessage(index++, SyncSlotDataPacket.class, SyncSlotDataPacket::encode, SyncSlotDataPacket::new, SyncSlotDataPacket::handle);
+//        int index = 0;
+//        INSTANCE.registerMessage(index++, StartSyncChecksPacket.class, StartSyncChecksPacket::encode, StartSyncChecksPacket::new, StartSyncChecksPacket::handle);
+//        INSTANCE.registerMessage(index++, GetCheckPacket.class, GetCheckPacket::encode, GetCheckPacket::new, GetCheckPacket::handle);
+//        INSTANCE.registerMessage(index++, SyncSlotDataPacket.class, SyncSlotDataPacket::encode, SyncSlotDataPacket::new, SyncSlotDataPacket::handle);
     }
 }

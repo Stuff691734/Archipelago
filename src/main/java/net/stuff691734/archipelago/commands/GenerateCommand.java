@@ -9,6 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
+import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.AdvancementsCheck;
 import net.stuff691734.archipelago.archipelagoData.Check;
@@ -64,27 +65,29 @@ public class GenerateCommand {
         for (AdvancementHolder advancement : server.getAdvancements().getAllAdvancements()) {
 
             advancement.value().display().ifPresent(display -> {
-                AdvancementNode placedAdvancement = Archipelago.server.getAdvancements().tree().get(advancement);
-                if (placedAdvancement != null) {
-                    AdvancementNode parent = placedAdvancement.parent();
-                    String parent_id = null;
-                    if (parent != null&& parent.getDisplay() != null) {
-                        parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.getDisplay().getTitle().getString());
-                }
-                Advancement root = Utils.getRoot(advancement);
-                String tab;
-                if (root.getDisplay() != null) {
-                    tab = String.format("adv %s (%s)", root.getId(), root.getDisplay().getTitle().getString());
-                } else {
-                    tab = String.format("adv %s (%s)", root.getId(), root.getId());
-                }
+                if (Archipelago.getServer() != null) {
+                    AdvancementNode placedAdvancement = Archipelago.getServer().getAdvancements().tree().get(advancement);
+                    if (placedAdvancement != null) {
+                        AdvancementNode parent = placedAdvancement.parent();
+                        String parent_id = null;
+                        if (parent != null && parent.advancement().display().isPresent()) {
+                            parent_id = String.format("adv %s (%s)", parent.holder().id(), parent.advancement().display().get().getTitle().getString());
+                        }
+                        AdvancementNode root = Utils.getRoot(placedAdvancement);
+                        String tab;
+                        if (root.advancement().display().isPresent()) {
+                            tab = String.format("adv %s (%s)", root.holder().id(), root.advancement().display().get().getTitle().getString());
+                        } else {
+                            tab = String.format("adv %s (%s)", root.holder().id(), root.holder().id());
+                        }
 
-                    if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
-                        advancementsChecks.put(String.format("adv %s (%s)", advancement.id(), display.getTitle().getString()), new AdvancementsCheck(
-                                display.getType().getSerializedName(),
-                                parent_id,
-                            tab
-                        ));
+                        if (parent_id == null || !parent_id.equals("minecraft:recipes/root")) {
+                            advancementsChecks.put(String.format("adv %s (%s)", advancement.id(), display.getTitle().getString()), new AdvancementsCheck(
+                                    display.getType().getSerializedName(),
+                                    parent_id,
+                                    tab
+                            ));
+                        }
                     }
                 }
             });

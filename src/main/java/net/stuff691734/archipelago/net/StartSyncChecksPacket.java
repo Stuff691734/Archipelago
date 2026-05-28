@@ -1,15 +1,15 @@
 package net.stuff691734.archipelago.net;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
 
-import java.util.function.Supplier;
-
-public class StartSyncChecksPacket {
+public class StartSyncChecksPacket implements CustomPacketPayload {
     private String[] checks;
+
+    public static ResourceLocation ID = new ResourceLocation(Archipelago.MODID, "start_sync_checks_packet");
 
     public StartSyncChecksPacket(String[] checks) {
         this.checks = checks;
@@ -23,23 +23,27 @@ public class StartSyncChecksPacket {
         }
     }
 
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeInt(checks.length);
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeInt(checks.length);
         for (String check : checks) {
-            friendlyByteBuf.writeUtf(check);
+            buffer.writeUtf(check);
         }
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(
-                    Dist.CLIENT,
-                    () -> () -> {
-                        Archipelago.LOGGER.info("Got archipelago check data from server.");
-                        Archipelago.clientState.addAllChecks(this.checks);
-                    }
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
+
+    public static class Handler {
+        public static void handle(StartSyncChecksPacket packet, PlayPayloadContext context) {
+            context.workHandler().submitAsync(
+                () -> {
+                    Archipelago.LOGGER.info("Got archipelago check data from server.");
+                    Archipelago.clientState.addAllChecks(packet.checks);
+                }
             );
-        });
-        context.get().setPacketHandled(true);
+        }
     }
 }

@@ -1,15 +1,15 @@
 package net.stuff691734.archipelago.net;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
 
-import java.util.function.Supplier;
-
-public class GetCheckPacket {
+public class GetCheckPacket implements CustomPacketPayload {
     public String check;
+
+    public static ResourceLocation ID = new ResourceLocation(Archipelago.MODID, "get_check_packet");
 
     public GetCheckPacket(String check) {
         this.check = check;
@@ -19,20 +19,22 @@ public class GetCheckPacket {
         this.check = friendlyByteBuf.readUtf();
     }
 
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeUtf(check);
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeUtf(check);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(
-                    Dist.CLIENT,
-                    () -> () -> {
-                        Archipelago.LOGGER.info("Received archipelago check from server.");
-                        Archipelago.clientState.addCheck(this.check);
-                    }
-            );
-        });
-        context.get().setPacketHandled(true);
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
+
+    public static class Handler {
+        public static void handle(GetCheckPacket packet, PlayPayloadContext context) {
+            context.workHandler().submitAsync(() -> {
+                Archipelago.LOGGER.info("Received archipelago check from server.");
+                Archipelago.clientState.addCheck(packet.check);
+            });
+        }
     }
 }

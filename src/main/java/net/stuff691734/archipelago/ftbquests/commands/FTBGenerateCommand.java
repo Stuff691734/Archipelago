@@ -1,11 +1,14 @@
 package net.stuff691734.archipelago.ftbquests.commands;
 
-import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
-import dev.ftb.mods.ftbquests.quest.*;
+import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
+import dev.ftb.mods.ftbquests.quest.Chapter;
+import dev.ftb.mods.ftbquests.quest.ChapterGroup;
+import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.task.*;
-import dev.ftb.mods.ftbquests.quest.task.forge.ForgeEnergyTask;
-import net.minecraft.advancements.Advancement;
+import dev.ftb.mods.ftbquests.quest.task.neoforge.ForgeEnergyTask;
+import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +18,9 @@ import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FTBGenerateCommand {
@@ -45,11 +50,11 @@ public class FTBGenerateCommand {
                 if (task.getType() == TaskTypes.ADVANCEMENT) {
                     ResourceLocation adv = ((AdvancementTaskAccessor) task).archipelago$advancement();
                     if (Utils.isAdvancementId(adv.toString())) {
-                        Advancement advancement = server.getAdvancements().getAdvancement(adv);
+                        AdvancementNode advancement = server.getAdvancements().tree().get(adv);
                         assert advancement != null;
-                        if (advancement.getDisplay() != null) {
-                            dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getString()));
-                        }
+                        advancement.advancement().display().ifPresent((display) ->
+                            dependencies.addCheck(String.format("adv %s (%s)", adv, display.getTitle().getString()))
+                        );
                     }
                 }
             }
@@ -115,9 +120,9 @@ public class FTBGenerateCommand {
                 AdvancementTask task1 = (AdvancementTask) task;
                 AdvancementTaskAccessor accessor = (AdvancementTaskAccessor) task1;
                 if (Utils.isAdvancementId(accessor.archipelago$advancement().toString())) {
-                    Advancement advancement = server.getAdvancements().getAdvancement(accessor.archipelago$advancement());
-                    if (advancement != null && advancement.getDisplay() != null) {
-                        Component text = (Component.translatable("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getDisplay().getTitle());
+                    AdvancementNode advancement = server.getAdvancements().tree().get(accessor.archipelago$advancement());
+                    if (advancement != null && advancement.advancement().display().isPresent()) {
+                        Component text = (Component.translatable("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.advancement().display().get().getTitle());
                         return text.getString();
                     }
                 }
@@ -187,7 +192,8 @@ public class FTBGenerateCommand {
             }
             if (task.getType() == TaskTypes.FLUID) {
                 FluidTask task1 = (FluidTask) task;
-                Component text = (Component.literal(FluidTask.getVolumeString(task1.getMaxProgress()) + " of ")).append(task1.createFluidStack().getName());
+                FluidTaskAccessor accessor = (FluidTaskAccessor) task1;
+                Component text = (Component.literal(FluidTask.getVolumeString(task1.getMaxProgress()) + " of ")).append(accessor.archipelago$fluidStack().getName());
                 return text.getString();
             }
             if (task.getType() == ForgeEnergyTask.TYPE) {
