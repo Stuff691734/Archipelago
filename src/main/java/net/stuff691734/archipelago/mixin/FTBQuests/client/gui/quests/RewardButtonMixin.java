@@ -4,6 +4,7 @@ import dev.ftb.mods.ftbquests.client.gui.quests.RewardButton;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
+import net.stuff691734.archipelago.ftbquests.FTBUtils;
 import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

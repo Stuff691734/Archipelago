@@ -57,10 +57,8 @@ public class Utils {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemName));
-        if (itemValue != null) {
-            giveItem(server, itemValue, amount, index);
-        }
+        Item itemValue = BuiltInRegistries.ITEM.get(new ResourceLocation(itemName));
+        giveItem(server, itemValue, amount, index);
     }
 
     public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
@@ -81,10 +79,10 @@ public class Utils {
         }
     }
 
-    public static Advancement getRoot(Advancement advancement) {
-        Advancement advancement1 = advancement;
+    public static AdvancementNode getRoot(AdvancementNode advancement) {
+        AdvancementNode advancement1 = advancement;
         while (true) {
-            Advancement advancement2 = advancement1.getParent();
+            AdvancementNode advancement2 = advancement1.parent();
             if (advancement2 == null) {
                 return advancement1;
             }
@@ -102,11 +100,11 @@ public class Utils {
         });
     }
 
-    public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
+    public static boolean shouldAdvancementBeHidden(DisplayInfo display, AdvancementNode advancement) {
         if (display != null) {
             if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-                Advancement rootAdvancement = Utils.getRoot(advancement);
-                String rootAdvancementName = rootAdvancement.getId().toString();
+                AdvancementNode rootAdvancement = Utils.getRoot(advancement);
+                String rootAdvancementName = rootAdvancement.holder().id().toString();
 
                 return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(rootAdvancementName));
             }
@@ -115,22 +113,22 @@ public class Utils {
                     if (Archipelago.slotData.roots_unlocked) {
                         return false;
                     }
-                    return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
+                    return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.holder().id().toString()));
                 } else {
-                    Advancement checkAdvancement = advancement.getParent();
+                    AdvancementNode checkAdvancement = advancement.parent();
                     while (checkAdvancement != null) {
-                        String checkAdvancementName = checkAdvancement.getId().toString();
+                        String checkAdvancementName = checkAdvancement.holder().id().toString();
                         if (!ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(checkAdvancementName))) {
                             return true;
                         }
-                        checkAdvancement = checkAdvancement.getParent();
+                        checkAdvancement = checkAdvancement.parent();
                     }
                     return false;
                 }
             }
             // not either, probably uninitiated
             else {
-                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
+                return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.holder().id().toString()));
             }
         }
         return false;

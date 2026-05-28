@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 public class AdvancementWidgetMixin {
     @Shadow
     @Final
-    private Advancement advancement;
+    private AdvancementNode advancementNode;
     @Shadow
     @Nullable
     private AdvancementWidget parent;
@@ -29,16 +29,16 @@ public class AdvancementWidgetMixin {
 
     @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
     public boolean drawSetNotHidden(DisplayInfo display) {
-        return Utils.shouldAdvancementBeHidden(display, this.advancement);
+        return Utils.shouldAdvancementBeHidden(display, this.advancementNode);
     }
 
     @Redirect(method = "isMouseOver", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
     public boolean isMouseOverSetNotHidden(DisplayInfo display) {
-        return Utils.shouldAdvancementBeHidden(display, this.advancement);
+        return Utils.shouldAdvancementBeHidden(display, this.advancementNode);
     }
 
     @Redirect(method = "drawConnectivity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementWidget;parent:Lnet/minecraft/client/gui/screens/advancements/AdvancementWidget;", opcode = Opcodes.GETFIELD))
     public AdvancementWidget parent(AdvancementWidget thisWidget) {
-        return MixinHelper.getGuiAdvancementParent(this.parent, this.display, this.advancement);
+        return MixinHelper.getGuiAdvancementParent(this.parent, this.display, this.advancementNode);
     }
 }

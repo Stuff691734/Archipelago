@@ -7,9 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
@@ -49,10 +48,7 @@ public class ReceiveItemEvent {
                     AdvancementHolder advancement = server.getAdvancements().get(ResourceLocation.parse(itemName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
-                        ArchipelagoPacketHandler.INSTANCE.send(
-                                PacketDistributor.PLAYER.with(() -> player),
-                                new GetCheckPacket(checkType.addPrefix(itemName))
-                        );
+                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
@@ -67,10 +63,7 @@ public class ReceiveItemEvent {
                     state.checks.put(checkType.addPrefix(itemName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         FTBUtils.checkIsCompleted(player, itemName);
-                        ArchipelagoPacketHandler.INSTANCE.send(
-                                PacketDistributor.PLAYER.with(() -> player),
-                                new GetCheckPacket(checkType.addPrefix(itemName))
-                        );
+                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
                     }
                 }
                 break;
