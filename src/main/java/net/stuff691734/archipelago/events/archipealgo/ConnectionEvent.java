@@ -34,12 +34,7 @@ public class ConnectionEvent {
                     state.slotData.get("death_link"),
                     state.slotData.get("roots_unlocked")
             );
-            for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
-                ArchipelagoPacketHandler.INSTANCE.send(
-                        PacketDistributor.PLAYER.with(() -> player),
-                        new SyncSlotDataPacket(state.slotData)
-                );
-            }
+            PacketDistributor.sendToAllPlayers(new SyncSlotDataPacket(state.slotData));
 
             if (Archipelago.slotData.death_link) {
                 Archipelago.LOGGER.info("DeathLink activated");

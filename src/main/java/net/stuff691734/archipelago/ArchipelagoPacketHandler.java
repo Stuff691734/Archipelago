@@ -1,28 +1,33 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.NetworkRegistry;
-import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 import net.stuff691734.archipelago.net.StartSyncChecksPacket;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 public class ArchipelagoPacketHandler {
+    @SubscribeEvent
+    public void init(final RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
 
-    private static final String PROTOCOL_VERSION = "1";
+        registrar.playToClient(
+                StartSyncChecksPacket.TYPE,
+                StartSyncChecksPacket.STREAM_CODEC,
+                StartSyncChecksPacket.Handler::handle
+        );
 
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(Archipelago.MODID, "main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );
+        registrar.playToClient(
+                GetCheckPacket.TYPE,
+                GetCheckPacket.STREAM_CODEC,
+                GetCheckPacket.Handler::handle
+        );
 
-    public static void init() {
-        int index = 0;
-
-        INSTANCE.registerMessage(index++, StartSyncChecksPacket.class, new StartSyncChecksPacket.Encoder(), new StartSyncChecksPacket.Decoder(), new StartSyncChecksPacket.Handler());
-        INSTANCE.registerMessage(index++, GetCheckPacket.class, new GetCheckPacket.Encoder(), new GetCheckPacket.Decoder(), new GetCheckPacket.Handler());
-        INSTANCE.registerMessage(index++, SyncSlotDataPacket.class, new SyncSlotDataPacket.Encoder(), new SyncSlotDataPacket.Decoder(), new SyncSlotDataPacket.Handler());
+        registrar.playToClient(
+                SyncSlotDataPacket.TYPE,
+                SyncSlotDataPacket.STREAM_CODEC,
+                SyncSlotDataPacket.Handler::handle
+        );
     }
 }
