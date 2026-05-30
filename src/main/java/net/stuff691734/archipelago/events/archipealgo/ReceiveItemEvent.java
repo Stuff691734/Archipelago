@@ -14,6 +14,7 @@ import net.stuff691734.archipelago.Utils;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 import net.stuff691734.archipelago.mixin.PlayerAdvancementAccessor;
 import net.stuff691734.archipelago.net.GetCheckPacket;
+import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 
 import javax.annotation.Nullable;
 
@@ -47,11 +48,8 @@ public class ReceiveItemEvent {
                     AdvancementHolder advancement = server.getAdvancements().get(new ResourceLocation(itemName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
-                        ArchipelagoPacketHandler.INSTANCE.send(
-                                PacketDistributor.PLAYER.with(() -> player),
-                                new GetCheckPacket(checkType.addPrefix(itemName))
-                        );
                     }
+                    PacketDistributor.sendToAllPlayers(new GetCheckPacket(checkType.addPrefix(itemName)));
                     if (Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(

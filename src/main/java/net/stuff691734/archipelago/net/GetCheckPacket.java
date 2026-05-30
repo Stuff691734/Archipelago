@@ -1,44 +1,33 @@
 package net.stuff691734.archipelago.net;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.simple.MessageFunctions;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
 
-public class GetCheckPacket {
-    public String check;
+public record GetCheckPacket(String check) implements CustomPacketPayload {
+    public static Type<GetCheckPacket> TYPE = new Type<>(new ResourceLocation(Archipelago.MODID, "get_check_packet"));
 
-    public GetCheckPacket(String check) {
-        this.check = check;
+    public static StreamCodec<ByteBuf, GetCheckPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8,
+            GetCheckPacket::check,
+            GetCheckPacket::new
+    );
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static class Encoder implements MessageFunctions.MessageEncoder<GetCheckPacket> {
-        @Override
-        public void encode(GetCheckPacket message, FriendlyByteBuf buffer) {
-            buffer.writeUtf(message.check);
-        }
-    }
-
-    public static class Decoder implements MessageFunctions.MessageDecoder<GetCheckPacket> {
-        @Override
-        public GetCheckPacket decode(FriendlyByteBuf buffer) {
-            String check = buffer.readUtf();
-
-            return new GetCheckPacket(check);
-        }
-    }
-
-    public static class Handler implements MessageFunctions.MessageConsumer<GetCheckPacket> {
-        @Override
-        public void handle(GetCheckPacket packet, NetworkEvent.Context context) {
+    public static class Handler {
+        public static void handle(GetCheckPacket packet, IPayloadContext context) {
             context.enqueueWork(() -> {
-                if (FMLEnvironment.dist.isClient()) {
-                    Archipelago.LOGGER.info("Received archipelago check from server.");
-                    Archipelago.clientState.addCheck(packet.check);
-                }
+                Archipelago.LOGGER.info("Received archipelago check from server.");
+                Archipelago.clientState.addCheck(packet.check);
             });
-            context.setPacketHandled(true);
         }
     }
 }
