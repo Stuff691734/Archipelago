@@ -52,7 +52,7 @@ public abstract class QuestMixin implements QuestAccessor {
     private void checkIsCompleted(@Coerce Object checker, CallbackInfoReturnable<Boolean> cir) {
         // I don't actually care about the checker
         if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) (Object) this)) {
-            cir.cancel();
+            cir.setReturnValue(false);
         }
     }
 }
