@@ -26,9 +26,9 @@ public class EntityLoadEvent {
                 }
                 ArchipelagoPersistentState.getInstance().setDirty();
             }
-            PacketDistributor.PLAYER.with((ServerPlayer) event.getEntity()).send(new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().toArray(new String[0])));
+            PacketDistributor.sendToPlayer((ServerPlayer) event.getEntity(), new StartSyncChecksPacket(ArchipelagoPersistentState.getInstance().checks.keySet().stream().toList()));
             if (!ArchipelagoPersistentState.getInstance().slotData.isEmpty()) {
-                PacketDistributor.PLAYER.with((ServerPlayer) event.getEntity()).send(new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData));
+                PacketDistributor.sendToPlayer((ServerPlayer) event.getEntity(), new SyncSlotDataPacket(ArchipelagoPersistentState.getInstance().slotData));
             }
         }
     }

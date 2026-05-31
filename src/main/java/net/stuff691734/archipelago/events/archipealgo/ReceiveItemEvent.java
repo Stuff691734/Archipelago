@@ -48,8 +48,8 @@ public class ReceiveItemEvent {
                     AdvancementHolder advancement = server.getAdvancements().get(ResourceLocation.parse(itemName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
-                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
                     }
+                    PacketDistributor.sendToAllPlayers(new GetCheckPacket(checkType.addPrefix(itemName)));
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
@@ -63,8 +63,8 @@ public class ReceiveItemEvent {
                     state.checks.put(checkType.addPrefix(itemName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         FTBUtils.checkIsCompleted(player, itemName);
-                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
                     }
+                    PacketDistributor.sendToAllPlayers(new GetCheckPacket(checkType.addPrefix(itemName)));
                 }
                 break;
             case ITEM:
