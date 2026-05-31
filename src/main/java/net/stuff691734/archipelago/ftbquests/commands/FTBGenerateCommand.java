@@ -44,7 +44,7 @@ public class FTBGenerateCommand {
                                 Advancement advancement = server.getAdvancements().getAdvancement(new ResourceLocation(adv));
                                 assert advancement != null;
                                 if (advancement.getDisplay() != null) {
-                                    dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getContents()));
+                                    dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getString()));
                                 }
                             }
                         }
