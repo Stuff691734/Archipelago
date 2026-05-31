@@ -108,7 +108,7 @@ public class FTBGenerateCommand {
         });
     }
 
-    private static String getName(QuestObject questObject, MinecraftServer server) {
+    public static String getName(QuestObject questObject, MinecraftServer server) {
         // getAltTitle (used for default quest names) is client side only, so I have reimplemented them here *sigh*
         // This is mostly copy and pasted code from
         if (!questObject.getRawTitle().isEmpty()) {
