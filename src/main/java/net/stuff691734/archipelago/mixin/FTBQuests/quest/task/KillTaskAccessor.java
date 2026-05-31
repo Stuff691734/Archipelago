@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(KillTask.class)
 public interface KillTaskAccessor {
-    @Accessor(value = "entity", remap = false)
+    @Accessor(value = "entityTypeId", remap = false)
     ResourceLocation archipelago$entity();
 }

@@ -3,15 +3,16 @@ package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 import dev.ftb.mods.ftbquests.events.QuestProgressEventData;
 import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Quest.class)
 public abstract class QuestMixin implements QuestAccessor {
@@ -24,11 +25,11 @@ public abstract class QuestMixin implements QuestAccessor {
     }
 
     @Shadow
-    private boolean invisible;
+    private boolean invisibleUntilCompleted;
 
     @Override
     public boolean archipelago$isInvisibleUntilCompleted() {
-        return invisible;
+        return invisibleUntilCompleted;
     }
 
     @Shadow(remap = false)
@@ -47,10 +48,11 @@ public abstract class QuestMixin implements QuestAccessor {
         FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
     }
 
-    @Inject(method = "lambda$checkForDependantCompletion$1", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;"), remap = false, cancellable = true)
-    private static void checkIsCompleted(TeamData data, QuestObject questObject, CallbackInfo ci) {
-        if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) questObject)) {
-            ci.cancel();
+    @Inject(method = "checkDependencies", at = @At(value = "RETURN"), remap = false, cancellable = true)
+    private void checkIsCompleted(@Coerce Object checker, CallbackInfoReturnable<Boolean> cir) {
+        // I don't actually care about the checker
+        if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) (Object) this)) {
+            cir.cancel();
         }
     }
 }
