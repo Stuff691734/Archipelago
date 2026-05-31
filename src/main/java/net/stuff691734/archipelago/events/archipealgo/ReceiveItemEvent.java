@@ -72,6 +72,7 @@ public class ReceiveItemEvent {
                                 PacketDistributor.PLAYER.with(() -> player),
                                 new GetCheckPacket(checkType.addPrefix(itemName))
                         );
+                        FTBUtils.checkIsCompleted(player, itemName);
                     }
                 }
                 break;

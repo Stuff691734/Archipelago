@@ -12,6 +12,7 @@
     "FTBQuests.gui.quests.ViewQuestPanelMixin",
     "FTBQuests.net.ClaimAllRewardsMessageMixin",
     "FTBQuests.net.ClaimRewardMessageMixin",
+    "FTBQuests.quest.QuestAccessor",
     "FTBQuests.quest.QuestMixin",
     "FTBQuests.quest.TeamDataMixin",
     "FTBQuests.quest.task.StructureTaskAccessor"
