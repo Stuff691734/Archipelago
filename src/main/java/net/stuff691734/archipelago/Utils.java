@@ -57,7 +57,7 @@ public class Utils {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         String itemName = strings[1];
-        Item itemValue = BuiltInRegistries.ITEM.get(new ResourceLocation(itemName));
+        Item itemValue = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemName));
         giveItem(server, itemValue, amount, index);
     }
 
