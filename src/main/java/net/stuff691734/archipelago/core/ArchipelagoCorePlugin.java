@@ -23,7 +23,8 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
                 ButtonRewardTransformer.class.getName(),
                 MessageClaimAllRewardsTransformer.class.getName(),
                 MessageClaimRewardTransformer.class.getName(),
-                QuestTransformer.class.getName()
+                QuestTransformer.class.getName(),
+                PanelViewQuestTransformer.class.getName()
         };
     }
 
