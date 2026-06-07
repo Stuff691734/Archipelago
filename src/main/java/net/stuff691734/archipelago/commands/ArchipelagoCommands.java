@@ -48,6 +48,12 @@ public class ArchipelagoCommands {
                     .executes((context -> OpenBookCommand.execute(context, StringArgumentType.getString(context, "quest_id"))))
                 )
             )
+            .then(literal("setPassword")
+                .then(argument("password", StringArgumentType.greedyString())
+                    .executes((context) -> SetPasswordCommand.execute(context, StringArgumentType.getString(context, "password")))
+                )
+                .executes((context) -> SetPasswordCommand.execute(context, ""))
+            )
         );
     }
 }
