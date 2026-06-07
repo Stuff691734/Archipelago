@@ -8,7 +8,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +26,7 @@ public class ArchipelagoCommands extends CommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get>");
+            throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get|setPassword>");
         }
         switch (args[0]) {
             case "add":
@@ -45,15 +44,18 @@ public class ArchipelagoCommands extends CommandBase {
             case "get":
                 GetCommand.execute(sender, args);
                 break;
+            case "setPassword":
+                SetPasswordCommand.execute(sender, args);
+                break;
             default:
-                throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get>");
+                throw new WrongUsageException("Usage: /archipelago <add|connect|disconnect|generate|get|setPassword>");
         }
     }
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "add", "connect", "disconnect", "generate", "get");
+            return getListOfStringsMatchingLastWord(args, "add", "connect", "disconnect", "generate", "get", "setPassword");
         }
         if ((args.length == 2 || args.length == 3) && Objects.equals(args[1], "generate")) {
             return getListOfStringsMatchingLastWord(args, "true", "false");
