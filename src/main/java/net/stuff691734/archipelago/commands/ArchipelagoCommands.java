@@ -42,6 +42,12 @@ public class ArchipelagoCommands {
                     .executes(AddCommand::execute)
                 )
             )
+            .then(literal("setPassword")
+                .then(argument("password", StringArgumentType.greedyString())
+                    .executes((context) -> SetPasswordCommand.execute(context, StringArgumentType.getString(context, "password")))
+                )
+                .executes((context) -> SetPasswordCommand.execute(context, ""))
+            )
         );
     }
 }
