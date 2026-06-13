@@ -1,22 +1,23 @@
 package net.stuff691734.archipelago;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
+import net.minecraft.command.arguments.ItemInput;
+import net.minecraft.command.arguments.ItemParser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -34,53 +35,42 @@ public class Utils {
     }
 
     public static boolean isItemId(String itemId) {
-        String item;
+        String itemName = itemId.split(" ", 2)[1];
+        ItemParser itemResult = null;
         try {
-            item = itemId.split(" ")[1];
-        } catch (IndexOutOfBoundsException exception) {
-            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
-            return false;
+            itemResult = new ItemParser(new StringReader(itemName), false).parse();
+        } catch (CommandSyntaxException e) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemName);
         }
-        ResourceLocation id;
-        try {
-            id = new ResourceLocation(item);
-        } catch (ResourceLocationException exception) {
-            return false;
-        }
-        return ForgeRegistries.ITEMS.containsKey(id);
+        return itemResult != null;
     }
 
-    public static void giveItem(EntityPlayerMP player, Item item, int amount) {
-        ItemStack itemStack = new ItemStack(item, amount);
-        if (!player.inventory.addItemStackToInventory(itemStack)) {
-            player.entityDropItem(itemStack);
+    public static void giveItem(EntityPlayerMP player, ItemStack item) {
+        if (!player.inventory.addItemStackToInventory(item)) {
+            player.entityDropItem(item);
         }
     }
 
     public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-        if (itemValue != null) {
-            giveItem(server, itemValue, amount, index);
-        }
+        try {
+            ItemParser itemResult = new ItemParser(new StringReader(strings[1]), false).parse();
+            ItemInput itemInput = new ItemInput(itemResult.getItem(), itemResult.getNbt());
+            giveItem(server, itemInput.createStack(amount, false), index);
+        } catch (CommandSyntaxException ignored) {}
     }
 
-    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
-        giveItem(server, item, 1, index);
-    }
-
-    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+    public static void giveItem(MinecraftServer server, ItemStack item, @Nullable Long index) {
         for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
                     if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
-                        giveItem(player, item, amount);
+                        giveItem(player, item);
                     }
                 }
             } else {
-                giveItem(player, item, amount);
+                giveItem(player, item);
             }
         }
     }
