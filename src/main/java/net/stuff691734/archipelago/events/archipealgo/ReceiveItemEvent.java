@@ -26,7 +26,7 @@ public class ReceiveItemEvent {
                 event.getPlayerName(),
                 event.getLocationName()
         )));
-        String[] itemName = event.getItemName().split(" ",3);
+        String[] itemName = event.getItemName().split(" ",2);
 
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
     }
@@ -42,20 +42,21 @@ public class ReceiveItemEvent {
         CheckType checkType = CheckType.getCheckType(itemType);
         switch (checkType) {
             case ADVANCEMENT:
-                if (Utils.isAdvancementId(itemName)) {
-                    state.checks.put(checkType.addPrefix(itemName), true);
-                    AdvancementHolder advancement = server.getAdvancements().get(new ResourceLocation(itemName));
+                String advancementName = itemName.split(" ",2)[0];
+                if (Utils.isAdvancementId(advancementName)) {
+                    state.checks.put(checkType.addPrefix(advancementName), true);
+                    AdvancementHolder advancement = server.getAdvancements().get(new ResourceLocation(advancementName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
                         ArchipelagoPacketHandler.INSTANCE.send(
                                 PacketDistributor.PLAYER.with(() -> player),
-                                new GetCheckPacket(checkType.addPrefix(itemName))
+                                new GetCheckPacket(checkType.addPrefix(advancementName))
                         );
                     }
-                    if (Archipelago.slotData.advancement_checks_give_items) {
+                    if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(server,  display.getIcon().getItem(), index)
+                            display -> Utils.giveItem(server, display.getIcon(), index)
                         );
                     }
                 }
