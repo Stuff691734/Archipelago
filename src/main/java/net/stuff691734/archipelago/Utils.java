@@ -1,24 +1,25 @@
 package net.stuff691734.archipelago;
 
-import io.github.archipelagomw.ClientStatus;
-import net.minecraft.ResourceLocationException;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DataResult;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.commands.arguments.item.ItemParser;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -35,50 +36,42 @@ public class Utils {
     }
 
     public static boolean isItemId(String itemId) {
-        String item;
+        String itemName = itemId.split(" ", 2)[1];
+        ItemParser.ItemResult itemResult = null;
         try {
-            item = itemId.split(" ")[1];
-        } catch (IndexOutOfBoundsException exception) {
-            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
-            return false;
+            itemResult = ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(itemName));
+        } catch (CommandSyntaxException e) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemName);
         }
-        DataResult<ResourceLocation> id = ResourceLocation.read(item);
-        AtomicBoolean result = new AtomicBoolean(false);
-        id.result().ifPresent((identifier) ->  result.set(ForgeRegistries.ITEMS.containsKey(identifier)));
-        return result.get();
+        return itemResult != null;
     }
 
-    public static void giveItem(ServerPlayer player, Item item, int amount) {
-        ItemStack itemStack = new ItemStack(item, amount);
-        if (!player.addItem(itemStack)) {
-            player.spawnAtLocation(itemStack);
+    public static void giveItem(ServerPlayer player, ItemStack item) {
+        if (!player.addItem(item)) {
+            player.spawnAtLocation(item);
         }
     }
 
     public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-        if (itemValue != null) {
-            giveItem(server, itemValue, amount, index);
-        }
+        try {
+            ItemParser.ItemResult itemResult = ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(strings[1]));
+            ItemInput itemInput = new ItemInput(itemResult.item(), itemResult.nbt());
+            giveItem(server, itemInput.createItemStack(amount, false), index);
+        } catch (CommandSyntaxException ignored) {}
     }
 
-    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
-        giveItem(server, item, 1, index);
-    }
-
-    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+    public static void giveItem(MinecraftServer server, ItemStack item, @Nullable Long index) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
                     if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
-                        giveItem(player, item, amount);
+                        giveItem(player, item);
                     }
                 }
             } else {
-                giveItem(player, item, amount);
+                giveItem(player, item);
             }
         }
     }
