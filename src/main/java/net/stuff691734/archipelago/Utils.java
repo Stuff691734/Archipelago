@@ -1,16 +1,18 @@
 package net.stuff691734.archipelago;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.archipelagomw.ClientStatus;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.commands.arguments.item.ItemArgument;
+import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
@@ -33,53 +35,41 @@ public class Utils {
     }
 
     public static boolean isItemId(String itemId) {
-        String item;
+        String itemName = itemId.split(" ", 2)[1];
+        ItemInput itemParser = null;
         try {
-            item = itemId.split(" ")[1];
-        } catch (IndexOutOfBoundsException exception) {
-            Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
-            return false;
+            itemParser = new ItemArgument().parse(new StringReader(itemName));
+        } catch (CommandSyntaxException e) {
+            Archipelago.LOGGER.error("Unable to parse item: {}", itemName);
         }
-        ResourceLocation id;
-        try {
-            id = new ResourceLocation(item);
-        } catch (ResourceLocationException exception) {
-            return false;
-        }
-        return ForgeRegistries.ITEMS.containsKey(id);
+        return itemParser != null;
     }
 
-    public static void giveItem(ServerPlayer player, Item item, int amount) {
-        ItemStack itemStack = new ItemStack(item, amount);
-        if (!player.addItem(itemStack)) {
-            player.spawnAtLocation(itemStack);
+    public static void giveItem(ServerPlayer player, ItemStack item) {
+        if (!player.addItem(item)) {
+            player.spawnAtLocation(item);
         }
     }
 
     public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-        if (itemValue != null) {
-            giveItem(server, itemValue, amount, index);
-        }
+        try {
+            ItemInput itemInput = new ItemArgument().parse(new StringReader(strings[1]));
+            giveItem(server, itemInput.createItemStack(amount, false), index);
+        } catch (CommandSyntaxException ignored) {}
     }
 
-    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
-        giveItem(server, item, 1, index);
-    }
-
-    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+    public static void giveItem(MinecraftServer server, ItemStack item, @Nullable Long index) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
                     if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
-                        giveItem(player, item, amount);
+                        giveItem(player, item);
                     }
                 }
             } else {
-                giveItem(player, item, amount);
+                giveItem(player, item);
             }
         }
     }
