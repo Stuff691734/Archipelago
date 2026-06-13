@@ -27,7 +27,7 @@ public class ReceiveItemEvent {
                 event.getPlayerName(),
                 event.getLocationName()
         )));
-        String[] itemName = event.getItemName().split(" ",3);
+        String[] itemName = event.getItemName().split(" ",2);
 
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
     }
@@ -43,27 +43,29 @@ public class ReceiveItemEvent {
         CheckType checkType = CheckType.getCheckType(itemType);
         switch (checkType) {
             case ADVANCEMENT:
-                if (Utils.isAdvancementId(itemName)) {
-                    state.checks.put(checkType.addPrefix(itemName), true);
-                    AdvancementHolder advancement = server.getAdvancements().get(new ResourceLocation(itemName));
+                String advancementName = itemName.split(" ",2)[0];
+                if (Utils.isAdvancementId(advancementName)) {
+                    state.checks.put(checkType.addPrefix(advancementName), true);
+                    AdvancementHolder advancement = server.getAdvancements().get(new ResourceLocation(advancementName));
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$markForVisibilityUpdate(advancement);
-                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
+                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(advancementName)));
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         advancement.value().display().ifPresent(
-                            display -> Utils.giveItem(server, display.getIcon().getItem(), index)
+                            display -> Utils.giveItem(server, display.getIcon(), index)
                         );
                     }
                 }
                 break;
             case FTB_QUEST:
-                if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
-                    state.checks.put(checkType.addPrefix(itemName), true);
+                String questName = itemName.split(" ",2)[0];
+                if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(questName)) {
+                    state.checks.put(checkType.addPrefix(questName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(questName)));
                         FTBUtils.checkIsCompleted(player, itemName);
-                        PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(itemName)));
                     }
                 }
                 break;
