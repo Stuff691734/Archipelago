@@ -8,7 +8,7 @@ import net.stuff691734.archipelago.events.archipealgo.ReceiveItemEvent;
 public class AddCommand {
     public static int execute(CommandContext<CommandSource> context) {
         final String checkName = StringArgumentType.getString(context, "check");
-        String[] itemName = checkName.split(" ",3);
+        String[] itemName = checkName.split(" ",2);
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], null);
         return 0;
     }
