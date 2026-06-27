@@ -1,7 +1,6 @@
 package net.stuff691734.archipelago.ftbquests;
 
 import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
-import dev.ftb.mods.ftbquests.client.ClientQuestFile;
 import dev.ftb.mods.ftbquests.quest.*;
 import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +20,7 @@ public class FTBUtils {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;
         }
-        return FTBQuestsAPI.api().getQuestFile(true).get(id) != null;
+        return FTBQuestsAPI.api().getQuestFile(false).get(id) != null;
     }
 
     public static boolean hasQuestRewardAccess(Quest quest, Function<Quest, Boolean> action) {
@@ -66,7 +65,7 @@ public class FTBUtils {
     public static void checkIsCompleted(ServerPlayer player, String questName) {
         // not doing this safely as it has already been checked that this works via FTBUtils.isQuestId()
         long questId = Long.parseLong(questName, 16);
-        ClientQuestFile file = ClientQuestFile.INSTANCE;
+        BaseQuestFile file = FTBQuestsAPI.api().getQuestFile(false);
         QuestObject questObject = file.get(questId);
         if (questObject instanceof Quest quest) {
             ((QuestAccessor)(Object)quest).archipelago$checkForDependantCompletion(TeamData.get(player));
