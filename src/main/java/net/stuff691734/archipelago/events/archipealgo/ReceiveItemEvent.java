@@ -77,7 +77,9 @@ public class ReceiveItemEvent {
         }
         if (index != null) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                state.playerLastCheck.put(player.getStringUUID(), index.intValue());
+                if (state.playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
+                    state.playerLastCheck.put(player.getStringUUID(), index.intValue());
+                }
             }
         }
     }
