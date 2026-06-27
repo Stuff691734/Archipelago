@@ -80,7 +80,9 @@ public class ReceiveItemEvent {
         }
         if (index != null) {
             for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
-                state.playerLastCheck.put(player.getCachedUniqueIdString(), index.intValue());
+                if (state.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
+                    state.playerLastCheck.put(player.getCachedUniqueIdString(), index.intValue());
+                }
             }
         }
     }
