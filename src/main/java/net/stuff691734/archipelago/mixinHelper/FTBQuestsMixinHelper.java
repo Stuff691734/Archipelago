@@ -72,23 +72,20 @@ public class FTBQuestsMixinHelper {
         ) {
             return original;
         }
+        if (Archipelago.slotData.roots_unlocked && quest.dependencies.isEmpty()) {
+            return true;
+        }
 
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
             if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getChapter().getCodeString()))) {
                 // if player hasn't received quest chapter check prevent them from getting the advancement
-                return false;
+                return original;
             }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             if (quest.dependencies.isEmpty()) {
-                if (!Archipelago.slotData.roots_unlocked) {
-                    if (!FTBUtils.hasRequiredChecks(quest)) {
-                        return false;
-                    }
-                    if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()))) {
-                        // no dependencies, check if it has self
-                        return false;
-                    }
+                if (!FTBUtils.hasRequiredChecks(quest)) {
+                    return false;
                 }
             }
             else {
@@ -112,7 +109,7 @@ public class FTBQuestsMixinHelper {
             }
         }
         else {
-            if (!ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString()))) {
+            if (!FTBUtils.hasRequiredChecks(quest)) {
                 return false;
             }
         }
@@ -132,7 +129,9 @@ public class FTBQuestsMixinHelper {
 
         // only do this for dependencies
         if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
-            addToMenu(contextMenu, "Archipelago Item: ftb " + CheckType.FTB_QUEST.addPrefix(String.format("%s (%s)", quest.getChapter().getCodeString(), quest.getChapter().getTitle())), 0);
+            if (!(quest.dependencies.isEmpty() && Archipelago.slotData.roots_unlocked)) {
+                addToMenu(contextMenu, "Archipelago Item: ftb " + CheckType.FTB_QUEST.addPrefix(String.format("%s (%s)", quest.getChapter().getCodeString(), quest.getChapter().getTitle())), 0);
+            }
         }
         else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
             List<String> advancementDependencies = quest.tasks.stream()
