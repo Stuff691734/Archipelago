@@ -171,6 +171,9 @@ public class Utils {
 
     public static boolean shouldAdvancementBeHidden(DisplayInfo display, Advancement advancement) {
         if (display != null) {
+            if (Archipelago.slotData.roots_unlocked && Utils.getRoot(advancement) == advancement) {
+                return false;
+            }
             if (Objects.equals(Archipelago.slotData.unlock_type, "tab")) {
                 Advancement rootAdvancement = Utils.getRoot(advancement);
                 String rootAdvancementName = rootAdvancement.getId().toString();
@@ -179,9 +182,6 @@ public class Utils {
             }
             else if (Objects.equals(Archipelago.slotData.unlock_type, "tree")) {
                 if (Utils.getRoot(advancement) == advancement) {
-                    if (Archipelago.slotData.roots_unlocked) {
-                        return false;
-                    }
                     return !ArchipelagoPersistentState.getCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
                 } else {
                     Advancement checkAdvancement = advancement.getParent();
