@@ -67,7 +67,7 @@ public class MixinHelper {
         if (Archipelago.slotData.isInitiated &&
             (
                 !Archipelago.slotData.activated_modules.contains("Advancements") ||
-                (Objects.equals(Archipelago.slotData.unlock_type, "tree") && Archipelago.slotData.roots_unlocked)
+                Archipelago.slotData.roots_unlocked
             )
         ) {
             return tab;
