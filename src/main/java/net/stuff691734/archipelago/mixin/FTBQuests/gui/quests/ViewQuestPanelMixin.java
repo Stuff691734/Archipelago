@@ -50,8 +50,8 @@ public class ViewQuestPanelMixin {
                 Archipelago.slotData.activated_modules.contains("FTBQuests") &&
                 Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
         ) {
-            if (Archipelago.slotData.roots_unlocked && quest.getDependencies().toList().isEmpty()) {
-                return false;
+            if (Archipelago.slotData.roots_unlocked) {
+                return quest.getDependencies().toList().isEmpty();
             }
             return true;
         }
