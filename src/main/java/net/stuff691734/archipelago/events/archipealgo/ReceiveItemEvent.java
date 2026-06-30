@@ -29,7 +29,7 @@ public class ReceiveItemEvent {
                 event.getPlayerName(),
                 event.getLocationName()
         )));
-        String[] itemName = event.getItemName().split(" ",3);
+        String[] itemName = event.getItemName().split(" ",2);
 
         ReceiveItemEvent.parseItem(itemName[0], itemName[1], event.getIndex());
     }
@@ -45,18 +45,19 @@ public class ReceiveItemEvent {
         CheckType checkType = CheckType.getCheckType(itemType);
         switch (checkType) {
             case ADVANCEMENT:
-                if (Utils.isAdvancementId(itemName)) {
-                    state.checks.put(checkType.addPrefix(itemName), true);
-                    Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(itemName));
+                String advancementName = itemName.split(" ",2)[0];
+                if (Utils.isAdvancementId(advancementName)) {
+                    state.checks.put(checkType.addPrefix(advancementName), true);
+                    Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(advancementName));
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
                         ((PlayerAdvancementAccessor)server.getPlayerList().getPlayerAdvancements(player)).archipelago$ensureVisibility(advancement);
-                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(checkType.addPrefix(itemName)), player);
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(checkType.addPrefix(advancementName)), player);
                     }
                     if (Archipelago.slotData.isInitiated && Archipelago.slotData.advancement_checks_give_items) {
                         assert advancement != null; // via isAdvancementId
                         DisplayInfo display = advancement.getDisplay();
                         if (display != null) {
-                            Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon().getItem(), index);
+                            Utils.giveItem(server, ((DisplayInfoAccessor) display).archipelago$getIcon(), index);
                         }
                     }
                 }

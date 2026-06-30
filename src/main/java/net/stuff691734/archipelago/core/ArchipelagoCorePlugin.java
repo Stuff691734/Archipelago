@@ -18,6 +18,7 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
                 GuiAdvancementTransformer.class.getName(),
                 GuiScreenAdvancementsTransformer.class.getName(),
                 DisplayInfoTransformer.class.getName(),
+                JsonToNBTTransformer.class.getName(),
 
                 ButtonQuestTransformer.class.getName(),
                 ButtonRewardTransformer.class.getName(),

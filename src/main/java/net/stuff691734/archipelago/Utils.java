@@ -6,6 +6,8 @@ import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
@@ -14,8 +16,10 @@ import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Utils {
     public static boolean isAdvancementId(String advancementId) {
@@ -40,46 +44,106 @@ public class Utils {
             Archipelago.LOGGER.error("Unable to parse item: {}", itemId);
             return false;
         }
+        String[] itemDetails = item
+                .split("\\{", 2)[0] // remove nbt
+                .split(" ", 2)[0] // remove display name
+                .split(":", 3);
+
         ResourceLocation id;
-        try {
-            id = new ResourceLocation(item);
-        } catch (Exception exception) {
-            return false;
+        if (itemDetails.length == 1) {
+            id = new ResourceLocation(itemDetails[0]);
+            return ForgeRegistries.ITEMS.containsKey(id);
         }
-        return ForgeRegistries.ITEMS.containsKey(id);
+        else {
+            id = new ResourceLocation(itemDetails[0], itemDetails[1]);
+            if (ForgeRegistries.ITEMS.containsKey(id)) {
+                return true;
+            }
+            else {
+                id = new ResourceLocation(itemDetails[0]);
+                return ForgeRegistries.ITEMS.containsKey(id);
+            }
+        }
     }
 
-    public static void giveItem(EntityPlayerMP player, Item item, int amount) {
-        ItemStack itemStack = new ItemStack(item, amount);
-        if (!player.inventory.addItemStackToInventory(itemStack)) {
-            player.entityDropItem(itemStack, 0);
+    public static void giveItem(EntityPlayerMP player, ItemStack item) {
+        if (!player.inventory.addItemStackToInventory(item)) {
+            player.entityDropItem(item, 0);
         }
     }
 
     public static void giveItem(MinecraftServer server, String item, @Nullable Long index) {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
-        String itemName = strings[1];
-        Item itemValue = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-        if (itemValue != null) {
-            giveItem(server, itemValue, amount, index);
+
+        String[] possibleNbt = strings[1].split("\\{", 2);
+
+        NBTTagCompound nbt = null;
+        if (possibleNbt.length == 2) {
+            try {
+                Method method = JsonToNBT.class.getMethod("archipelago$readStruct", String.class);
+                nbt = (NBTTagCompound) method.invoke(JsonToNBT.class, "{" + possibleNbt[1]);
+            }
+            catch (NoSuchMethodException e) {
+                Archipelago.LOGGER.info("Class Transformer JsonToNBTTransformer failed to add method");
+            }
+            catch (InvocationTargetException ignored) { /* Probably an NBTException */ }
+            catch (IllegalAccessException e) {
+                Archipelago.LOGGER.info("Class Transformer JsonToNBTTransformer failed to assign proper method access");
+            }
+        }
+
+        // splitting on space to make sure no check display names get past here
+        String[] itemDetails = possibleNbt[0].split(" ")[0].split(":", 3);
+
+
+        Item item1;
+        ItemStack itemStack = null;
+
+        if (itemDetails.length == 1) {
+            item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemDetails[0]));
+            if (item1 != null) {
+                itemStack = new ItemStack(item1, amount);
+            }
+        }
+        if (itemDetails.length == 2) {
+            item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemDetails[0], itemDetails[1]));
+            if (item1 != null) {
+                itemStack = new ItemStack(item1, amount);
+            }
+            else {
+                item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemDetails[0]));
+                if (item1 != null) {
+                    itemStack = new ItemStack(item1, amount, Integer.parseInt(itemDetails[1]));
+                }
+            }
+        }
+        if (itemDetails.length == 3) {
+            item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemDetails[0], itemDetails[1]));
+            if (item1 != null) {
+                itemStack = new ItemStack(item1, amount, Integer.parseInt(itemDetails[2]));
+            }
+        }
+
+
+        if (itemStack != null) {
+            if (nbt != null) {
+                itemStack.setTagCompound(nbt);
+            }
+            giveItem(server, itemStack, index);
         }
     }
 
-    public static void giveItem(MinecraftServer server, Item item, @Nullable Long index) {
-        giveItem(server, item, 1, index);
-    }
-
-    public static void giveItem(MinecraftServer server, Item item, int amount, @Nullable Long index) {
+    public static void giveItem(MinecraftServer server, ItemStack item, @Nullable Long index) {
         for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance() != null) {
                     if (ArchipelagoPersistentState.getInstance().playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
-                        giveItem(player, item, amount);
+                        giveItem(player, item);
                     }
                 }
             } else {
-                giveItem(player, item, amount);
+                giveItem(player, item);
             }
         }
     }
