@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.stuff691734.archipelago.archipelagoData.CheckType;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -130,23 +131,24 @@ public class Utils {
         return false;
     }
 
-    public static Long getLocationId(String locationName) {
+        public static List<Long> getLocationId(String locationName) {
         return Archipelago.client.getDataPackage().getGame("Modded Minecraft")
                 .locationNameToId.keySet()
                 .stream().filter(
                     (key) -> locationName.equals(String.format("%s %s", (Object[]) key.split(" ")))
-                ).findFirst().map(
+                ).map(
                     (value) -> Archipelago.client.getDataPackage().getGame("Modded Minecraft").locationNameToId.get(value)
-                ).orElse(null);
+                ).toList();
     }
 
     public static void sendCheck(String checkName) {
         if (Archipelago.client.isConnected()) {
-            Long check_id = Utils.getLocationId(checkName);
-            if (check_id != null) {
-                Archipelago.client.getLocationManager().checkLocation(check_id);
-                if (Archipelago.slotData.isCheckFinalGoal(checkName)) {
-                    Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+            for (Long check_id : Utils.getLocationId(checkName)) {
+                if (check_id != null) {
+                    Archipelago.client.getLocationManager().checkLocation(check_id);
+                    if (Archipelago.slotData.isCheckFinalGoal(checkName)) {
+                        Archipelago.client.setGameState(ClientStatus.CLIENT_GOAL);
+                    }
                 }
             }
         } else if (ArchipelagoPersistentState.getInstance() != null) {
