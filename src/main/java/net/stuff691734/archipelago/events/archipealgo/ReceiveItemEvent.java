@@ -63,10 +63,11 @@ public class ReceiveItemEvent {
                 }
                 break;
             case FTB_QUEST:
-                if (Loader.isModLoaded("ftbquests") && FTBUtils.isQuestId(itemName)) {
-                    state.checks.put(checkType.addPrefix(itemName), true);
+                String questName = itemName.split(" ", 2)[0];
+                if (Loader.isModLoaded("ftbquests") && FTBUtils.isQuestId(questName)) {
+                    state.checks.put(checkType.addPrefix(questName), true);
                     for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
-                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(itemName), player);
+                        ArchipelagoPacketHandler.INSTANCE.sendTo(new GetCheckPacket(questName), player);
                     }
                 }
                 break;
