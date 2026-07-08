@@ -49,13 +49,13 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
                 }
                 if (
                     mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin") &&
-                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.24")) >= 0
+                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) >= 0
                 ) {
                     return false;
                 }
                 if (
                         mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.NewClaimAllRewardsMessageMixin") &&
-                                ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.24")) < 0
+                                ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) < 0
                 ) {
                     return false;
                 }
