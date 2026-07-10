@@ -65,7 +65,7 @@ public class ReceiveItemEvent {
                     state.checks.put(checkType.addPrefix(questName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                         PacketDistributor.PLAYER.with(player).send(new GetCheckPacket(checkType.addPrefix(questName)));
-                        FTBUtils.checkIsCompleted(player, itemName);
+                        FTBUtils.checkIsCompleted(player, questName);
                     }
                 }
                 break;
