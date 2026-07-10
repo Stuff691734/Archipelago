@@ -64,7 +64,7 @@ public class ReceiveItemEvent {
                 if (ModList.get().isLoaded("ftbquests") && FTBUtils.isQuestId(questName)) {
                     state.checks.put(checkType.addPrefix(questName), true);
                     for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                        FTBUtils.checkIsCompleted(player, itemName);
+                        FTBUtils.checkIsCompleted(player, questName);
                     }
                     PacketDistributor.sendToAllPlayers(new GetCheckPacket(checkType.addPrefix(questName)));
                 }
