@@ -1,28 +1,23 @@
 package net.stuff691734.archipelago.events.neoforge;
 
-import io.github.archipelagomw.flags.ItemsHandling;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
-import net.stuff691734.archipelago.*;
-import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.implementations.ServerImpl;
+import net.stuff691734.archipelago.implementations.UtilsImpl;
+import net.stuff691734.archipelagoLib.Logic;
+import net.stuff691734.archipelagoLib.SlotData;
+import net.stuff691734.archipelagoLib.archipelagoClient.ArchipelagoClient;
 
 public class ServerStartingEvent {
     @SubscribeEvent
     public void onEvent(FMLServerStartingEvent event) {
         Archipelago.setServer(event.getServer());
-        ArchipelagoClient client = new ArchipelagoClient();
 
-        client.setGame("Modded Minecraft");
+        ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance(event.getServer());
 
-        client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
-
-        ArchipelagoEvents.register(client.getEventManager());
-
-        Archipelago.client = client;
-
-        ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance();
-
-        if (state != null && !state.slotData.isEmpty()) {
+        if (!state.slotData.isEmpty()) {
             Archipelago.slotData = new SlotData(
                     state.slotData.get("unlock_type"),
                     state.slotData.get("final_goal"),
@@ -35,5 +30,11 @@ public class ServerStartingEvent {
                     state.slotData.get("roots_unlocked")
             );
         }
+        Archipelago.logic = new Logic(state, Archipelago.slotData);
+
+        UtilsImpl utils = new UtilsImpl();
+        ServerImpl server = new ServerImpl(event.getServer());
+
+        Archipelago.client = new ArchipelagoClient(utils, server, state);
     }
 }

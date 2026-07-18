@@ -29,7 +29,7 @@ public class GetCheckPacket {
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Received archipelago check from server.");
-                        Archipelago.clientState.addCheck(this.check);
+                        Archipelago.CLIENT_STATE.addCheck(this.check);
                     }
             );
         });
