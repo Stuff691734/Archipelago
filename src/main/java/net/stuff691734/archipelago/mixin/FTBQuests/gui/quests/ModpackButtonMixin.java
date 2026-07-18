@@ -6,7 +6,7 @@ import com.feed_the_beast.ftbquests.quest.Chapter;
 import com.feed_the_beast.ftbquests.quest.ChapterGroup;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ftbquests.FTBUtils;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +30,7 @@ public abstract class ModpackButtonMixin {
             for(Chapter chapter : group.chapters) {
                 for(Quest quest : chapter.quests) {
                     if (
-                        FTBUtils.hasQuestRewardAccess(quest) &&
+                            Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
                         quest.rewards.stream().anyMatch(reward -> !questFile.self.isRewardClaimed(reward.id))
                     ) {
                         hasAvailableReward = true;
