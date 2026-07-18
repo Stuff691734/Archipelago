@@ -1,123 +1,125 @@
-package net.stuff691734.archipelago.ftbquests.commands;
+package net.stuff691734.archipelago.ftbquests.implementations;
 
-import dev.ftb.mods.ftbquests.api.FTBQuestsAPI;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
-import dev.ftb.mods.ftbquests.quest.*;
+import dev.ftb.mods.ftbquests.quest.Chapter;
+import dev.ftb.mods.ftbquests.quest.ChapterGroup;
+import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.task.*;
 import dev.ftb.mods.ftbquests.quest.task.forge.ForgeEnergyTask;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.stuff691734.archipelago.Utils;
-import net.stuff691734.archipelago.archipelagoData.DependencyNotation;
-import net.stuff691734.archipelago.archipelagoData.FTBQuestsCheck;
+import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.*;
+import net.stuff691734.archipelagoLib.CheckType;
+import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
+import net.stuff691734.archipelagoLib.interfaces.FTBQuestsInterface;
+import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class FTBGenerateCommand {
-    public static Map<String, FTBQuestsCheck> generateFTBChecks(MinecraftServer server , boolean removePermaHidden) {
-        Map<String, FTBQuestsCheck> ftbQuestsChecks = new HashMap<>();
+public class FTBQuestsImpl implements FTBQuestsInterface {
+    private final Quest quest;
 
-        FTBQuestsAPI.api().getQuestFile(false).forAllQuests((quest) -> {
-            QuestAccessor questAccessor = (QuestAccessor) (Object) quest;
-            if (removePermaHidden) {
-                if (quest.getDependants().isEmpty() && questAccessor.archipelago$isInvisibleUntilCompleted() && quest.getRewards().isEmpty()) {
-                    return;
-                }
-            }
-            DependencyNotation dependencies = new DependencyNotation();
-            // this uses nested in case it is also with advancements
-            DependencyNotation questDependencies = new DependencyNotation();
-            if (quest.getMinRequiredDependencies() > 0) {
-                questDependencies.setMinimum(quest.getMinRequiredDependencies());
-            } else if (questAccessor.archipelago$getDependencyRequirement().needOnlyOne()) {
-                questDependencies.setMinimum(1);
-            } else {
-                questDependencies.setMinimum(0);
-            }
-            getDependencies(questDependencies, quest, server);
-            dependencies.addNested(questDependencies);
-            for (Task task : quest.getTasks()) {
-                if (task.getType() == TaskTypes.ADVANCEMENT) {
-                    ResourceLocation adv = ((AdvancementTaskAccessor) task).archipelago$advancement();
-                    if (Utils.isAdvancementId(adv.toString())) {
-                        Advancement advancement = server.getAdvancements().getAdvancement(adv);
-                        assert advancement != null;
-                        if (advancement.getDisplay() != null) {
-                            dependencies.addCheck(String.format("adv %s (%s)", adv, advancement.getDisplay().getTitle().getString()));
-                        }
-                    }
-                }
-            }
-
-            ftbQuestsChecks.put(
-                String.format("ftb %s (%s)", quest.getCodeString(), getName(quest, server)),
-                new FTBQuestsCheck(
-                        quest.getShape(),
-                        dependencies,
-                        String.format("ftb %s (%s)", quest.getChapter().getCodeString(), getName(quest.getChapter(), server))
-                )
-            );
-        });
-
-        return ftbQuestsChecks.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .sorted(Map.Entry.comparingByValue())
-            .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (e1, e2) -> e1, // use first instance when dealing with conflicts
-                    LinkedHashMap::new
-                )
-            );
+    public FTBQuestsImpl(Quest quest) {
+        this.quest = quest;
     }
 
-    private static void getDependencies(DependencyNotation input, Quest quest, MinecraftServer server) {
-        quest.streamDependencies().forEach((questObject) ->  {
-            if (questObject instanceof ChapterGroup) {
-                DependencyNotation chapterGroupDependency = new DependencyNotation();
-
-                for (Chapter chapter : ((ChapterGroup) questObject).getChapters()) {
-                    for (Quest chapterGroupQuest : (chapter.getQuests())) {
-                        chapterGroupDependency.addCheck(String.format("ftb %s (%s)", chapterGroupQuest.getCodeString(), getName(chapterGroupQuest, server)));
-                    }
-                }
-                input.addNested(chapterGroupDependency);
+    @Override
+    public Stream<List<FTBQuestsInterface>> getDependencies() {
+        return this.quest.streamDependencies().map((dependency) -> {
+            if (dependency instanceof Quest) {
+                return Collections.singletonList(new FTBQuestsImpl((Quest) dependency));
+            } else if (dependency instanceof Task) {
+                return Collections.singletonList(new FTBQuestsImpl(((Task) dependency).getQuest()));
+            } else if (dependency instanceof Chapter) {
+                return ((Chapter) dependency).getQuests().stream()
+                        .map(FTBQuestsImpl::new)
+                        .collect(Collectors.toList());
+            } else if (dependency instanceof ChapterGroup) {
+                return ((ChapterGroup) dependency).getChapters().stream()
+                        .flatMap((chapter) -> chapter.getQuests().stream())
+                        .map(FTBQuestsImpl::new)
+                        .collect(Collectors.toList());
             }
-            else if (questObject instanceof Chapter) {
-                DependencyNotation chapterDependency = new DependencyNotation();
-                for (Quest chapterQuest : ((Chapter) questObject).getQuests()) {
-                    chapterDependency.addCheck(String.format("ftb %s (%s)", chapterQuest.getCodeString(), getName(chapterQuest, server)));
-                }
-                input.addNested(chapterDependency);
-            } else {
-                if (questObject instanceof Task) {
-                    questObject = ((Task) questObject).getQuest();
-                }
-                input.addCheck(String.format("ftb %s (%s)", questObject.getCodeString(), getName(questObject, server)));
-            }
+            return Collections.emptyList();
         });
     }
 
-    public static String getName(QuestObject questObject, MinecraftServer server) {
+    @Override
+    public List<String> getAdvancementDependencies() {
+        return this.quest.getTasks().stream()
+                .filter((task) -> task instanceof AdvancementTask)
+                .map((task) -> ((AdvancementTaskAccessor) task).archipelago$advancement().toString())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getMinimumDependencies() {
+        return this.quest.getMinRequiredDependencies();
+    }
+
+    @Override
+    public boolean hasSingleDependencyRequirement() {
+        return ((QuestAccessor)(Object) this.quest).archipelago$getDependencyRequirement().needOnlyOne();
+    }
+
+    @Override
+    public String getChapterName() {
+        if (!this.quest.getChapter().getRawTitle().isEmpty()) {
+            return this.quest.getChapter().getRawTitle();
+        }
+        return Component.translatable("ftbquests.unnamed").getString();
+    }
+
+    @Override
+    public String getPage() {
+        return this.quest.getChapter().getCodeString();
+    }
+
+    @Override
+    public String getId() {
+        return this.quest.getCodeString();
+    }
+
+    @Override
+    public String getDifficulty() {
+        return this.quest.getShape();
+    }
+
+    @Override
+    public boolean isRoot() {
+        return !this.quest.hasDependencies();
+    }
+
+    @Override
+    public String getName() {
+        return this.quest.getAltTitle().getString();
+    }
+
+    @Override
+    public String getName(ServerInterface server) {
+        return this.getTitle(server);
+    }
+
+    private String getTitle(ServerInterface server) {
         // getAltTitle (used for default quest names) is client side only, so I have reimplemented them here *sigh*
         // This is mostly copy and pasted code from
-        if (!questObject.getRawTitle().isEmpty()) {
-            return questObject.getRawTitle();
+        if (!this.quest.getRawTitle().isEmpty()) {
+            return this.quest.getRawTitle();
         }
-        if (questObject instanceof Quest && !((Quest) questObject).getTasks().isEmpty()) {
-            Task task = ((Quest)questObject).getTasksAsList().get(0);
+        if (!this.quest.getTasks().isEmpty()) {
+            Task task = quest.getTasksAsList().get(0);
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
                 AdvancementTaskAccessor accessor = (AdvancementTaskAccessor) task1;
-                if (Utils.isAdvancementId(accessor.archipelago$advancement().toString())) {
-                    Advancement advancement = server.getAdvancements().getAdvancement(accessor.archipelago$advancement());
-                    if (advancement != null && advancement.getDisplay() != null) {
-                        Component text = (Component.translatable("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getDisplay().getTitle());
+                if (Archipelago.client.isValidId(CheckType.ADVANCEMENT, accessor.archipelago$advancement().toString())) {
+                    AdvancementInterface advancement = server.getAdvancement(accessor.archipelago$advancement().toString());
+                    if (advancement.hasDisplay()) {
+                        Component text = (Component.translatable("ftbquests.task.ftbquests.advancement")).append(": ").append(advancement.getName());
                         return text.getString();
                     }
                 }

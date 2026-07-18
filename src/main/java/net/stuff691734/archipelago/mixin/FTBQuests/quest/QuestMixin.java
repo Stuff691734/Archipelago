@@ -6,7 +6,9 @@ import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
-import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +47,7 @@ public abstract class QuestMixin implements QuestAccessor {
             remap = false
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
-        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+        Archipelago.client.sendCheck(CheckType.FTB_QUEST.addPrefix(((Quest)(Object)this).getCodeString()));
     }
 
     @Inject(method = "lambda$checkForDependantCompletion$1", at = {
@@ -53,7 +55,7 @@ public abstract class QuestMixin implements QuestAccessor {
             @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;") // 2001.4.21 and before
     }, remap = false, cancellable = true)
     private static void checkIsCompleted(TeamData data, QuestObject questObject, CallbackInfo ci) {
-        if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) questObject)) {
+        if (!Archipelago.logic.isFTBQuestCompletable(new FTBQuestsImpl((Quest) questObject), true)) {
             ci.cancel();
         }
     }
