@@ -26,7 +26,7 @@ public record GetCheckPacket(String check) implements CustomPacketPayload {
         public static void handle(GetCheckPacket packet, IPayloadContext context) {
             context.enqueueWork(() -> {
                 Archipelago.LOGGER.info("Received archipelago check from server.");
-                Archipelago.clientState.addCheck(packet.check);
+                Archipelago.CLIENT_STATE.addCheck(packet.check);
             });
         }
     }

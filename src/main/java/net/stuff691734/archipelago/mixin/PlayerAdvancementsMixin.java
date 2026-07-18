@@ -1,14 +1,14 @@
 package net.stuff691734.archipelago.mixin;
 
-
-import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.mixinHelper.MixinHelper;
+import net.stuff691734.archipelago.implementations.AdvancementImpl;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,12 +17,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementsMixin {
@@ -32,24 +34,22 @@ public abstract class PlayerAdvancementsMixin {
 
     @Shadow
     @Final
-    private Set<Advancement> progressChanged;
-
-    @Shadow
-    protected abstract void markForVisibilityUpdate(AdvancementHolder p_136011_);
-
-    @Shadow
-    protected abstract void startProgress(AdvancementHolder p_135986_, AdvancementProgress p_135987_);
+    private Path playerSavePath;
 
     @Shadow
     private AdvancementTree tree;
+
+    @Shadow
+    public abstract void save();
 
     @Inject(
             method = "award",
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (MixinHelper.allowAdvancementCompletion(advancement, this.tree.get(advancement))) {
-            MixinHelper.sendArchipelagoAdvancement(advancement);
+        // this calls other mixin to check if completable, so don't need to check here again
+        if (this.getOrStartProgress(advancement).isDone()) {
+            Archipelago.client.sendCheck(CheckType.ADVANCEMENT.addPrefix(advancement.id().toString()));
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class PlayerAdvancementsMixin {
             cancellable = true
     )
     private void preventAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (!MixinHelper.allowAdvancementCompletion(advancement, this.tree.get(advancement))) {
+        if (!Archipelago.logic.isAdvancementCompletable(new AdvancementImpl(this.tree.get(advancement)))) {
             cir.setReturnValue(false);
         }
     }
@@ -67,15 +67,14 @@ public abstract class PlayerAdvancementsMixin {
     @Redirect(method = "applyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements$Data;forEach(Ljava/util/function/BiConsumer;)V"))
     private void forEach(@Coerce DataMixin instance, BiConsumer<ResourceLocation, AdvancementProgress> action) {
         if (Archipelago.getServer() != null) {
-            Map<ResourceLocation, AdvancementProgress> list = Archipelago.getServer().getAdvancements().getAllAdvancements().stream().map(
-                    (advancement) -> Map.entry(advancement.id(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (e1, e2) -> e1
-                    )
-            );
-            instance.archipelago$forEach(list::put);
-            list.forEach(action);
+            Map<ResourceLocation, AdvancementProgress> map = new HashMap<>();
+
+            instance.archipelago$forEach(map::put);
+            Archipelago.getServer().getAdvancements().getAllAdvancements().forEach((advancement) -> {
+                map.putIfAbsent(advancement.id(), this.getOrStartProgress(advancement));
+            });
+
+            map.forEach(action);
         }
     }
 
@@ -84,11 +83,11 @@ public abstract class PlayerAdvancementsMixin {
         @Invoker("forEach")
         void archipelago$forEach(BiConsumer<ResourceLocation, AdvancementProgress> p_300973_);
     }
-//
-//    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))
-//    public void showThings(PlayerAdvancements instance, Advancement advancement, AdvancementProgress progress) {
-//        this.startProgress(advancement, progress);
-//        this.progressChanged.add(advancement);
-//        this.markForVisibilityUpdate(advancement);
-//    }
+
+    @Inject(method = "load", at = @At(value = "HEAD"))
+    public void loadAdvancementsOnFirstJoin(ServerAdvancementManager p_240921_1_, CallbackInfo ci) {
+        if (!Files.isRegularFile(this.playerSavePath)) {
+            this.save();
+        }
+    }
 }
