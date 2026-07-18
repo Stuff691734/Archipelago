@@ -42,7 +42,7 @@ public class StartSyncChecksPacket {
             context.enqueueWork(() -> {
                 if (FMLEnvironment.dist.isClient()) {
                     Archipelago.LOGGER.info("Got archipelago check data from server.");
-                    Archipelago.clientState.addAllChecks(packet.checks);
+                    Archipelago.CLIENT_STATE.setChecks(packet.checks);
                 }
             });
             context.setPacketHandled(true);

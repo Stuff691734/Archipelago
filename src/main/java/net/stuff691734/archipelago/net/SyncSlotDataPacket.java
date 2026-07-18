@@ -5,7 +5,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.MessageFunctions;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
 import java.util.Map;
