@@ -35,7 +35,7 @@ public class GetCheckPacket {
             context.enqueueWork(() -> {
                 if (FMLEnvironment.dist.isClient()) {
                     Archipelago.LOGGER.info("Received archipelago check from server.");
-                    Archipelago.clientState.addCheck(packet.check);
+                    Archipelago.CLIENT_STATE.addCheck(packet.check);
                 }
             });
             context.setPacketHandled(true);
