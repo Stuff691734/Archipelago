@@ -11,6 +11,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.stuff691734.archipelago.events.mod.ModEvents;
 import net.stuff691734.archipelago.events.neoforge.NeoForgeEvents;
+import net.stuff691734.archipelagoLib.ArchipelagoClientState;
+import net.stuff691734.archipelagoLib.Logic;
+import net.stuff691734.archipelagoLib.SlotData;
+import net.stuff691734.archipelagoLib.archipelagoClient.ArchipelagoClient;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
@@ -23,7 +27,8 @@ public class Archipelago {
     public static ArchipelagoClient client;
     private static MinecraftServer server;
     public static SlotData slotData = new SlotData();
-    public static final ArchipelagoClientState clientState = new ArchipelagoClientState();
+    public static final ArchipelagoClientState CLIENT_STATE = new ArchipelagoClientState();
+    public static Logic logic = new Logic(Archipelago.CLIENT_STATE, Archipelago.slotData);
 
     public static final ResourceKey<DamageType> DeathLinkDamage = ResourceKey.create(
         Registries.DAMAGE_TYPE,
@@ -34,7 +39,6 @@ public class Archipelago {
         NeoForgeEvents.register(NeoForge.EVENT_BUS);
         ModEvents.register(eventBus);
     }
-
 
     public static @Nullable MinecraftServer getServer() {
         return server;
