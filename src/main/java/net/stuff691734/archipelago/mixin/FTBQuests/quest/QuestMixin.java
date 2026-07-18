@@ -3,7 +3,8 @@ package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 import com.feed_the_beast.ftbquests.quest.PlayerData;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,6 +20,6 @@ public class QuestMixin {
             remap = false
     )
     public void sendArchipelagoQuest(PlayerData data, List<ServerPlayerEntity> onlineMembers, List<ServerPlayerEntity> notifiedPlayers, CallbackInfo ci) {
-        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+        Archipelago.client.sendCheck(CheckType.FTB_QUEST.addPrefix(((Quest)(Object)this).getCodeString()));
     }
 }

@@ -1,29 +1,27 @@
 package net.stuff691734.archipelago.events.neoforge;
 
-import io.github.archipelagomw.flags.ItemsHandling;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.stuff691734.archipelago.*;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBServerImpl;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBUtilsImpl;
+import net.stuff691734.archipelago.implementations.ServerImpl;
+import net.stuff691734.archipelago.implementations.UtilsImpl;
+import net.stuff691734.archipelagoLib.Logic;
+import net.stuff691734.archipelagoLib.SlotData;
+import net.stuff691734.archipelagoLib.archipelagoClient.ArchipelagoClient;
 import net.stuff691734.archipelago.commands.ArchipelagoCommands;
-import net.stuff691734.archipelago.events.archipealgo.ArchipelagoEvents;
 
 public class ServerStartingEvent {
     @SubscribeEvent
     public void onEvent(FMLServerStartingEvent event) {
         Archipelago.setServer(event.getServer());
-        ArchipelagoClient client = new ArchipelagoClient();
 
-        client.setGame("Modded Minecraft");
+        ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance(event.getServer());
 
-        client.setItemsHandlingFlags(ItemsHandling.SEND_STARTING_INVENTORY | ItemsHandling.SEND_OWN_ITEMS | ItemsHandling.SEND_ITEMS);
-
-        ArchipelagoEvents.register(client.getEventManager());
-
-        Archipelago.client = client;
-
-        ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance();
-
-        if (state != null && !state.slotData.isEmpty()) {
+        if (!state.slotData.isEmpty()) {
             Archipelago.slotData = new SlotData(
                     state.slotData.get("unlock_type"),
                     state.slotData.get("final_goal"),
@@ -36,6 +34,19 @@ public class ServerStartingEvent {
                     state.slotData.get("roots_unlocked")
             );
         }
+        Archipelago.logic = new Logic(state, Archipelago.slotData);
+
+        UtilsImpl utils;
+        ServerImpl server;
+        if (ModList.get().isLoaded("ftbquests")) {
+            utils = new FTBUtilsImpl();
+            server = new FTBServerImpl(event.getServer());
+        } else {
+            utils = new UtilsImpl();
+            server = new ServerImpl(event.getServer());
+        }
+
+        Archipelago.client = new ArchipelagoClient(utils, server, state);
 
         ArchipelagoCommands.register(event.getCommandDispatcher());
     }
