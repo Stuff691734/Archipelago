@@ -23,6 +23,7 @@ version = "${project.minecraft_version}-${project.mod_version}-forge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -96,6 +97,9 @@ dependencies {
     minecraftLibrary 'io.github.archipelagomw:Java-Client:0.2.1'
 
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
+
+    minecraftLibrary "com.github.Stuff691734:archipelago-lib:0.11.3"
+    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
 }
 
 shadowJar {
@@ -107,6 +111,7 @@ shadowJar {
     relocate("org.apache.hc", "shadow.archipelago.org.apache.hc")
     relocate("io.github.archipelagomw", "shadow.archipelago.io.github.archipelagomw")
     relocate("com.google.gson", "shadow.archipelago.com.google.gson")
+    relocate("net.stuff691734.archipelagoLib", "shadow.archipelago.net.stuff691734.archipelagoLib")
     exclude 'META-INF/versions/**'
 }
 
