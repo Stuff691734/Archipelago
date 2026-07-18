@@ -5,7 +5,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
 import java.util.Map;

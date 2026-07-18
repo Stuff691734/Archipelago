@@ -9,7 +9,7 @@ import net.stuff691734.archipelago.Archipelago;
 import java.util.function.Supplier;
 
 public class StartSyncChecksPacket {
-    private String[] checks;
+    private final String[] checks;
 
     public StartSyncChecksPacket(String[] checks) {
         this.checks = checks;
@@ -36,7 +36,7 @@ public class StartSyncChecksPacket {
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Got archipelago check data from server.");
-                        Archipelago.clientState.addAllChecks(this.checks);
+                        Archipelago.CLIENT_STATE.setChecks(this.checks);
                     }
             );
         });
