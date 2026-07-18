@@ -21,6 +21,7 @@ version = "${project.minecraft_version}-${project.mod_version}-forge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -110,6 +111,9 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-teams-forge-404468:4611938")
     implementation fg.deobf("curse.maven:architectury-api-419699:5137942")
     implementation fg.deobf("curse.maven:item-filters-309674:4553326")
+
+    minecraftLibrary "com.github.Stuff691734:archipelago-lib:0.11.3"
+    jarJar (implementation "com.github.Stuff691734:archipelago-lib:0.11.3")
 }
 
 tasks.named('processResources', ProcessResources).configure {
