@@ -5,7 +5,9 @@ import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
-import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,13 +47,13 @@ public abstract class QuestMixin implements QuestAccessor {
             at = @At("RETURN")
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
-        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+        Archipelago.client.sendCheck(CheckType.FTB_QUEST.addPrefix(((Quest)(Object)this).getCodeString()));
     }
 
     @Inject(method = "checkDependencies", at = @At(value = "RETURN"), remap = false, cancellable = true)
     private void checkIsCompleted(@Coerce Object checker, CallbackInfoReturnable<Boolean> cir) {
         // I don't actually care about the checker
-        if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) (Object) this)) {
+        if (!Archipelago.logic.isFTBQuestCompletable(new FTBQuestsImpl((Quest) (Object) this), true)) {
             cir.setReturnValue(false);
         }
     }

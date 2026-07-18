@@ -29,7 +29,7 @@ public record StartSyncChecksPacket(List<String> checks) implements CustomPacket
         public static void handle(StartSyncChecksPacket packet, IPayloadContext context) {
             context.enqueueWork(() -> {
                 Archipelago.LOGGER.info("Got archipelago check data from server.");
-                Archipelago.clientState.addAllChecks(packet.checks.toArray(String[]::new));
+                Archipelago.CLIENT_STATE.setChecks(packet.checks.toArray(String[]::new));
             });
         }
     }

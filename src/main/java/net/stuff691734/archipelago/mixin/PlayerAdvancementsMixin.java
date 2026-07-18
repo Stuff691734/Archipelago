@@ -1,13 +1,15 @@
 package net.stuff691734.archipelago.mixin;
 
-
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.mixinHelper.MixinHelper;
+import net.stuff691734.archipelago.implementations.AdvancementImpl;
+import net.stuff691734.archipelagoLib.CheckType;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -15,8 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -30,13 +34,21 @@ public abstract class PlayerAdvancementsMixin {
     @Shadow
     private AdvancementTree tree;
 
+    @Shadow
+    @Final
+    private Path playerSavePath;
+
+    @Shadow
+    public abstract void save();
+
     @Inject(
             method = "award",
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (MixinHelper.allowAdvancementCompletion(advancement, this.tree.get(advancement))) {
-            MixinHelper.sendArchipelagoAdvancement(advancement);
+        // this calls other mixin to check if completable, so don't need to check here again
+        if (this.getOrStartProgress(advancement).isDone()) {
+            Archipelago.client.sendCheck(CheckType.ADVANCEMENT.addPrefix(advancement.id().toString()));
         }
     }
 
@@ -46,7 +58,7 @@ public abstract class PlayerAdvancementsMixin {
             cancellable = true
     )
     private void preventAdvancement(AdvancementHolder advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (!MixinHelper.allowAdvancementCompletion(advancement, this.tree.get(advancement))) {
+        if (!Archipelago.logic.isAdvancementCompletable(new AdvancementImpl(this.tree.get(advancement)))) {
             cir.setReturnValue(false);
         }
     }
@@ -70,5 +82,12 @@ public abstract class PlayerAdvancementsMixin {
     public interface DataMixin {
         @Invoker("forEach")
         void archipelago$forEach(BiConsumer<ResourceLocation, AdvancementProgress> p_300973_);
+    }
+
+    @Inject(method = "load", at = @At(value = "HEAD"))
+    public void loadAdvancementsOnFirstJoin(ServerAdvancementManager p_136007_, CallbackInfo ci) {
+        if (!this.playerSavePath.toFile().isFile()) {
+            this.save();
+        }
     }
 }

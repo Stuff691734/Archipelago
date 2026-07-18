@@ -29,36 +29,36 @@ public class ArchipelagoMixinConfig implements IMixinConfigPlugin {
         if (mixinClassName.contains("FTBQuests")) {
             Optional<ModInfo> ftbQuests = LoadingModList.get().getMods().stream().filter((modInfo) -> modInfo.getModId().equals("ftbquests")).findFirst();
             if (ftbQuests.isPresent()) {
-                if (
-                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin") &&
-                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.23")) < 0
-                ) {
-                    return false;
-                }
-                if (
-                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin") &&
-                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.23")) >= 0
-                ) {
-                    return false;
-                }
-                if (
-                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.OldQuestButtonMixin") &&
-                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.20")) >= 0
-                ) {
-                    return false;
-                }
-                if (
-                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin") &&
-                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) >= 0
-                ) {
-                    return false;
-                }
-                if (
-                        mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.NewClaimAllRewardsMessageMixin") &&
-                                ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) < 0
-                ) {
-                    return false;
-                }
+//                if (
+//                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.CollectRewardsButtonMixin") &&
+//                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.23")) < 0
+//                ) {
+//                    return false;
+//                }
+//                if (
+//                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.OldCollectRewardsButtonMixin") &&
+//                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.23")) >= 0
+//                ) {
+//                    return false;
+//                }
+//                if (
+//                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests.OldQuestButtonMixin") &&
+//                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.20")) >= 0
+//                ) {
+//                    return false;
+//                }
+//                if (
+//                    mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.ClaimAllRewardsMessageMixin") &&
+//                    ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) >= 0
+//                ) {
+//                    return false;
+//                }
+//                if (
+//                        mixinClassName.equals("net.stuff691734.archipelago.mixin.FTBQuests.net.NewClaimAllRewardsMessageMixin") &&
+//                                ftbQuests.get().getVersion().compareTo(new DefaultArtifactVersion("2101.1.25")) < 0
+//                ) {
+//                    return false;
+//                }
 
                 return true;
             }

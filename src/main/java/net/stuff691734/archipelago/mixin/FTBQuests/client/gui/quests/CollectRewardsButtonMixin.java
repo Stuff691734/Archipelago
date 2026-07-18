@@ -5,10 +5,8 @@ import dev.ftb.mods.ftbquests.client.gui.quests.CollectRewardsButton;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ArchipelagoPersistentState;
-import net.stuff691734.archipelago.archipelagoData.CheckType;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -17,18 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(CollectRewardsButton.class)
 public class CollectRewardsButtonMixin {
-
-//    @Redirect(method = "onClicked", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
-//    public boolean onClickedHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
-//        return archipelago$HasUnclaimedRewards(teamData, player, object);
-//    }
-//
-//    @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;a(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
-//    public boolean drawHasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
-//        return archipelago$HasUnclaimedRewards(teamData, player, object);
-//    }
-
-    @Redirect(method = "anyUnclaimedRewards", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
+    @Redirect(method = {"anyUnclaimedRewards", "onClicked", "draw"}, at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
         if (
             !Archipelago.slotData.isInitiated ||
@@ -44,7 +31,7 @@ public class CollectRewardsButtonMixin {
         AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
         questFile.forAllQuests(quest -> {
             if (
-                ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
+                Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
                 quest.getRewards().stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))
             ) {
                 hasAvailableReward.set(true);

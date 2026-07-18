@@ -1,14 +1,19 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.ui.ContextMenuItem;
 import dev.ftb.mods.ftbquests.client.gui.quests.ViewQuestPanel;
 import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
+import net.stuff691734.archipelago.implementations.AdvancementImpl;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,24 +34,19 @@ public class ViewQuestPanelMixin {
     @OnlyIn(Dist.CLIENT)
     private void AddArchipelagoDependency(Collection<QuestObject> c, boolean dependencies, CallbackInfo ci, @Local(name = "contextMenu") List<ContextMenuItem> contextMenu) {
         if (this.quest != null && dependencies) {
-            FTBQuestsMixinHelper.addDependencies(contextMenu, this.quest);
+            assert Minecraft.getInstance().player != null;
+            List<String> items = Archipelago.logic.addDependencies(
+                    (advancement) -> new AdvancementImpl(Minecraft.getInstance().player.connection.getAdvancements().getTree().get(ResourceLocation.parse(advancement))),
+                    new FTBQuestsImpl(this.quest)
+            );
+            for (String item : items) {
+                contextMenu.add(new ContextMenuItem(Component.literal(item), Color4I.empty(), null));
+            }
         }
     }
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;hasDependencies()Z"), remap = false)
     private boolean alwaysHaveDependencies(Quest quest) {
-        if (!Archipelago.slotData.isInitiated) {
-            return true;
-        }
-        if (
-                Archipelago.slotData.activated_modules.contains("FTBQuests") &&
-                Archipelago.slotData.ftb_quest_shape.contains(quest.getShape())
-        ) {
-            if (Archipelago.slotData.roots_unlocked) {
-                return quest.hasDependencies();
-            }
-            return false;
-        }
-        return quest.hasDependencies();
+        return Archipelago.logic.isFTBQuestRandomized(new FTBQuestsImpl(quest));
     }
 }

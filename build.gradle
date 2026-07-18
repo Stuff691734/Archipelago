@@ -8,6 +8,7 @@ version = "${project.minecraft_version}-${project.mod_version}-neoforge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -76,9 +77,13 @@ dependencies {
     compileOnly("curse.maven:ftb-library-forge-404465:7746959")
 
     implementation "curse.maven:ftb-quests-forge-289412:${ftb_quests_version}"
-    implementation "curse.maven:ftb-library-forge-404465:7746959"
+    implementation "curse.maven:ftb-library-forge-404465:8519365"
     implementation "curse.maven:ftb-teams-forge-404468:7369021"
     implementation "curse.maven:architectury-api-419699:5786327"
+
+    implementation "com.github.Stuff691734:archipelago-lib:0.11.3"
+    additionalRuntimeClasspath "com.github.Stuff691734:archipelago-lib:0.11.3"
+    jarJar (implementation "com.github.Stuff691734:archipelago-lib:0.11.3")
 }
 
 configurations.configureEach {
