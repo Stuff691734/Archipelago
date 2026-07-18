@@ -7,7 +7,7 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
 
 public class StartSyncChecksPacket implements CustomPacketPayload {
-    private String[] checks;
+    private final String[] checks;
 
     public static ResourceLocation ID = new ResourceLocation(Archipelago.MODID, "start_sync_checks_packet");
 
@@ -41,7 +41,7 @@ public class StartSyncChecksPacket implements CustomPacketPayload {
             context.workHandler().submitAsync(
                 () -> {
                     Archipelago.LOGGER.info("Got archipelago check data from server.");
-                    Archipelago.clientState.addAllChecks(packet.checks);
+                    Archipelago.CLIENT_STATE.setChecks(packet.checks);
                 }
             );
         }

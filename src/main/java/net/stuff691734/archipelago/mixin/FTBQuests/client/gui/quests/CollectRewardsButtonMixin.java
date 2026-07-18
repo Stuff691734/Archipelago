@@ -5,8 +5,7 @@ import dev.ftb.mods.ftbquests.client.gui.quests.CollectRewardsButton;
 import dev.ftb.mods.ftbquests.quest.QuestObject;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.ArchipelagoPersistentState;
-import net.stuff691734.archipelago.archipelagoData.CheckType;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -44,7 +43,7 @@ public class CollectRewardsButtonMixin {
         AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
         questFile.forAllQuests(quest -> {
             if (
-                ArchipelagoPersistentState.getCheck(CheckType.FTB_QUEST.addPrefix(quest.getCodeString())) &&
+                Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
                 quest.getRewards().stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))
             ) {
                 hasAvailableReward.set(true);

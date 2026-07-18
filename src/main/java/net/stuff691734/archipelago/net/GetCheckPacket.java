@@ -33,7 +33,7 @@ public class GetCheckPacket implements CustomPacketPayload {
         public static void handle(GetCheckPacket packet, PlayPayloadContext context) {
             context.workHandler().submitAsync(() -> {
                 Archipelago.LOGGER.info("Received archipelago check from server.");
-                Archipelago.clientState.addCheck(packet.check);
+                Archipelago.CLIENT_STATE.addCheck(packet.check);
             });
         }
     }

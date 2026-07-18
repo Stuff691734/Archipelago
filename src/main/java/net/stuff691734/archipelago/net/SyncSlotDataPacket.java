@@ -5,7 +5,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
 import java.util.Map;
