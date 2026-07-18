@@ -1,19 +1,19 @@
 package net.stuff691734.archipelago;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
-import net.stuff691734.archipelago.archipelagoData.CheckType;
+import net.stuff691734.archipelagoLib.CheckType;
+import net.stuff691734.archipelagoLib.interfaces.ServerStorageInterface;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class ArchipelagoPersistentState extends WorldSavedData {
+public class ArchipelagoPersistentState extends WorldSavedData implements ServerStorageInterface {
     private static ArchipelagoPersistentState instance;
 
     public Map<String, Boolean> checks = new HashMap<>();
@@ -100,13 +100,9 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         return state;
     }
 
-    @Nullable
-    public static ArchipelagoPersistentState getInstance() {
-        if (Archipelago.getServer() == null) {
-            return null;
-        }
+    public static ArchipelagoPersistentState getInstance(MinecraftServer server) {
         if (instance == null) {
-            instance = getServerState(Archipelago.getServer());
+            instance = getServerState(server);
         }
         return instance;
     }
@@ -115,11 +111,49 @@ public class ArchipelagoPersistentState extends WorldSavedData {
         instance = null;
     }
 
-    public static boolean getCheck(String checkName) {
-        if (getInstance() != null) {
-            return getInstance().checks.getOrDefault(checkName, false);
-        } else {
-            return Archipelago.clientState.hasCheck(checkName);
-        }
+    @Override
+    public boolean hasCheck(String checkName) {
+        return this.checks.getOrDefault(checkName, false);
+    }
+
+    @Override
+    public void setDirty() {
+        this.setDirty(true);
+    }
+
+    @Override
+    public List<String> getPendingChecks() {
+        return this.pendingChecks;
+    }
+
+    @Override
+    public void addPendingCheck(String check) {
+        this.pendingChecks.add(check);
+    }
+
+    @Override
+    public Map<String, String> getSlotData() {
+        return this.slotData;
+    }
+
+    @Override
+    public Map<String, Boolean> getChecks() {
+        return this.checks;
+    }
+
+    @Override
+    public void addCheck(String check) {
+        this.checks.put(check, true);
+    }
+
+    @Override
+    public void updateLastCheck(Long aLong) {
+        Archipelago.executeOnServer((server) -> {
+            server.getPlayerList().getPlayers().forEach((player) -> {
+                if (this.playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < aLong) {
+                    this.playerLastCheck.put(player.getCachedUniqueIdString(), aLong.intValue());
+                }
+            });
+        });
     }
 }
