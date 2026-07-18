@@ -5,16 +5,20 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.mixinHelper.MixinHelper;
+import net.stuff691734.archipelago.implementations.AdvancementImpl;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -36,13 +40,21 @@ public abstract class PlayerAdvancementsMixin {
     @Shadow
     protected abstract void startProgress(Advancement p_135986_, AdvancementProgress p_135987_);
 
+    @Shadow
+    @Final
+    private File file;
+
+    @Shadow
+    public abstract void save();
+
     @Inject(
             method = "award",
             at = @At("RETURN")
     )
     private void sendArchipelagoAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (MixinHelper.allowAdvancementCompletion(advancement)) {
-            MixinHelper.sendArchipelagoAdvancement(advancement);
+        // this calls other mixin to check if completable, so don't need to check here again
+        if (this.getOrStartProgress(advancement).isDone()) {
+            Archipelago.client.sendCheck(CheckType.ADVANCEMENT.addPrefix(advancement.getId().toString()));
         }
     }
 
@@ -52,32 +64,33 @@ public abstract class PlayerAdvancementsMixin {
             cancellable = true
     )
     private void preventAdvancement(Advancement advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
-        if (!MixinHelper.allowAdvancementCompletion(advancement)) {
+        if (!Archipelago.logic.isAdvancementCompletable(new AdvancementImpl(advancement))) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "shouldBeVisible", at = @At(value = "HEAD"), cancellable = true)
     public void shouldBeVisible(Advancement advancement, CallbackInfoReturnable<Boolean> cir) {
-        if (MixinHelper.shouldBeVisible(advancement)) {
+        if (Archipelago.logic.shouldShowAdvancement(new AdvancementImpl(advancement))) {
             cir.setReturnValue(true);
         }
     }
 
-    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;collect(Ljava/util/stream/Collector;)Ljava/lang/Object;"))
-    private Object forEach(Stream<Map.Entry<ResourceLocation, AdvancementProgress>> instance, Collector<Map.Entry<ResourceLocation, AdvancementProgress>, ?, List<Map.Entry<ResourceLocation, AdvancementProgress>>> arCollector) {
+    @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"))
+    private Set<Map.Entry<ResourceLocation, AdvancementProgress>> addAllAdvancementsToRender(Map<ResourceLocation, AdvancementProgress> instance) {
         if (Archipelago.getServer() != null) {
-            Map<ResourceLocation, AdvancementProgress> list = Archipelago.getServer().getAdvancements().getAllAdvancements().stream().map(
-                    (advancement) -> new AbstractMap.SimpleImmutableEntry<>(advancement.getId(), this.getOrStartProgress(advancement))).collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (e1, e2) -> e1
-                    )
-            );
-            instance.forEach((entry) -> list.put(entry.getKey(), entry.getValue()));
-            return new ArrayList<>(list.entrySet());
+            Archipelago.getServer().getAdvancements().getAllAdvancements().forEach((advancement) -> {
+                instance.putIfAbsent(advancement.getId(), this.getOrStartProgress(advancement));
+            });
         }
-        return instance.collect(arCollector);
+        return instance.entrySet();
+    }
+
+    @Inject(method = "load", at = @At(value = "HEAD"))
+    public void loadAdvancementsOnFirstJoin(ServerAdvancementManager p_136007_, CallbackInfo ci) {
+        if (!this.file.isFile()) {
+            this.save();
+        }
     }
 
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerAdvancements;startProgress(Lnet/minecraft/advancements/Advancement;Lnet/minecraft/advancements/AdvancementProgress;)V"))

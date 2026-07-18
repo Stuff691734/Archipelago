@@ -2,7 +2,8 @@ package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 
 import dev.ftb.mods.ftbquests.events.QuestProgressEventData;
 import dev.ftb.mods.ftbquests.quest.Quest;
-import net.stuff691734.archipelago.mixinHelper.FTBQuestsMixinHelper;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.CheckType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +17,6 @@ public class QuestMixin {
             remap = false
     )
     public void sendArchipelagoQuest(QuestProgressEventData<?> data, CallbackInfo ci) {
-        FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
+        Archipelago.client.sendCheck(CheckType.FTB_QUEST.addPrefix(((Quest)(Object)this).getCodeString()));
     }
 }

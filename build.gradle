@@ -23,6 +23,7 @@ version = "${project.minecraft_version}-${project.mod_version}-forge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -104,6 +105,9 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-teams-forge-404468:3657259")
     implementation fg.deobf("curse.maven:architectury-api-419699:3807004")
     implementation fg.deobf("curse.maven:item-filters-309674:3596362")
+
+    minecraftLibrary "com.github.Stuff691734:archipelago-lib:0.11.3"
+    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
 }
 
 shadowJar {
@@ -114,6 +118,7 @@ shadowJar {
     relocate("org.java_websocket", "shadow.archipelago.org.java_websocket")
     relocate("org.apache.hc", "shadow.archipelago.org.apache.hc")
     relocate("io.github.archipelagomw", "shadow.archipelago.io.github.archipelagomw")
+    relocate("net.stuff691734.archipelagoLib", "shadow.archipelago.net.stuff691734.archipelagoLib")
     exclude 'META-INF/versions/**'
 }
 
