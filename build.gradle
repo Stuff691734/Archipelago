@@ -82,8 +82,8 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-library-legacy-forge-237167:2985811")
     implementation fg.deobf("curse.maven:item-filters-309674:3003364")
 
-    implementation "com.github.Stuff691734:archipelago-lib:0.11.3"
-    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
+    implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
+    shadow "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
 }
 
 shadowJar {

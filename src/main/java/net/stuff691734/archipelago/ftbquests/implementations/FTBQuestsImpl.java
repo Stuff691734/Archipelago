@@ -88,6 +88,16 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     }
 
     @Override
+    public boolean hasRewards() {
+        return !this.quest.rewards.isEmpty();
+    }
+
+    @Override
+    public boolean isInvisibleUntilCompleted() {
+        return false;
+    }
+
+    @Override
     public String getName(ServerInterface server) {
         return this.quest.getTitle();
     }
