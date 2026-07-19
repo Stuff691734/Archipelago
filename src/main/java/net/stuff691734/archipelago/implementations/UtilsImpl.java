@@ -12,7 +12,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
@@ -20,6 +22,7 @@ import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 import net.stuff691734.archipelagoLib.interfaces.UtilsInterface;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class UtilsImpl implements UtilsInterface {
     @Override
@@ -27,7 +30,12 @@ public class UtilsImpl implements UtilsInterface {
         String itemName = itemId.split(" ", 2)[1];
         ItemParser.ItemResult itemParser = null;
         try {
-            itemParser = ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(itemName));
+            if (Archipelago.getServer() != null) {
+                Optional<HolderLookup.RegistryLookup<Item>> lookup = Archipelago.getServer().registryAccess().lookup(ForgeRegistries.ITEMS.getRegistryKey());
+                if (lookup.isPresent()) {
+                    itemParser = ItemParser.parseForItem(lookup.get(), new StringReader(itemName));
+                }
+            }
         } catch (CommandSyntaxException e) {
             Archipelago.LOGGER.error("Unable to parse item: {}", itemName);
         }
@@ -93,9 +101,12 @@ public class UtilsImpl implements UtilsInterface {
         String[] strings = item.split(" ", 2);
         int amount = Integer.parseInt(strings[0]);
         try {
-            ItemParser.ItemResult itemResult = ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(strings[1]));
-            ItemInput itemInput = new ItemInput(itemResult.item(), itemResult.nbt());
-            this.giveItem(server, itemInput.createItemStack(amount, false), index);
+            Optional<HolderLookup.RegistryLookup<Item>> lookup = ((MinecraftServer)server.getServer()).registryAccess().lookup(ForgeRegistries.ITEMS.getRegistryKey());
+            if (lookup.isPresent()) {
+                ItemParser.ItemResult itemResult = ItemParser.parseForItem(lookup.get(), new StringReader(strings[1]));
+                ItemInput itemInput = new ItemInput(itemResult.item(), itemResult.nbt());
+                this.giveItem(server, itemInput.createItemStack(amount, false), index);
+            }
         } catch (CommandSyntaxException ignored) {}
     }
 
