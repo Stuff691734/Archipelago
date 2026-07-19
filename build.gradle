@@ -98,8 +98,8 @@ dependencies {
 
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
 
-    minecraftLibrary "com.github.Stuff691734:archipelago-lib:0.11.3"
-    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
+    minecraftLibrary "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
+    shadow "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
 }
 
 shadowJar {
