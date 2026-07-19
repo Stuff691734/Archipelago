@@ -104,6 +104,16 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
         return this.getTitle(server);
     }
 
+    @Override
+    public boolean hasRewards() {
+        return !this.quest.rewards.isEmpty();
+    }
+
+    @Override
+    public boolean isInvisibleUntilCompleted() {
+        return this.quest.invisible;
+    }
+
     private String getTitle(ServerInterface server) {
         // getAltTitle (used for default quest names) is client side only, so I have reimplemented them here *sigh*
         // This is mostly copy and pasted code from
