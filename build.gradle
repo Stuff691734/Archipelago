@@ -103,8 +103,8 @@ dependencies {
     implementation fg.deobf("curse.maven:architectury-api-419699:4521290")
     implementation fg.deobf("curse.maven:item-filters-309674:3376819")
 
-    minecraftLibrary "com.github.Stuff691734:archipelago-lib:0.11.3"
-    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
+    minecraftLibrary "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
+    shadow "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
 }
 
 shadowJar {
