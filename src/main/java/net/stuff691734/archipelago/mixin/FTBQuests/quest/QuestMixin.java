@@ -48,7 +48,10 @@ public abstract class QuestMixin implements QuestAccessor {
         FTBQuestsMixinHelper.sendArchipelagoQuest((Quest)(Object) this);
     }
 
-    @Inject(method = "lambda$checkForDependantCompletion$1", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;"), remap = false, cancellable = true)
+    @Inject(method = "lambda$checkForDependantCompletion$1", at = {
+            @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;checkDependencies(Ldev/ftb/mods/ftbquests/quest/Quest$DependencyChecker;)Z"), // 2001.4.22 and above
+            @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/Quest;streamDependencies()Ljava/util/stream/Stream;") // 2001.4.21 and before
+    }, remap = false, cancellable = true)
     private static void checkIsCompleted(TeamData data, QuestObject questObject, CallbackInfo ci) {
         if (!FTBQuestsMixinHelper.isQuestStartable(true, (Quest) questObject)) {
             ci.cancel();
