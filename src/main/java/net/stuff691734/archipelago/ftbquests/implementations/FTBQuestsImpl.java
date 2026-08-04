@@ -111,7 +111,7 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
 
     @Override
     public boolean isInvisibleUntilCompleted() {
-        return false;
+        return ((QuestAccessor) (Object) this.quest).archipelago$isInvisibleUntilCompleted();
     }
 
     private String getTitle(ServerInterface server) {
