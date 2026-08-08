@@ -36,7 +36,7 @@ public class StartSyncChecksPacket {
                     Dist.CLIENT,
                     () -> () -> {
                         Archipelago.LOGGER.info("Got archipelago check data from server.");
-                        Archipelago.clientState.addAllChecks(this.checks);
+                        Archipelago.CLIENT_STATE.setChecks(this.checks);
                     }
             );
         });
