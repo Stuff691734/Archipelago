@@ -30,15 +30,18 @@ var ICONST_1 = Opcodes.ICONST_1;
 var IRETURN = Opcodes.IRETURN;
 var RETURN = Opcodes.RETURN;
 var IFNE = Opcodes.IFNE;
+var IFNULL = Opcodes.IFNULL;
 var GOTO = Opcodes.GOTO;
 var INVOKESPECIAL = Opcodes.INVOKESPECIAL;
 var NEW = Opcodes.NEW;
 var DUP = Opcodes.DUP;
 var H_INVOKESTATIC = Opcodes.H_INVOKESTATIC;
+var H_INVOKESPECIAL = Opcodes.H_INVOKESPECIAL;
 var ACC_PRIVATE = Opcodes.ACC_PRIVATE;
 var ACC_SYNTHETIC = Opcodes.ACC_SYNTHETIC;
 var ACC_STATIC = Opcodes.ACC_STATIC;
 var ACC_PUBLIC = Opcodes.ACC_PUBLIC;
+var SWAP = Opcodes.SWAP;
 
 function initializeCoreMod() {
     return {
@@ -60,7 +63,8 @@ function initializeCoreMod() {
                                 showAllAdvancementsTarget = node;
                             }
 
-                            if (node.getOpcode() === INVOKEINTERFACE && node.name.equals("collect")) {
+                            // Map.entrySet
+                            if (node.getOpcode() === INVOKEINTERFACE && node.name.equals("entrySet")) {
                                 loadAllAdvancementsTarget = node;
                             }
                 	    }
@@ -68,11 +72,10 @@ function initializeCoreMod() {
                 	        method.instructions.insert(showAllAdvancementsTarget, showAllAdvancements());
                 	    }
                 	    if (loadAllAdvancementsTarget != null) {
-                	        method.instructions.remove(loadAllAdvancementsTarget.previous.previous);
-                	        method.instructions.remove(loadAllAdvancementsTarget.previous);
-                	        method.instructions.insert(loadAllAdvancementsTarget, loadAllAdvancements());
-                	        method.instructions.remove(loadAllAdvancementsTarget);
+                	        method.instructions.insertBefore(loadAllAdvancementsTarget, loadAllAdvancements());
                 	    }
+
+                        method.instructions.insert(loadAdvancementsOnFirstJoin())
                 	}
                     // PlayerAdvancements.shouldBeVisible
                     if (method.name.equals(ASMAPI.mapMethod("func_192738_c"))) {
@@ -100,7 +103,7 @@ function initializeCoreMod() {
                     }
                 });
 
-                classNode.methods.add(lambda$forEach());
+                classNode.methods.add(archipelago$lambda$loadAllAdvancements$0());
 
                 classNode.methods.add(archipelago$ensureVisibility());
                 classNode.interfaces.add("net/stuff691734/archipelago/mixin/PlayerAdvancementAccessor");
@@ -111,18 +114,19 @@ function initializeCoreMod() {
     }
 }
 
-function lambda$forEach() {
-    var method = new MethodNode(ACC_PRIVATE | ACC_SYNTHETIC | ACC_STATIC, "lambda$forEach", "(Ljava/util/Map;Ljava/util/Map$Entry;)V", null, null);
+function archipelago$lambda$loadAllAdvancements$0() {
+    var method = new MethodNode(ACC_PRIVATE | ACC_SYNTHETIC, "archipelago$lambda$loadAllAdvancements$0", "(Ljava/util/Map;Lnet/minecraft/advancements/Advancement;)V", null, null);
 
     var instructions = new InsnList();
+    instructions.add(new VarInsnNode(ALOAD, 1));
+    instructions.add(new VarInsnNode(ALOAD, 2));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "getId", "()Lnet/minecraft/util/ResourceLocation;", false));
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getKey", "()Ljava/lang/Object;", true));
-    instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;", true));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
-    instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/advancements/AdvancementProgress"));
+    instructions.add(new VarInsnNode(ALOAD, 2));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "getProgress", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
+    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "putIfAbsent", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
     instructions.add(new InsnNode(POP));
+
     instructions.add(new InsnNode(RETURN));
 
     method.instructions.add(instructions);
@@ -149,76 +153,51 @@ function showAllAdvancements() {
 function loadAllAdvancements() {
     var instructions = new InsnList();
 
-    instructions.add(new TypeInsnNode(NEW, "java/util/HashMap"));
-    instructions.add(new InsnNode(DUP));
-    instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
-    instructions.add(new VarInsnNode(ASTORE, 3));
+    var L1 = new LabelNode();
+    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Archipelago", "getServer", "()Lnet/minecraft/server/MinecraftServer;", false));
+    instructions.add(new JumpInsnNode(IFNULL, L1));
 
     instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Archipelago", "getServer", "()Lnet/minecraft/server/MinecraftServer;", false));
     instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/server/MinecraftServer", "getAdvancementManager", "()Lnet/minecraft/advancements/AdvancementManager;", false));
-    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementManager", "getAllAdvancements", "()Ljava/util/Collection;", false));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Collection", "iterator", "()Ljava/util/Iterator;", true));
-    instructions.add(new VarInsnNode(ASTORE, 4));
-
-    var afterLoop = new LabelNode();
-
-    var startLoop = new LabelNode();
-    instructions.add(startLoop);
-    instructions.add(new VarInsnNode(ALOAD, 4));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
-    instructions.add(new JumpInsnNode(IFEQ, afterLoop));
-    instructions.add(new VarInsnNode(ALOAD, 4));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
-    instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/advancements/Advancement"));
-    instructions.add(new VarInsnNode(ASTORE, 6));
-
-    instructions.add(new VarInsnNode(ALOAD, 3));
-    instructions.add(new VarInsnNode(ALOAD, 6));
-    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "getId", "()Lnet/minecraft/util/ResourceLocation;", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementManager", "getAllAdvancements", "()Ljava/util/Collection;"));
+    instructions.add(new InsnNode(SWAP));
     instructions.add(new VarInsnNode(ALOAD, 0));
-    instructions.add(new VarInsnNode(ALOAD, 6));
-    instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "getProgress", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
-    instructions.add(new InsnNode(POP));
+    instructions.add(new InsnNode(SWAP));
+    // // instructions.add(new VarInsnNode(ALOAD, 1));
 
-    instructions.add(new JumpInsnNode(GOTO, startLoop));
-
-    instructions.add(afterLoop);
-
-    instructions.add(new VarInsnNode(ALOAD, 5));
-    instructions.add(new VarInsnNode(ALOAD, 3));
     instructions.add(new InvokeDynamicInsnNode(
         "accept",
-        "(Ljava/util/Map;)Ljava/util/function/Consumer;",
+        "(Lnet/minecraft/advancements/PlayerAdvancements;Ljava/util/Map;)Ljava/util/function/Consumer;",
         new Handle(H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;", false),
         Type.getType("(Ljava/lang/Object;)V"),
-        new Handle(H_INVOKESTATIC, "net/minecraft/advancements/PlayerAdvancements", "lambda$forEach", "(Ljava/util/Map;Ljava/util/Map$Entry;)V", false),
-        Type.getType("(Ljava/util/Map$Entry;)V")
+        new Handle(H_INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "archipelago$lambda$loadAllAdvancements$0", "(Ljava/util/Map;Lnet/minecraft/advancements/Advancement;)V", false),
+        Type.getType("(Lnet/minecraft/advancements/Advancement;)V")
     ));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/stream/Stream", "forEach", "(Ljava/util/function/Consumer;)V", true));
 
-    instructions.add(new TypeInsnNode(NEW, "java/util/ArrayList"));
-    instructions.add(new InsnNode(DUP));
-    instructions.add(new VarInsnNode(ALOAD, 3));
-    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;", true));
-    instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/ArrayList", "<init>", "(Ljava/util/Collection;)V", false));
+    instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Collection", "forEach", "(Ljava/util/function/Consumer;)V", true));
 
+    instructions.add(new VarInsnNode(ALOAD, 4));
+    instructions.add(L1);
     return instructions;
 }
 
 function shouldBeVisible() {
     var instructions = new InsnList();
 
-    var continueExecution = new LabelNode();
+    var L1 = new LabelNode();
 
+    instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+    instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+    instructions.add(new InsnNode(DUP));
     instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "shouldBeVisible", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-    instructions.add(new JumpInsnNode(IFEQ, continueExecution));
+    instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "shouldShowAdvancement", "(Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Z", false));
+    instructions.add(new JumpInsnNode(IFEQ, L1));
 
     instructions.add(new InsnNode(ICONST_1));
     instructions.add(new InsnNode(IRETURN));
 
-    instructions.add(continueExecution);
+    instructions.add(L1);
 
     return instructions;
 }
@@ -226,16 +205,19 @@ function shouldBeVisible() {
 function sendArchipelagoAdvancement() {
     var instructions = new InsnList();
 
-    var continueExecution = new LabelNode();
-
+    instructions.add(new VarInsnNode(ALOAD, 0));
     instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-    instructions.add(new JumpInsnNode(IFEQ, continueExecution));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "getProgress", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementProgress", "isDone", "()Z", false));
+    instructions.add(preventAdvancement());
 
+    instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "client", "Lnet/stuff691734/archipelagoLib/archipelagoClient/ArchipelagoClient;"));
+    instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelagoLib/CheckType", "ADVANCEMENT", "Lnet/stuff691734/archipelagoLib/CheckType;"));
     instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "sendArchipelagoAdvancement", "(Lnet/minecraft/advancements/Advancement;)V", false));
-
-    instructions.add(continueExecution);
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "getId", "()Lnet/minecraft/util/ResourceLocation;", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/ResourceLocation", "toString", "()Ljava/lang/String;", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/CheckType", "addPrefix", "(Ljava/lang/String;)Ljava/lang/String;", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/archipelagoClient/ArchipelagoClient", "sendCheck", "(Ljava/lang/String;)V", false));
 
     return instructions;
 }
@@ -243,16 +225,20 @@ function sendArchipelagoAdvancement() {
 function preventAdvancement() {
     var instructions = new InsnList();
 
-    var continueExecution = new LabelNode();
+    var L1 = new LabelNode();
 
+    instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+    instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+    instructions.add(new InsnNode(DUP));
     instructions.add(new VarInsnNode(ALOAD, 1));
-    instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-    instructions.add(new JumpInsnNode(IFNE, continueExecution));
+    instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "isAdvancementCompletable", "(Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Z", false));
+    instructions.add(new JumpInsnNode(IFNE, L1));
 
     instructions.add(new InsnNode(ICONST_0));
     instructions.add(new InsnNode(IRETURN));
 
-    instructions.add(continueExecution);
+    instructions.add(L1);
 
     return instructions;
 }
@@ -269,4 +255,19 @@ function archipelago$ensureVisibility() {
     method.instructions.add(instructions);
 
     return method;
+}
+
+function loadAdvancementsOnFirstJoin() {
+    var instructions = new InsnList();
+
+    instructions.add(new VarInsnNode(ALOAD, 0));
+    instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/advancements/PlayerAdvancements", "progressFile", "Ljava/io/File;"));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/File", "isFile", "()Z", false));
+    var L1 = new LabelNode();
+    instructions.add(new JumpInsnNode(IFNE, L1));
+    instructions.add(new VarInsnNode(ALOAD, 0));
+    instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "save", "()V", false));
+    instructions.add(L1);
+
+    return instructions;
 }
