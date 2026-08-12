@@ -35,7 +35,7 @@ public class GetCheckPacket implements IMessage {
         public IMessage onMessage(GetCheckPacket message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 Archipelago.LOGGER.info("Received archipelago check from server.");
-                Archipelago.clientState.addCheck(message.check);
+                Archipelago.CLIENT_STATE.addCheck(message.check);
             });
             return null;
         }

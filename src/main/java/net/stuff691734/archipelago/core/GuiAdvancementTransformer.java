@@ -67,7 +67,7 @@ public class GuiAdvancementTransformer implements IClassTransformer {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
-                    // DisplayInfo.isHidden
+                    // this.parent
                     // only for first one
                     if (drawConnectivityTarget == null && node.getOpcode() == GETFIELD && ((FieldInsnNode)node).name.equals("field_191834_l")) {
                         drawConnectivityTarget = node;
@@ -91,7 +91,24 @@ public class GuiAdvancementTransformer implements IClassTransformer {
 
         instructions.add(new VarInsnNode(ALOAD, 0));
         instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "field_191829_g", "Lnet/minecraft/advancements/Advancement;"));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Utils", "shouldAdvancementBeHidden", "(Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Z", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "isHidden", "(Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Z", false));
+
+//        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+//        instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+//        instructions.add(new InsnNode(DUP));
+//        instructions.add(new VarInsnNode(ALOAD, 0));
+//        instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "advancement", "Lnet/minecraft/advancements/Advancement;"));
+//        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+//        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "shouldShowAdvancement", "(Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Z", false));
+//        LabelNode L1 = new LabelNode();
+//        LabelNode L2 = new LabelNode();
+//        instructions.add(new JumpInsnNode(IFNE, L1));
+//        instructions.add(new InsnNode(ICONST_1));
+//        instructions.add(new JumpInsnNode(GOTO, L2));
+//        instructions.add(L1);
+//        instructions.add(new InsnNode(ICONST_0));
+//        instructions.add(L2);
+//        instructions.add(new InsnNode(ICONST_0));
 
         return instructions;
     }
@@ -99,11 +116,15 @@ public class GuiAdvancementTransformer implements IClassTransformer {
     public InsnList DrawConnectivitySetHidden() {
         InsnList instructions = new InsnList();
 
-        instructions.add(new VarInsnNode(ALOAD, 0));
-        instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "field_191830_h", "Lnet/minecraft/advancements/DisplayInfo;"));
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+        instructions.add(new InsnNode(SWAP));
+        instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+        instructions.add(new InsnNode(DUP));
         instructions.add(new VarInsnNode(ALOAD, 0));
         instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/gui/advancements/GuiAdvancement", "field_191829_g", "Lnet/minecraft/advancements/Advancement;"));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "getGuiAdvancementParent", "(Lnet/minecraft/client/gui/advancements/GuiAdvancement;Lnet/minecraft/advancements/DisplayInfo;Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/client/gui/advancements/GuiAdvancement;", false));
+        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "isDependencyDrawn", "(Ljava/lang/Object;Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Ljava/lang/Object;", false));
+        instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/client/gui/advancements/GuiAdvancement"));
 
         return instructions;
     }

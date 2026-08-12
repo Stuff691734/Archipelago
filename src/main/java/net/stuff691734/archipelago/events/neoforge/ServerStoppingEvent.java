@@ -5,14 +5,14 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelagoLib.SlotData;
 
 public class ServerStoppingEvent {
     @Mod.EventHandler
     public static void onEvent(FMLServerStoppingEvent event) {
         Archipelago.client.close();
         Archipelago.slotData = new SlotData();
-        Archipelago.clientState.clear();
+        Archipelago.CLIENT_STATE.clear();
         Archipelago.setServer(null);
         ArchipelagoPersistentState.clearInstance();
     }

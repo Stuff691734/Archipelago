@@ -43,7 +43,7 @@ public class StartSyncChecksPacket implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 Archipelago.LOGGER.info("Got archipelago check data from server.");
 
-                Archipelago.clientState.addAllChecks(message.checks);
+                Archipelago.CLIENT_STATE.setChecks(message.checks);
             });
             return null;
         }
