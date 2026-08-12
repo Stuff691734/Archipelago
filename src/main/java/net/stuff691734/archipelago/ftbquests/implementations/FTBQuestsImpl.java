@@ -101,4 +101,9 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     public String getName(ServerInterface server) {
         return this.quest.getTitle();
     }
+
+    @Override
+    public boolean hasDependants() {
+        return !this.quest.getDependants().isEmpty();
+    }
 }
