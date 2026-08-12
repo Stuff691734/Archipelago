@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.SlotData;
+import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
 import java.util.Map;

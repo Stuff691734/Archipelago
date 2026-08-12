@@ -24,6 +24,7 @@ version = "${project.minecraft_version}-${project.mod_version}-forge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -80,6 +81,9 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-quests-forge-289412:${ftb_quests_version}")
     implementation fg.deobf("curse.maven:ftb-library-legacy-forge-237167:2985811")
     implementation fg.deobf("curse.maven:item-filters-309674:3003364")
+
+    implementation "com.github.Stuff691734:archipelago-lib:0.11.3"
+    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
 }
 
 shadowJar {
@@ -91,6 +95,7 @@ shadowJar {
     relocate("org.apache.hc", "shadow.archipelago.org.apache.hc")
     relocate("io.github.archipelagomw", "shadow.archipelago.io.github.archipelagomw")
     relocate("com.google.gson", "shadow.archipelago.com.google.gson")
+//    relocate("net.stuff691734.archipelagoLib", "net.stuff691734.archipelagoLib")
     exclude 'META-INF/versions/**'
 }
 

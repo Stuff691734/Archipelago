@@ -43,7 +43,8 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
                         showAllAdvancementsTarget = node;
                     }
 
-                    if (node.getOpcode() == INVOKEINTERFACE && ((MethodInsnNode)node).name.equals("collect")) {
+                    // Map.entrySet
+                    if (node.getOpcode() == INVOKEINTERFACE && ((MethodInsnNode)node).name.equals("entrySet")) {
                         loadAllAdvancementsTarget = node;
                     }
                 }
@@ -52,11 +53,10 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
                     method.instructions.insert(showAllAdvancementsTarget, showAllAdvancements());
                 }
                 if (loadAllAdvancementsTarget != null) {
-                    method.instructions.remove(loadAllAdvancementsTarget.getPrevious().getPrevious());
-                    method.instructions.remove(loadAllAdvancementsTarget.getPrevious());
-                    method.instructions.insert(loadAllAdvancementsTarget, loadAllAdvancements());
-                    method.instructions.remove(loadAllAdvancementsTarget);
+                    method.instructions.insertBefore(loadAllAdvancementsTarget, loadAllAdvancements());
                 }
+
+                method.instructions.insert(loadAdvancementsOnFirstJoin());
             }
             // PlayerAdvancements.shouldBeVisible
             if (method.name.equals("func_192738_c")) {
@@ -86,7 +86,7 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
             }
         });
 
-        classNode.methods.add(lambda$forEach());
+        classNode.methods.add(archipelago$lambda$loadAllAdvancements$0());
 
         classNode.methods.add(archipelago$ensureVisibility());
         classNode.interfaces.add("net/stuff691734/archipelago/mixin/PlayerAdvancementAccessor");
@@ -97,18 +97,19 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         return writer.toByteArray();
     }
 
-    public MethodNode lambda$forEach() {
-        MethodNode method = new MethodNode(ACC_PRIVATE | ACC_SYNTHETIC | ACC_STATIC, "lambda$forEach", "(Ljava/util/Map;Ljava/util/Map$Entry;)V", null, null);
+    public MethodNode archipelago$lambda$loadAllAdvancements$0() {
+        MethodNode method = new MethodNode(ACC_PRIVATE | ACC_SYNTHETIC, "archipelago$lambda$loadAllAdvancements$0", "(Ljava/util/Map;Lnet/minecraft/advancements/Advancement;)V", null, null);
 
         InsnList instructions = new InsnList();
+        instructions.add(new VarInsnNode(ALOAD, 1));
+        instructions.add(new VarInsnNode(ALOAD, 2));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "func_192067_g", "()Lnet/minecraft/util/ResourceLocation;", false));
         instructions.add(new VarInsnNode(ALOAD, 0));
-        instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getKey", "()Ljava/lang/Object;", true));
-        instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;", true));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
-        instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/advancements/AdvancementProgress"));
+        instructions.add(new VarInsnNode(ALOAD, 2));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "func_192747_a", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
+        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "putIfAbsent", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
         instructions.add(new InsnNode(POP));
+
         instructions.add(new InsnNode(RETURN));
 
         method.instructions.add(instructions);
@@ -135,76 +136,51 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
     public InsnList loadAllAdvancements() {
         InsnList instructions = new InsnList();
 
-        instructions.add(new TypeInsnNode(NEW, "java/util/HashMap"));
-        instructions.add(new InsnNode(DUP));
-        instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
-        instructions.add(new VarInsnNode(ASTORE, 5));
+        LabelNode L1 = new LabelNode();
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Archipelago", "getServer", "()Lnet/minecraft/server/MinecraftServer;", false));
+        instructions.add(new JumpInsnNode(IFNULL, L1));
 
         instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/Archipelago", "getServer", "()Lnet/minecraft/server/MinecraftServer;", false));
         instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/server/MinecraftServer", "func_191949_aK", "()Lnet/minecraft/advancements/AdvancementManager;", false));
         instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementManager", "func_192780_b", "()Ljava/lang/Iterable;", false));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Collection", "iterator", "()Ljava/util/Iterator;", true));
-        instructions.add(new VarInsnNode(ASTORE, 4));
-
-        LabelNode afterLoop = new LabelNode();
-
-        LabelNode startLoop = new LabelNode();
-        instructions.add(startLoop);
-        instructions.add(new VarInsnNode(ALOAD, 4));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
-        instructions.add(new JumpInsnNode(IFEQ, afterLoop));
-        instructions.add(new VarInsnNode(ALOAD, 4));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
-        instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/advancements/Advancement"));
-        instructions.add(new VarInsnNode(ASTORE, 6));
-
-        instructions.add(new VarInsnNode(ALOAD, 5));
-        instructions.add(new VarInsnNode(ALOAD, 6));
-        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "func_192067_g", "()Lnet/minecraft/util/ResourceLocation;", false));
+        instructions.add(new InsnNode(SWAP));
         instructions.add(new VarInsnNode(ALOAD, 0));
-        instructions.add(new VarInsnNode(ALOAD, 6));
-        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "func_192747_a", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
-        instructions.add(new InsnNode(POP));
+        instructions.add(new InsnNode(SWAP));
+        // // instructions.add(new VarInsnNode(ALOAD, 1));
 
-        instructions.add(new JumpInsnNode(GOTO, startLoop));
-
-        instructions.add(afterLoop);
-
-        instructions.add(new VarInsnNode(ALOAD, 3));
-        instructions.add(new VarInsnNode(ALOAD, 5));
         instructions.add(new InvokeDynamicInsnNode(
                 "accept",
-                "(Ljava/util/Map;)Ljava/util/function/Consumer;",
+                "(Lnet/minecraft/advancements/PlayerAdvancements;Ljava/util/Map;)Ljava/util/function/Consumer;",
                 new Handle(H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;", false),
                 Type.getType("(Ljava/lang/Object;)V"),
-                new Handle(H_INVOKESTATIC, "net/minecraft/advancements/PlayerAdvancements", "lambda$forEach", "(Ljava/util/Map;Ljava/util/Map$Entry;)V", false),
-                Type.getType("(Ljava/util/Map$Entry;)V")
+                new Handle(H_INVOKESPECIAL, "net/minecraft/advancements/PlayerAdvancements", "archipelago$lambda$loadAllAdvancements$0", "(Ljava/util/Map;Lnet/minecraft/advancements/Advancement;)V", false),
+                Type.getType("(Lnet/minecraft/advancements/Advancement;)V")
         ));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/stream/Stream", "forEach", "(Ljava/util/function/Consumer;)V", true));
 
-        instructions.add(new TypeInsnNode(NEW, "java/util/ArrayList"));
-        instructions.add(new InsnNode(DUP));
-        instructions.add(new VarInsnNode(ALOAD, 5));
-        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;", true));
-        instructions.add(new MethodInsnNode(INVOKESPECIAL, "java/util/ArrayList", "<init>", "(Ljava/util/Collection;)V", false));
+        instructions.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Collection", "forEach", "(Ljava/util/function/Consumer;)V", true));
 
+        instructions.add(new VarInsnNode(ALOAD, 2));
+        instructions.add(L1);
         return instructions;
     }
 
     public InsnList shouldBeVisible() {
         InsnList instructions = new InsnList();
 
-        LabelNode continueExecution = new LabelNode();
+        LabelNode L1 = new LabelNode();
 
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+        instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+        instructions.add(new InsnNode(DUP));
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "shouldBeVisible", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-        instructions.add(new JumpInsnNode(IFEQ, continueExecution));
+        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "shouldShowAdvancement", "(Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Z", false));
+        instructions.add(new JumpInsnNode(IFEQ, L1));
 
         instructions.add(new InsnNode(ICONST_1));
         instructions.add(new InsnNode(IRETURN));
 
-        instructions.add(continueExecution);
+        instructions.add(L1);
 
         return instructions;
     }
@@ -212,16 +188,19 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
     public InsnList sendArchipelagoAdvancement() {
         InsnList instructions = new InsnList();
 
-        LabelNode continueExecution = new LabelNode();
-
+        instructions.add(new VarInsnNode(ALOAD, 0));
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-        instructions.add(new JumpInsnNode(IFEQ, continueExecution));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "func_192747_a", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementProgress", "func_192105_a", "()Z", false));
+        instructions.add(preventAdvancement());
 
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "client", "Lnet/stuff691734/archipelagoLib/archipelagoClient/ArchipelagoClient;"));
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelagoLib/CheckType", "ADVANCEMENT", "Lnet/stuff691734/archipelagoLib/CheckType;"));
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "sendArchipelagoAdvancement", "(Lnet/minecraft/advancements/Advancement;)V", false));
-
-        instructions.add(continueExecution);
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/Advancement", "func_192067_g", "()Lnet/minecraft/util/ResourceLocation;", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/ResourceLocation", "toString", "()Ljava/lang/String;", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/CheckType", "addPrefix", "(Ljava/lang/String;)Ljava/lang/String;", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/archipelagoClient/ArchipelagoClient", "sendCheck", "(Ljava/lang/String;)V", false));
 
         return instructions;
     }
@@ -229,16 +208,20 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
     public InsnList preventAdvancement() {
         InsnList instructions = new InsnList();
 
-        LabelNode continueExecution = new LabelNode();
+        LabelNode L1 = new LabelNode();
 
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+        instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+        instructions.add(new InsnNode(DUP));
         instructions.add(new VarInsnNode(ALOAD, 1));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "allowAdvancementCompletion", "(Lnet/minecraft/advancements/Advancement;)Z", false));
-        instructions.add(new JumpInsnNode(IFNE, continueExecution));
+        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "isAdvancementCompletable", "(Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Z", false));
+        instructions.add(new JumpInsnNode(IFNE, L1));
 
         instructions.add(new InsnNode(ICONST_0));
         instructions.add(new InsnNode(IRETURN));
 
-        instructions.add(continueExecution);
+        instructions.add(L1);
 
         return instructions;
     }
@@ -255,5 +238,20 @@ public class PlayerAdvancementsTransformer implements IClassTransformer {
         method.instructions.add(instructions);
 
         return method;
+    }
+
+    public InsnList loadAdvancementsOnFirstJoin() {
+        InsnList instructions = new InsnList();
+
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new FieldInsnNode(GETFIELD, "net/minecraft/advancements/PlayerAdvancements", "field_192757_e", "Ljava/io/File;"));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/File", "isFile", "()Z", false));
+        LabelNode L1 = new LabelNode();
+        instructions.add(new JumpInsnNode(IFNE, L1));
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "func_192749_b", "()V", false));
+        instructions.add(L1);
+
+        return instructions;
     }
 }
