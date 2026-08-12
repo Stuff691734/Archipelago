@@ -25,6 +25,7 @@ version = "${project.minecraft_version}-${project.mod_version}-forge"
 group = mod_group_id
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven {
         url "https://cursemaven.com"
     }
@@ -43,6 +44,9 @@ dependencies {
     implementation('io.github.archipelagomw:Java-Client:0.2.1')
 
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
+
+    implementation "com.github.Stuff691734:archipelago-lib:0.11.3"
+    shadow "com.github.Stuff691734:archipelago-lib:0.11.3"
 }
 
 shadowJar {

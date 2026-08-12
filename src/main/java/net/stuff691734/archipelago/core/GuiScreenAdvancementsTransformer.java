@@ -33,7 +33,7 @@ public class GuiScreenAdvancementsTransformer implements IClassTransformer {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
-                    // DisplayInfo.isHidden
+                    // AdvancementTabGui.create
                     if (node.getOpcode() == INVOKESTATIC && ((MethodInsnNode)node).name.equals("func_193936_a")) {
                         showAdvancementPageTarget = node;
                     }
@@ -54,7 +54,18 @@ public class GuiScreenAdvancementsTransformer implements IClassTransformer {
     private static InsnList showAdvancementPage() {
         InsnList instructions = new InsnList();
 
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/MixinHelper", "getGuiAdvancementTab", "(Lnet/minecraft/client/gui/advancements/GuiAdvancementTab;)Lnet/minecraft/client/gui/advancements/GuiAdvancementTab;", false));
+        instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "logic", "Lnet/stuff691734/archipelagoLib/Logic;"));
+
+        instructions.add(new InsnNode(SWAP));
+
+        instructions.add(new TypeInsnNode(NEW, "net/stuff691734/archipelago/implementations/AdvancementImpl"));
+        instructions.add(new InsnNode(DUP));
+        instructions.add(new VarInsnNode(ALOAD, 1));
+        instructions.add(new MethodInsnNode(INVOKESPECIAL, "net/stuff691734/archipelago/implementations/AdvancementImpl", "<init>", "(Lnet/minecraft/advancements/Advancement;)V", false));
+
+
+        instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/stuff691734/archipelagoLib/Logic", "isTabDrawn", "(Ljava/lang/Object;Lnet/stuff691734/archipelagoLib/interfaces/AdvancementInterface;)Ljava/lang/Object;", false));
+        instructions.add(new TypeInsnNode(CHECKCAST, "net/minecraft/client/gui/advancements/GuiAdvancementTab"));
 
         return instructions;
 
