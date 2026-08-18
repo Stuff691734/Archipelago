@@ -102,7 +102,7 @@ dependencies {
     jarJar (implementation'org.apache.httpcomponents.core5:httpcore5:[5.4]')
 
     minecraftLibrary "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
-    jarJar (implementation"com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}")
+    jarJar (implementation"com.github.Stuff691734:archipelago-lib:[${archipelago_lib_version}]")
 }
 
 tasks.named('processResources', ProcessResources).configure {
