@@ -110,7 +110,7 @@ dependencies {
     implementation fg.deobf("curse.maven:architectury-api-419699:5137938")
 
     minecraftLibrary "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
-    jarJar (implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}")
+    jarJar (implementation "com.github.Stuff691734:archipelago-lib:[${archipelago_lib_version}]")
 }
 
 tasks.named('processResources', ProcessResources).configure {
