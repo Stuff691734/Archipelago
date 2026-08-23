@@ -107,7 +107,9 @@ dependencies {
     implementation fg.deobf("curse.maven:item-filters-309674:3596362")
 
     minecraftLibrary "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
-    shadow "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
+    shadow ("com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}") {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
 }
 
 shadowJar {
