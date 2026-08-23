@@ -112,7 +112,7 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
 
     @Override
     public boolean isInvisibleUntilCompleted() {
-        return this.quest.invisible;
+        return false;
     }
 
     @Override
