@@ -102,9 +102,7 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, AdvancementInterface advancementInterface, Long aLong) {
         Advancement advancement = (Advancement) advancementInterface.getAdvancement();
         if (advancement.getDisplay() != null) {
-            // uses .copy() here since given items removes items from the itemstack.
-            // causing advancements to not display the item stack.
-            this.giveItem(serverInterface, ((DisplayInfoAccessor) advancement.getDisplay()).archipelago$getIcon().copy(), aLong);
+            this.giveItem(serverInterface, ((DisplayInfoAccessor) advancement.getDisplay()).archipelago$getIcon(), aLong);
         }
     }
 
@@ -174,17 +172,18 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, ItemStack item, @Nullable Long index) {
         MinecraftServer server = (MinecraftServer) serverInterface.getServer();
         for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
+            ItemStack playerItem = item.copy();
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance(server) != null) {
                     if (ArchipelagoPersistentState.getInstance(server).playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
-                        if (!player.inventory.addItemStackToInventory(item)) {
-                            player.entityDropItem(item, 0);
+                        if (!player.inventory.addItemStackToInventory(playerItem.copy())) {
+                            player.entityDropItem(playerItem, 0);
                         }
                     }
                 }
             } else {
-                if (!player.inventory.addItemStackToInventory(item)) {
-                    player.entityDropItem(item, 0);
+                if (!player.inventory.addItemStackToInventory(playerItem)) {
+                    player.entityDropItem(playerItem, 0);
                 }
             }
         }
