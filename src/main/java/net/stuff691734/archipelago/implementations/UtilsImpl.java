@@ -84,9 +84,7 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, AdvancementInterface advancementInterface, Long aLong) {
         AdvancementNode advancement = (AdvancementNode) advancementInterface.getAdvancement();
         if (advancement.holder().value().display().isPresent()) {
-            // uses .copy() here since given items removes items from the itemstack.
-            // causing advancements to not display the item stack.
-            this.giveItem(serverInterface, advancement.holder().value().display().get().getIcon().copy(), aLong);
+            this.giveItem(serverInterface, advancement.holder().value().display().get().getIcon(), aLong);
         }
     }
 
@@ -104,17 +102,18 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, ItemStack item, @Nullable Long index) {
         MinecraftServer server = (MinecraftServer) serverInterface.getServer();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            ItemStack playerItem = item.copy();
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance(server) != null) {
                     if (ArchipelagoPersistentState.getInstance(server).playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
-                        if (!player.addItem(item)) {
-                            player.spawnAtLocation(item);
+                        if (!player.addItem(playerItem.copy())) {
+                            player.spawnAtLocation(playerItem);
                         }
                     }
                 }
             } else {
-                if (!player.addItem(item)) {
-                    player.spawnAtLocation(item);
+                if (!player.addItem(playerItem)) {
+                    player.spawnAtLocation(playerItem);
                 }
             }
         }
