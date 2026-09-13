@@ -33,6 +33,9 @@ public class QuestButtonMixin {
         )) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
-        return questIcon != ThemeProperties.ALERT_ICON.get(quest) ? questIcon : Color4I.EMPTY;
+        if (questIcon == ThemeProperties.ALERT_ICON.get(quest)) {
+            return Color4I.EMPTY;
+        }
+        return questIcon;
     }
 }
