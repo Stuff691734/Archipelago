@@ -19,6 +19,7 @@ import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ServerImpl implements ServerInterface {
     private final MinecraftServer server;
@@ -83,6 +84,12 @@ public class ServerImpl implements ServerInterface {
             list.add(new AdvancementImpl(advancement));
         }
         return list;
+    }
+
+    @Override
+    public Optional<FTBQuestsInterface> getFTBQuest(String questName) {
+        Archipelago.LOGGER.error("ran ServerImpl getFTBQuest, this should not happen.");
+        return Optional.empty();
     }
 
     @Override
