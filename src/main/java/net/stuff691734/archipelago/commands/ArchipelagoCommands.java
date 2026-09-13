@@ -76,8 +76,8 @@ public class ArchipelagoCommands {
     }
 
     public static int generateCommand(CommandContext<CommandSourceStack> context, boolean singleLine, boolean removePermaHidden) {
-        return Archipelago.logic.generateChecks(
-                new ServerImpl(context.getSource().getServer()),
+        return Archipelago.client.generateCommand(
+                Archipelago.logic,
                 new ContextImpl(context),
                 singleLine,
                 removePermaHidden
