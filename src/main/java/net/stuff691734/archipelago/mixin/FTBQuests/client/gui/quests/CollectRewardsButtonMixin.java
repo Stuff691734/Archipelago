@@ -17,23 +17,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CollectRewardsButtonMixin {
     @Redirect(method = {"anyUnclaimedRewards", "onClicked", "draw"}, at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;hasUnclaimedRewards(Ljava/util/UUID;Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"))
     private boolean archipelago$HasUnclaimedRewards(TeamData teamData, UUID player, QuestObject object) {
-        if (
-            !Archipelago.slotData.isInitiated ||
-            (
-                !Archipelago.slotData.quest_checks_give_rewards ||
-                !Archipelago.slotData.activated_modules.contains("FTBQuests")
-            )
-        ) {
-            return teamData.hasUnclaimedRewards(player, object);
-        }
         // always called with arguments of this.questScreen.file
-        ClientQuestFile questFile = (ClientQuestFile) object;
         AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
-        questFile.forAllQuests(quest -> {
-            if (
-                Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
-                quest.getRewards().stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))
-            ) {
+        ((ClientQuestFile) object).forAllQuests(quest -> {
+            if (Archipelago.logic.isFTBQuestRewardObtained(
+                    new FTBQuestsImpl(quest),
+                    quest.getRewards().stream().anyMatch(
+                            (reward) -> !teamData.isRewardClaimed(player, reward)
+                    )
+            )) {
                 hasAvailableReward.set(true);
             }
         });

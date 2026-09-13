@@ -4,9 +4,13 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.ChapterGroup;
 import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.task.*;
 import dev.ftb.mods.ftbquests.quest.task.neoforge.ForgeEnergyTask;
+import dev.ftb.mods.ftbquests.util.TextUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
 import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.*;
@@ -69,7 +73,7 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     @Override
     public String getChapterName() {
         if (!this.quest.getChapter().getRawTitle().isEmpty()) {
-            return this.quest.getChapter().getRawTitle();
+            return TextUtils.parseRawText(this.quest.getChapter().getRawTitle(), this.quest.getChapter().holderLookup()).getString();
         }
         return Component.translatable("ftbquests.unnamed").getString();
     }
@@ -100,6 +104,15 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     }
 
     @Override
+    public void updateVisibility() {
+        if (Archipelago.getServer() != null) {
+            for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
+                ((QuestAccessor) (Object) this.quest).archipelago$checkForDependantCompletion(TeamData.get(player));
+            }
+        }
+    }
+
+    @Override
     public String getName(ServerInterface server) {
         return this.getTitle(server);
     }
@@ -127,6 +140,10 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
         }
         if (!this.quest.getTasks().isEmpty()) {
             Task task = quest.getTasksAsList().get(0);
+            if (!task.getRawTitle().isEmpty()) {
+                return TextUtils.parseRawText(task.getRawTitle(), task.holderLookup()).getString();
+            }
+
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
                 AdvancementTaskAccessor accessor = (AdvancementTaskAccessor) task1;
