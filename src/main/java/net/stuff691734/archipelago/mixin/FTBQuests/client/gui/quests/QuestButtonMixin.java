@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.client.gui.quests;
 
-import dev.ftb.mods.ftblibrary.icon.Color4I;
 import dev.ftb.mods.ftblibrary.icon.Icon;
 import dev.ftb.mods.ftbquests.client.gui.quests.QuestButton;
 import dev.ftb.mods.ftbquests.quest.Quest;
@@ -33,6 +32,9 @@ public class QuestButtonMixin {
         )) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
-        return questIcon != ThemeProperties.ALERT_ICON.get(quest) ? questIcon : Color4I.empty();
+        if (questIcon == ThemeProperties.ALERT_ICON.get(quest)) {
+            return Icon.empty();
+        }
+        return questIcon;
     }
 }
