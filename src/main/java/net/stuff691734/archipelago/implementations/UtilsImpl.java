@@ -66,8 +66,8 @@ public class UtilsImpl implements UtilsInterface {
     }
 
     @Override
-    public void sendMessageTranslatable(String s) {
-        TextComponentTranslation message = new TextComponentTranslation(s);
+    public void sendMessageTranslatable(String s, Object... args) {
+        TextComponentTranslation message = new TextComponentTranslation(s, args);
         Archipelago.executeOnServer((server) -> {
             server.sendMessage(message);
 
