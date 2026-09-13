@@ -4,11 +4,13 @@ import dev.ftb.mods.ftbquests.quest.Quest;
 import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.reward.Reward;
 import dev.ftb.mods.ftbquests.quest.reward.RewardClaimType;
+import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.UUID;
@@ -34,5 +36,10 @@ public class TeamDataMixin {
         } else {
             cir.setReturnValue(RewardClaimType.CANT_CLAIM);
         }
+    }
+
+    @Redirect(method = "areDependenciesComplete", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteOpenHashMap;get(J)B"), remap = false)
+    public byte removeCachingWhenCheckingCompletedQuests(Long2ByteOpenHashMap instance, long k) {
+        return instance.defaultReturnValue();
     }
 }
