@@ -88,8 +88,8 @@ public class ArchipelagoCommands extends CommandBase {
             removePermaHidden = !CommandBase.parseBoolean(args[2]);
         }
 
-        Archipelago.logic.generateChecks(
-                new ServerImpl(server),
+        Archipelago.client.generateCommand(
+                Archipelago.logic,
                 new ContextImpl(sender),
                 singleLine,
                 removePermaHidden
