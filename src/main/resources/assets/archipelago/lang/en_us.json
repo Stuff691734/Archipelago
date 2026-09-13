@@ -1,5 +1,16 @@
 {
+  "archipelago.client.received_check": "Received %s from %s (%s)",
+  "archipelago.client.error": "Error from Archipelago Client: %s",
+  "archipelago.client.message": "%s",
+  "archipelago.command.generate.start": "Started writing to file.",
+  "archipelago.command.generate.end": "Finished writing to file.",
+  "archipelago.command.generate.error": "Error while generating checks: %s",
+  "archipelago.command.get.checks": "Received checks: %s",
+  "archipelago.command.get.slotData": "Current slot data: %s",
+  "archipelago.command.get.specific": "Player has received check %s: %s",
+  "archipelago.command.password.success": "Password set successfully",
+  "archipelago.connection.invalid_server": "Error parsing server address: %s",
+  "archipelago.connection.refused": "Connection Refused: %s",
   "death.attack.archipelago.death_link": "%s was killed by archipelago death link",
-  "archipelago.recieved.check": "Received %s from %s (%s)",
-  "archipelago.connection.invalid_server": "Invalid server address"
+  "archipelago.death_link.info": "[DeathLink] %s died: %s"
 }
