@@ -4,13 +4,16 @@ import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.ChapterGroup;
 import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.TeamData;
 import dev.ftb.mods.ftbquests.quest.task.*;
 import dev.ftb.mods.ftbquests.quest.task.forge.ForgeEnergyTask;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.mixin.FTBQuests.quest.QuestAccessor;
 import net.stuff691734.archipelago.mixin.FTBQuests.quest.task.StructureTaskAccessor;
 import net.stuff691734.archipelagoLib.CheckType;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
@@ -102,6 +105,15 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     }
 
     @Override
+    public void updateVisibility() {
+        if (Archipelago.getServer() != null) {
+            for (ServerPlayer player : Archipelago.getServer().getPlayerList().getPlayers()) {
+                ((QuestAccessor) (Object) this.quest).archipelago$checkForDependantCompletion(TeamData.get(player));
+            }
+        }
+    }
+
+    @Override
     public String getName(ServerInterface server) {
         return this.getTitle(server);
     }
@@ -129,6 +141,9 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
         }
         if (!this.quest.tasks.isEmpty()) {
             Task task = this.quest.tasks.get(0);
+            if (!task.title.isEmpty()) {
+                return task.title;
+            }
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
                 if (Archipelago.client.isValidId(CheckType.ADVANCEMENT, task1.advancement.toString())) {
