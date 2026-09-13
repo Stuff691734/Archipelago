@@ -19,7 +19,7 @@ public class ContextImpl implements ContextInterface {
     }
 
     @Override
-    public void sendMessageTranslatable(String s) {
-        this.context.getSource().sendFeedback(new TranslationTextComponent(s), false);
+    public void sendMessageTranslatable(String s, Object... args) {
+        this.context.getSource().sendFeedback(new TranslationTextComponent(s, args), false);
     }
 }
