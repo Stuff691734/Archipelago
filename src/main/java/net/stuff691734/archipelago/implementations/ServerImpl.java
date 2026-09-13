@@ -21,6 +21,7 @@ import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ServerImpl implements ServerInterface {
@@ -88,6 +89,12 @@ public class ServerImpl implements ServerInterface {
     @Override
     public List<AdvancementInterface> getAllAdvancements() {
         return this.server.getAdvancements().getAllAdvancements().stream().map(AdvancementImpl::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<FTBQuestsInterface> getFTBQuest(String questName) {
+        Archipelago.LOGGER.error("ran ServerImpl getFTBQuest, this should not happen.");
+        return Optional.empty();
     }
 
     @Override
