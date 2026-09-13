@@ -52,6 +52,6 @@ public class ViewQuestPanelMixin {
 
     @Redirect(method = "addWidgets", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 2), remap = false)
     private boolean alwaysHaveDependencies(List<QuestObject> dependencies) {
-        return Archipelago.logic.isFTBQuestRandomized(new FTBQuestsImpl(this.quest));
+        return !Archipelago.logic.isFTBQuestRandomized(new FTBQuestsImpl(this.quest));
     }
 }

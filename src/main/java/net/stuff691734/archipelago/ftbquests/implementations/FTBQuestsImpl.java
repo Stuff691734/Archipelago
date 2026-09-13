@@ -95,6 +95,11 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     }
 
     @Override
+    public void updateVisibility() {
+        // should be nothing to do here
+    }
+
+    @Override
     public String getName(ServerInterface server) {
         return this.getTitle(server);
     }
@@ -122,6 +127,9 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
         }
         if (!this.quest.tasks.isEmpty()) {
             Task task = this.quest.tasks.get(0);
+            if (!task.title.isEmpty()) {
+                return task.title;
+            }
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
                 if (Archipelago.client.isValidId(CheckType.ADVANCEMENT, task1.advancement)) {
