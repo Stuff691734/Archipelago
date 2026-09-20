@@ -17,6 +17,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
 import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 import net.stuff691734.archipelagoLib.interfaces.UtilsInterface;
@@ -85,7 +86,7 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, AdvancementInterface advancementInterface, Long aLong) {
         Advancement advancement = (Advancement) advancementInterface.getAdvancement();
         if (advancement.getDisplay() != null) {
-            this.giveItem(serverInterface, advancement.getDisplay().getIcon(), aLong);
+            this.giveItem(serverInterface, ((DisplayInfoAccessor) advancement.getDisplay()).archipelago$getIcon(), aLong);
         }
     }
 
