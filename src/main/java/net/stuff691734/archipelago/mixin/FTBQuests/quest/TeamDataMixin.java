@@ -39,8 +39,8 @@ public class TeamDataMixin {
         }
     }
 
-    @Redirect(method = "checkDepsCached", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteMap;getOrDefault(JB)B"), remap = false)
-    public byte removeCachingWhenCheckingCompletedQuests(Long2ByteMap instance, long key, byte defaultValue) {
-        return defaultValue;
+    @Redirect(method = "areDependenciesComplete", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteOpenHashMap;get(J)B"), remap = false)
+    public byte removeCachingWhenCheckingCompletedQuests(Long2ByteOpenHashMap instance, long k) {
+        return instance.defaultReturnValue();
     }
 }
