@@ -104,7 +104,7 @@ public class UtilsImpl implements UtilsInterface {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance(server) != null) {
                     if (ArchipelagoPersistentState.getInstance(server).playerLastCheck.getOrDefault(player.getStringUUID(), 0) < index) {
-                        if (!player.addItem(playerItem.copy())) {
+                        if (!player.addItem(playerItem)) {
                             player.spawnAtLocation(playerItem);
                         }
                     }
