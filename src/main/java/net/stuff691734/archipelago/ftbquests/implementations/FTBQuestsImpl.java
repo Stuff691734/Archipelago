@@ -1,10 +1,13 @@
 package net.stuff691734.archipelago.ftbquests.implementations;
 
+import com.feed_the_beast.ftblib.lib.data.TeamData;
 import com.feed_the_beast.ftbquests.quest.Chapter;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.task.AdvancementTask;
 import com.feed_the_beast.ftbquests.quest.task.Task;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelagoLib.interfaces.FTBQuestsInterface;
 import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 
@@ -86,6 +89,12 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     public String getName() {
         return this.quest.getAltTitle();
     }
+
+    @Override
+    public void updateVisibility() {
+        // should be nothing to do here
+    }
+
 
     @Override
     public boolean hasRewards() {

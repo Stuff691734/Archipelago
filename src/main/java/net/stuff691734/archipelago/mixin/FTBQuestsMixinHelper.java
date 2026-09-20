@@ -28,7 +28,10 @@ public class FTBQuestsMixinHelper {
         )) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
-        return originalIcon != ThemeProperties.ALERT_ICON.get(quest) ? originalIcon : Icon.EMPTY;
+        if (originalIcon == ThemeProperties.ALERT_ICON.get(quest)) {
+            return Icon.EMPTY;
+        }
+        return originalIcon;
     }
 
     public static boolean isQuestRewardAvailable(Quest quest, QuestData data) {
