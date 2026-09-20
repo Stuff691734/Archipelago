@@ -103,7 +103,7 @@ public class UtilsImpl implements UtilsInterface {
             if (index != null) {
                 if (ArchipelagoPersistentState.getInstance(server) != null) {
                     if (ArchipelagoPersistentState.getInstance(server).playerLastCheck.getOrDefault(player.getCachedUniqueIdString(), 0) < index) {
-                        if (!player.inventory.addItemStackToInventory(playerItem.copy())) {
+                        if (!player.inventory.addItemStackToInventory(playerItem)) {
                             player.entityDropItem(playerItem);
                         }
                     }
