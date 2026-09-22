@@ -4,7 +4,9 @@ import com.feed_the_beast.ftbquests.client.ClientQuestFile;
 import com.feed_the_beast.ftbquests.gui.quests.ModpackButton;
 import com.feed_the_beast.ftbquests.quest.Chapter;
 import com.feed_the_beast.ftbquests.quest.ChapterGroup;
+import com.feed_the_beast.ftbquests.quest.PlayerData;
 import com.feed_the_beast.ftbquests.quest.Quest;
+import net.minecraft.client.Minecraft;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,9 +31,11 @@ public abstract class ModpackButtonMixin {
         for(ChapterGroup group : questFile.chapterGroups) {
             for(Chapter chapter : group.chapters) {
                 for(Quest quest : chapter.quests) {
-                    if (
-                            Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
-                        quest.rewards.stream().anyMatch(reward -> !questFile.self.isRewardClaimed(reward.id))
+                    assert Minecraft.getInstance().player != null;
+                    if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), PlayerData.get(Minecraft.getInstance().player).isComplete(quest)) &&
+                            quest.rewards.stream().anyMatch(
+                                    (reward) -> !PlayerData.get(Minecraft.getInstance().player).isRewardClaimed(reward.id)
+                            )
                     ) {
                         hasAvailableReward = true;
                     }
