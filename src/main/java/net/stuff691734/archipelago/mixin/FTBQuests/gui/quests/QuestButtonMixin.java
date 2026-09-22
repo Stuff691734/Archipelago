@@ -22,15 +22,14 @@ public class QuestButtonMixin {
     @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Lcom/feed_the_beast/ftbquests/quest/Quest;getShape()Lcom/feed_the_beast/ftbquests/quest/QuestShape;"), remap = false, name = "qicon")
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
-        if (Archipelago.logic.isFTBQuestRewardObtained(
-                new FTBQuestsImpl(quest),
+        if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), PlayerData.get(Minecraft.getInstance().player).isComplete(quest)) &&
                 quest.rewards.stream().anyMatch(
                         (reward) -> !PlayerData.get(Minecraft.getInstance().player).isRewardClaimed(reward.id)
                 )
-        )) {
+        ) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
-        if (questIcon == ThemeProperties.ALERT_ICON.get(quest)) {
+        if (questIcon.equals(ThemeProperties.ALERT_ICON.get(quest))) {
             return Icon.EMPTY;
         }
         return questIcon;

@@ -4,22 +4,32 @@ import com.feed_the_beast.ftbquests.gui.quests.ButtonReward;
 import com.feed_the_beast.ftbquests.quest.PlayerData;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.QuestObject;
+import com.feed_the_beast.ftbquests.quest.reward.Reward;
+import net.minecraft.client.Minecraft;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ButtonReward.class)
 public class RewardButtonMixin {
+    @Shadow(remap = false)
+    @Final
+    public Reward reward;
+
     @Redirect(method = "draw", at = @At(value = "INVOKE", target = "Lcom/feed_the_beast/ftbquests/quest/PlayerData;isComplete(Lcom/feed_the_beast/ftbquests/quest/QuestObject;)Z"), remap = false)
     private boolean modifyRewardAccess(PlayerData playerData, QuestObject questObject) {
-        return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), playerData.isComplete(questObject));
+        return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), playerData.isComplete(questObject))
+                && !playerData.isRewardClaimed(this.reward.id);
     }
 
     @Redirect(method = "getWidgetType", at = @At(value = "INVOKE", target = "Lcom/feed_the_beast/ftbquests/quest/PlayerData;isComplete(Lcom/feed_the_beast/ftbquests/quest/QuestObject;)Z"), remap = false)
     public boolean getWidgetType(PlayerData playerData, QuestObject questObject) {
         // required for allowing user to click on quest reward and get reward
-        return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), playerData.isComplete(questObject));
+        return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), playerData.isComplete(questObject))
+                && !playerData.isRewardClaimed(this.reward.id);
     }
 }
