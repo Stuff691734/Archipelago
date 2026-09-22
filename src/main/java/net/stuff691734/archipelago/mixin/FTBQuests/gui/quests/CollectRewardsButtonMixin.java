@@ -21,9 +21,10 @@ public class CollectRewardsButtonMixin {
         for(ChapterGroup group : questFile.chapterGroups) {
             for(Chapter chapter : group.chapters) {
                 for (Quest quest : chapter.quests) {
-                    if (
-                            Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
-                                    quest.rewards.stream().anyMatch(reward -> !teamData.isRewardClaimed(player, reward))
+                    if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), teamData.isCompleted(quest)) &&
+                        quest.rewards.stream().anyMatch(
+                            (reward) -> !teamData.isRewardClaimed(player, reward)
+                        )
                     ) {
                         hasAvailableReward = true;
                     }

@@ -14,11 +14,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ClaimRewardMessageMixin {
     @Redirect(method = "handle", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftbquests/quest/TeamData;isCompleted(Ldev/ftb/mods/ftbquests/quest/QuestObject;)Z"), remap = false)
     private boolean modifyRewardAccess(TeamData teamData, QuestObject questObject) {
-        if (
-            questObject instanceof Quest &&
-            Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), true)
-        ) {
-            return true;
+        if (questObject instanceof Quest) {
+            return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl((Quest) questObject), teamData.isCompleted(questObject));
         }
         return teamData.isCompleted(questObject);
     }
