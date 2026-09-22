@@ -20,12 +20,11 @@ public class CollectRewardsButtonMixin {
         // always called with arguments of this.questScreen.file
         AtomicBoolean hasAvailableReward = new AtomicBoolean(false);
         ((ClientQuestFile) object).forAllQuests(quest -> {
-            if (Archipelago.logic.isFTBQuestRewardObtained(
-                    new FTBQuestsImpl(quest),
+            if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), teamData.isCompleted(quest)) &&
                     quest.getRewards().stream().anyMatch(
                             (reward) -> !teamData.isRewardClaimed(player, reward)
                     )
-            )) {
+            ) {
                 hasAvailableReward.set(true);
             }
         });
