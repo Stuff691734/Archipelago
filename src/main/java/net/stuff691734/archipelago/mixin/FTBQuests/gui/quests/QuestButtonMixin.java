@@ -25,15 +25,14 @@ public class QuestButtonMixin {
     @ModifyVariable(method = "draw", at = @At(value = "INVOKE", target = "Ldev/ftb/mods/ftblibrary/ui/GuiHelper;setupDrawing()V"), remap = false, name = "questIcon")
     public Icon drawAlertIcon(Icon questIcon) {
         assert Minecraft.getInstance().player != null;
-        if (Archipelago.logic.isFTBQuestRewardObtained(
-                new FTBQuestsImpl(quest),
+        if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), TeamData.get(Minecraft.getInstance().player).isCompleted(quest)) &&
                 quest.rewards.stream().anyMatch(
                         (reward) -> !TeamData.get(Minecraft.getInstance().player).isRewardClaimed(Minecraft.getInstance().player.getUUID(), reward)
                 )
-        )) {
+        ) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
-        if (questIcon == ThemeProperties.ALERT_ICON.get(quest)) {
+        if (questIcon.equals(ThemeProperties.ALERT_ICON.get(quest))) {
             return Color4I.EMPTY;
         }
         return questIcon;
