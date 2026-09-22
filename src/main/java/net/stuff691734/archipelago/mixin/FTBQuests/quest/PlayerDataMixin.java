@@ -1,9 +1,6 @@
 package net.stuff691734.archipelago.mixin.FTBQuests.quest;
 
-import com.feed_the_beast.ftbquests.quest.Chapter;
-import com.feed_the_beast.ftbquests.quest.PlayerData;
-import com.feed_the_beast.ftbquests.quest.Quest;
-import com.feed_the_beast.ftbquests.quest.QuestFile;
+import com.feed_the_beast.ftbquests.quest.*;
 import com.feed_the_beast.ftbquests.quest.reward.Reward;
 import com.feed_the_beast.ftbquests.quest.reward.RewardClaimType;
 import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
@@ -26,6 +23,9 @@ public abstract class PlayerDataMixin {
 
     @Shadow(remap = false)
     public abstract boolean isRewardClaimed(int id);
+
+    @Shadow(remap = false)
+    public abstract boolean isComplete(QuestObject object);
 
     @Inject(
             method = "areDependenciesComplete",
@@ -68,7 +68,7 @@ public abstract class PlayerDataMixin {
         for(Chapter chapter : this.file.chapters) {
             for(Quest quest : chapter.quests) {
                 if (
-                    Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), true) &&
+                    Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), this.isComplete(quest)) &&
                     quest.rewards.stream().anyMatch(reward -> !this.isRewardClaimed(reward.id))
                 ) {
                     hasAvailableReward = true;
