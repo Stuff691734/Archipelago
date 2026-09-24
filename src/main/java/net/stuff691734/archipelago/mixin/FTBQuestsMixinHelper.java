@@ -20,12 +20,11 @@ import java.util.List;
 
 public class FTBQuestsMixinHelper {
     public static Icon getQuestIcon(Quest quest, Icon originalIcon, ClientQuestData data) {
-        if (Archipelago.logic.isFTBQuestRewardObtained(
-                new FTBQuestsImpl(quest),
+        if (Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), quest.isComplete(data)) &&
                 quest.rewards.stream().anyMatch(
                         (reward) -> !data.isRewardClaimedSelf(reward)
                 )
-        )) {
+        ) {
             return ThemeProperties.ALERT_ICON.get(quest);
         }
         if (originalIcon == ThemeProperties.ALERT_ICON.get(quest)) {
@@ -36,6 +35,11 @@ public class FTBQuestsMixinHelper {
 
     public static boolean isQuestRewardAvailable(Quest quest, QuestData data) {
         return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), quest.isComplete(data));
+    }
+
+    public static boolean isQuestRewardAvailableCheckReward(Quest quest, QuestData data) {
+        return Archipelago.logic.isFTBQuestRewardObtained(new FTBQuestsImpl(quest), quest.isComplete(data))
+                && quest.rewards.stream().anyMatch((reward) -> !data.isRewardClaimed(Minecraft.getMinecraft().player.getUniqueID(), reward));
     }
 
     public static void sendArchipelagoQuest(Quest quest) {

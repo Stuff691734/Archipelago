@@ -78,7 +78,7 @@ public class ButtonRewardTransformer implements IClassTransformer {
     public InsnList showAlertIcon() {
         InsnList instructions = new InsnList();
 
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/FTBQuestsMixinHelper", "isQuestRewardAvailable", "(Lcom/feed_the_beast/ftbquests/quest/Quest;Lcom/feed_the_beast/ftbquests/quest/QuestData;)Z", false));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/FTBQuestsMixinHelper", "isQuestRewardAvailableCheckReward", "(Lcom/feed_the_beast/ftbquests/quest/Quest;Lcom/feed_the_beast/ftbquests/quest/QuestData;)Z", false));
 
         return instructions;
     }
