@@ -22,7 +22,7 @@ public class FTBServerImpl extends ServerImpl {
     public Optional<FTBQuestsInterface> getFTBQuest(String questName) {
         int id;
         try {
-            id = Integer.parseInt(questName, 16);
+            id = Integer.parseUnsignedInt(questName, 16);
         } catch (NumberFormatException exception) {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questName);
             return Optional.empty();

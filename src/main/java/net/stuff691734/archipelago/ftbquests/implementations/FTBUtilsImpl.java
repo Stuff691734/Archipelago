@@ -9,7 +9,7 @@ public class FTBUtilsImpl extends UtilsImpl {
     public boolean isQuestId(String questId) {
         int id;
         try {
-            id = Integer.parseInt(questId, 16);
+            id = Integer.parseUnsignedInt(questId, 16);
         } catch (NumberFormatException exception) {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
             return false;
