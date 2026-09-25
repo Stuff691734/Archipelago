@@ -64,7 +64,7 @@ public class FTBQuestsMixinHelper {
                     new FTBQuestsImpl(quest)
             );
             for (String item : items) {
-                contextMenu.add(new ContextMenuItem(item, Color4I.EMPTY, null));
+                contextMenu.add(new ContextMenuItem(item, Color4I.EMPTY, () -> {}));
             }
         }
     }
