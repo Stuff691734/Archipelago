@@ -209,6 +209,15 @@ function sendArchipelagoAdvancement() {
     instructions.add(new VarInsnNode(ALOAD, 1));
     instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/PlayerAdvancements", "getProgress", "(Lnet/minecraft/advancements/Advancement;)Lnet/minecraft/advancements/AdvancementProgress;", false));
     instructions.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/advancements/AdvancementProgress", "isDone", "()Z", false));
+
+    var L1 = new LabelNode();
+
+    instructions.add(new JumpInsnNode(IFNE, L1));
+    instructions.add(new InsnNode(ICONST_0));
+    instructions.add(new InsnNode(IRETURN));
+
+    instructions.add(L1);
+
     instructions.add(preventAdvancement());
 
     instructions.add(new FieldInsnNode(GETSTATIC, "net/stuff691734/archipelago/Archipelago", "client", "Lnet/stuff691734/archipelagoLib/archipelagoClient/ArchipelagoClient;"));
