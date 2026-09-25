@@ -107,7 +107,6 @@ function SetHidden() {
     instructions.add(L1);
     instructions.add(new InsnNode(ICONST_0));
     instructions.add(L2);
-    instructions.add(new InsnNode(ICONST_0));
 
     return instructions;
 }
