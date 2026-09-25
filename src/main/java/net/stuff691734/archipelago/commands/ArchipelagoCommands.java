@@ -78,9 +78,9 @@ public class ArchipelagoCommands extends CommandBase {
     }
 
     public void generateCommand(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        boolean singleLine = true;
+        boolean singleLine = false;
         if (args.length >= 2) {
-            singleLine = !CommandBase.parseBoolean(args[1]);
+            singleLine = CommandBase.parseBoolean(args[1]);
         }
 
         boolean removePermaHidden = true;
