@@ -1,0 +1,60 @@
+package net.stuff691734.archipelago.mixin.FTBQuests.quest;
+
+import dev.ftb.mods.ftbquests.api.event.progress.ProgressEventData;
+import dev.ftb.mods.ftbquests.quest.DependencyRequirement;
+import dev.ftb.mods.ftbquests.quest.Quest;
+import dev.ftb.mods.ftbquests.quest.TeamData;
+import net.stuff691734.archipelago.ftbquests.accessor.QuestAccessor;
+import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImpl;
+import net.stuff691734.archipelagoLib.CheckType;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(Quest.class)
+public abstract class QuestMixin implements QuestAccessor {
+    @Shadow
+    private DependencyRequirement dependencyRequirement;
+
+    @Override
+    public DependencyRequirement archipelago$getDependencyRequirement() {
+        return dependencyRequirement;
+    }
+
+    @Shadow
+    private boolean invisibleUntilCompleted;
+
+    @Override
+    public boolean archipelago$isInvisibleUntilCompleted() {
+        return invisibleUntilCompleted;
+    }
+
+    @Shadow(remap = false)
+    protected abstract void checkForDependantCompletion(TeamData data);
+
+    @Override
+    public void archipelago$checkForDependantCompletion(TeamData data) {
+        this.checkForDependantCompletion(data);
+    }
+
+    @Inject(
+            method = "onCompleted",
+            at = @At("RETURN")
+    )
+    public void sendArchipelagoQuest(ProgressEventData<?> data, CallbackInfo ci) {
+        Archipelago.client.sendCheck(CheckType.FTB_QUEST.addPrefix(((Quest)(Object)this).getCodeString()));
+    }
+
+    @Inject(method = "checkDependencies", at = @At(value = "RETURN"), remap = false, cancellable = true)
+    private void checkIsCompleted(@Coerce Object checker, CallbackInfoReturnable<Boolean> cir) {
+        // I don't actually care about the checker
+        if (!Archipelago.logic.isFTBQuestCompletable(new FTBQuestsImpl((Quest) (Object) this), true)) {
+            cir.setReturnValue(false);
+        }
+    }
+}
