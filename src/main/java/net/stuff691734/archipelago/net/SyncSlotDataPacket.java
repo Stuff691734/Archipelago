@@ -5,6 +5,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.Logic;
 import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
@@ -60,6 +61,7 @@ public class SyncSlotDataPacket {
                                 this.slotData.get("death_link"),
                                 this.slotData.get("roots_unlocked")
                         );
+                        Archipelago.logic = Archipelago.logic.updateSlotData(Archipelago.slotData);
                     }
             );
         });
