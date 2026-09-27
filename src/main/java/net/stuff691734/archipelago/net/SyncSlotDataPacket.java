@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.Logic;
 import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.Map;
@@ -41,6 +42,7 @@ public record SyncSlotDataPacket(Map<String, String> slotData) implements Custom
                         packet.slotData.get("death_link"),
                         packet.slotData.get("roots_unlocked")
                 );
+                Archipelago.logic = Archipelago.logic.updateSlotData(Archipelago.slotData);
             });
         }
     }
