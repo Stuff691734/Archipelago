@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.Logic;
 import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
@@ -66,6 +67,7 @@ public class SyncSlotDataPacket implements IMessage {
                         message.slotData.get("death_link"),
                         message.slotData.get("roots_unlocked")
                 );
+                Archipelago.logic = Archipelago.logic.updateSlotData(Archipelago.slotData);
             });
             return null;
         }
