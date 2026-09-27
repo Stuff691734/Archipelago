@@ -5,6 +5,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.simple.MessageFunctions;
 import net.stuff691734.archipelago.Archipelago;
+import net.stuff691734.archipelagoLib.Logic;
 import net.stuff691734.archipelagoLib.SlotData;
 
 import java.util.HashMap;
@@ -67,6 +68,7 @@ public class SyncSlotDataPacket {
                             packet.slotData.get("death_link"),
                             packet.slotData.get("roots_unlocked")
                     );
+                    Archipelago.logic = Archipelago.logic.updateSlotData(Archipelago.slotData);
                 }
             });
             context.setPacketHandled(true);
