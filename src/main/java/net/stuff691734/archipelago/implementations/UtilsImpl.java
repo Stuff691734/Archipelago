@@ -84,7 +84,7 @@ public class UtilsImpl implements UtilsInterface {
     public void giveItem(ServerInterface serverInterface, AdvancementInterface advancementInterface, Long aLong) {
         AdvancementNode advancement = (AdvancementNode) advancementInterface.getAdvancement();
         if (advancement.holder().value().display().isPresent()) {
-            this.giveItem(serverInterface, advancement.holder().value().display().get().getIcon().create(), aLong);
+            this.giveItem(serverInterface, advancement.holder().value().display().get().icon().create(), aLong);
         }
     }
 

@@ -55,7 +55,7 @@ public class AdvancementImpl implements AdvancementInterface {
     @Override
     public String getName() {
         if (this.advancement.holder().value().display().isPresent()) {
-            return this.advancement.holder().value().display().get().getTitle().getString();
+            return this.advancement.holder().value().display().get().title().getString();
         }
         return "";
     }
@@ -73,7 +73,7 @@ public class AdvancementImpl implements AdvancementInterface {
     @Override
     public String getDifficulty() {
         if (this.advancement.holder().value().display().isPresent()) {
-            return this.advancement.holder().value().display().get().getType().getSerializedName();
+            return this.advancement.holder().value().display().get().type().getSerializedName();
         }
         return "";
     }
@@ -81,7 +81,7 @@ public class AdvancementImpl implements AdvancementInterface {
     @Override
     public boolean isHidden() {
         if (this.advancement.holder().value().display().isPresent()) {
-            return this.advancement.holder().value().display().get().isHidden();
+            return this.advancement.holder().value().display().get().hidden();
         }
         return false;
     }

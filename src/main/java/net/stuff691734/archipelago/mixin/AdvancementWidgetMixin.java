@@ -24,12 +24,12 @@ public class AdvancementWidgetMixin {
     @Nullable
     private AdvancementWidget parent;
 
-    @Redirect(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
+    @Redirect(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;hidden()Z"))
     public boolean drawSetNotHidden(DisplayInfo display) {
         return !Archipelago.logic.shouldShowAdvancement(new AdvancementImpl(this.advancementNode));
     }
 
-    @Redirect(method = "isMouseOver", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"))
+    @Redirect(method = "isMouseOver", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/DisplayInfo;hidden()Z"))
     public boolean isMouseOverSetNotHidden(DisplayInfo display) {
         return !Archipelago.logic.shouldShowAdvancement(new AdvancementImpl(this.advancementNode));
     }

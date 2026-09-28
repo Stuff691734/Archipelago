@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(AdvancementsScreen.class)
 public class AdvancementsScreenMixin {
-    @Redirect(method = "onAddAdvancementRoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;create(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;ILnet/minecraft/advancements/AdvancementNode;)Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;"))
+    @Redirect(method = "onAdvancementsUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;create(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;ILnet/minecraft/advancements/AdvancementNode;)Lnet/minecraft/client/gui/screens/advancements/AdvancementTab;"))
     public AdvancementTab avoidAddingEmptyPages(Minecraft minecraft, AdvancementsScreen screen, int index, AdvancementNode advancementNode) {
         return Archipelago.logic.isTabDrawn(
                 AdvancementTab.create(minecraft, screen, index, advancementNode),
