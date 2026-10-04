@@ -47,7 +47,7 @@ public class BetterQuestingImplMethods {
         }
         int id;
         try {
-            id = Integer.parseUnsignedInt(questId.substring(2));
+            id = Integer.parseUnsignedInt(questId);
             return QuestDatabase.INSTANCE.getValue(id) != null;
         } catch (NumberFormatException exception) {
             Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
