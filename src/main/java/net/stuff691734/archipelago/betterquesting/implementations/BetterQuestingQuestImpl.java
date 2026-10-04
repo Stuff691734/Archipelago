@@ -1,6 +1,5 @@
 package net.stuff691734.archipelago.betterquesting.implementations;
 
-import betterquesting.api.enums.EnumLogic;
 import betterquesting.api.enums.EnumQuestVisibility;
 import betterquesting.api.properties.NativeProps;
 import betterquesting.api.questing.IQuest;
@@ -8,7 +7,6 @@ import betterquesting.api.questing.IQuestLine;
 import betterquesting.api.questing.IQuestLineEntry;
 import betterquesting.api2.storage.DBEntry;
 import betterquesting.questing.QuestDatabase;
-import betterquesting.questing.QuestInstance;
 import betterquesting.questing.QuestLineDatabase;
 import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.bq_standard.BQStandardMethods;
@@ -36,11 +34,11 @@ public class BetterQuestingQuestImpl implements BetterQuestingInterface {
         for (DBEntry<IQuestLine> questLine : QuestLineDatabase.INSTANCE.getEntries()) {
             for (DBEntry<IQuestLineEntry> questEntry : questLine.getValue().getEntries()) {
                 if (questEntry.getID() == id) {
-                    return String.valueOf(questLine.getID());
+                    return "c-" + questLine.getID();
                 }
             }
         }
-        return "0";
+        return "c-0";
     }
 
     /**
@@ -99,9 +97,7 @@ public class BetterQuestingQuestImpl implements BetterQuestingInterface {
      * Method called after check has been received to update visuals of the check.
      */
     @Override
-    public void updateVisibility() {
-        // TODO: is there anything to run after getting a check?
-    }
+    public void updateVisibility() {}
 
     @Override
     public String getChapterName() {

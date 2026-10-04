@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.betterquesting.implementations.BetterQuestingImplMethods;
 import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImplMethods;
 import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
@@ -81,7 +82,9 @@ public class UtilsImpl implements UtilsInterface {
 
     @Override
     public boolean isBetterQuestingQuestId(String questName) {
-        // TODO: FIGURE THIS SHIT OUT
+        if (Loader.isModLoaded("betterquesting")) {
+            return BetterQuestingImplMethods.isBetterQuestingQuestId(questName);
+        }
         return false;
     }
 

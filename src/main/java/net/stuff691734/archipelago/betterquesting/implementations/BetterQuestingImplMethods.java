@@ -2,6 +2,7 @@ package net.stuff691734.archipelago.betterquesting.implementations;
 
 import betterquesting.api.questing.IQuest;
 import betterquesting.questing.QuestDatabase;
+import betterquesting.questing.QuestLineDatabase;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelagoLib.interfaces.BetterQuestingInterface;
 
@@ -28,15 +29,29 @@ public class BetterQuestingImplMethods {
     public static List<BetterQuestingInterface> getAllBetterQuestingQuests() {
         List<BetterQuestingInterface> list = new ArrayList<>();
         QuestDatabase.INSTANCE.getEntries().forEach(
-                (quest) -> {
-                    list.add(new BetterQuestingQuestImpl(quest.getValue()));
-                }
+                (quest) -> list.add(new BetterQuestingQuestImpl(quest.getValue()))
         );
         return list;
     }
 
     public static boolean isBetterQuestingQuestId(String questId) {
-        return true;
-        // TODO: check if valid id
+        if (questId.startsWith("c-")) {
+            int id;
+            try {
+                id = Integer.parseUnsignedInt(questId.substring(2));
+                return QuestLineDatabase.INSTANCE.getValue(id) != null;
+            } catch (NumberFormatException exception) {
+                Archipelago.LOGGER.error("Unable to parse quest chapter: {}", questId);
+                return false;
+            }
+        }
+        int id;
+        try {
+            id = Integer.parseUnsignedInt(questId.substring(2));
+            return QuestDatabase.INSTANCE.getValue(id) != null;
+        } catch (NumberFormatException exception) {
+            Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
+            return false;
+        }
     }
 }
