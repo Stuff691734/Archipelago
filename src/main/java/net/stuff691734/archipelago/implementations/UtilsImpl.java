@@ -75,6 +75,11 @@ public class UtilsImpl implements UtilsInterface {
     }
 
     @Override
+    public boolean isBetterQuestingQuestId(String questName) {
+        return false;
+    }
+
+    @Override
     public void sendMessage(String s) {
         TextComponentString message = new TextComponentString(s);
         Archipelago.executeOnServer((server) -> {

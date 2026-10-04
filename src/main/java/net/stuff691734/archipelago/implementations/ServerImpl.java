@@ -7,19 +7,18 @@ import net.minecraftforge.fml.common.Loader;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.betterquesting.implementations.BetterQuestingImplMethods;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 import net.stuff691734.archipelago.net.StartSyncChecksPacket;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
 import net.stuff691734.archipelagoLib.Logic;
 import net.stuff691734.archipelagoLib.SlotData;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
+import net.stuff691734.archipelagoLib.interfaces.BetterQuestingInterface;
 import net.stuff691734.archipelagoLib.interfaces.FTBQuestsInterface;
 import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ServerImpl implements ServerInterface {
     private final MinecraftServer server;
@@ -94,6 +93,22 @@ public class ServerImpl implements ServerInterface {
 
     @Override
     public List<FTBQuestsInterface> getAllFTBQuests() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Optional<BetterQuestingInterface> getBetterQuestingQuest(String questName) {
+        if (this.isModLoaded("betterquesting")) {
+            return BetterQuestingImplMethods.getBetterQuestingQuest(questName);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<BetterQuestingInterface> getAllBetterQuestingQuests() {
+        if (this.isModLoaded("betterquesting")) {
+            return BetterQuestingImplMethods.getAllBetterQuestingQuests();
+        }
         return new ArrayList<>();
     }
 

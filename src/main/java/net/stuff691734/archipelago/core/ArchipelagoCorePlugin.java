@@ -1,6 +1,8 @@
 package net.stuff691734.archipelago.core;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.stuff691734.archipelago.core.BetterQuesting.PanelButtonQuestTransformer;
+import net.stuff691734.archipelago.core.BetterQuesting.QuestInstanceTransformer;
 import net.stuff691734.archipelago.core.FTBQuests.*;
 
 import javax.annotation.Nullable;
@@ -25,7 +27,10 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
                 MessageClaimAllRewardsTransformer.class.getName(),
                 MessageClaimRewardTransformer.class.getName(),
                 QuestTransformer.class.getName(),
-                PanelViewQuestTransformer.class.getName()
+                PanelViewQuestTransformer.class.getName(),
+
+                QuestInstanceTransformer.class.getName(),
+                PanelButtonQuestTransformer.class.getName()
         };
     }
 

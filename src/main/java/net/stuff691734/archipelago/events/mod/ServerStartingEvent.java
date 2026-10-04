@@ -20,17 +20,7 @@ public class ServerStartingEvent {
         ArchipelagoPersistentState state = ArchipelagoPersistentState.getInstance(event.getServer());
 
         if (!state.slotData.isEmpty()) {
-            Archipelago.slotData = new SlotData(
-                    state.slotData.get("unlock_type"),
-                    state.slotData.get("final_goal"),
-                    state.slotData.get("activated_modules"),
-                    state.slotData.get("advancement_check_difficulty"),
-                    state.slotData.get("ftb_quest_check_shape"),
-                    state.slotData.get("advancement_checks_give_items"),
-                    state.slotData.get("quest_checks_give_rewards"),
-                    state.slotData.get("death_link"),
-                    state.slotData.get("roots_unlocked")
-            );
+            Archipelago.slotData = new SlotData(state.slotData);
         }
         Archipelago.logic = new Logic(state, Archipelago.slotData);
 
