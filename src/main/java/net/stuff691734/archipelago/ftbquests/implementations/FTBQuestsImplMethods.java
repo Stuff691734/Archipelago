@@ -4,22 +4,15 @@ import com.feed_the_beast.ftbquests.quest.Chapter;
 import com.feed_the_beast.ftbquests.quest.Quest;
 import com.feed_the_beast.ftbquests.quest.QuestObject;
 import com.feed_the_beast.ftbquests.quest.ServerQuestFile;
-import net.minecraft.server.MinecraftServer;
 import net.stuff691734.archipelago.Archipelago;
-import net.stuff691734.archipelago.implementations.ServerImpl;
 import net.stuff691734.archipelagoLib.interfaces.FTBQuestsInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FTBServerImpl extends ServerImpl {
-    public FTBServerImpl(MinecraftServer server) {
-        super(server);
-    }
-
-    @Override
-    public Optional<FTBQuestsInterface> getFTBQuest(String questName) {
+public class FTBQuestsImplMethods {
+    public static Optional<FTBQuestsInterface> getFTBQuest(String questName) {
         int id;
         try {
             id = Integer.parseUnsignedInt(questName, 16);
@@ -34,8 +27,7 @@ public class FTBServerImpl extends ServerImpl {
         return Optional.empty();
     }
 
-    @Override
-    public List<FTBQuestsInterface> getAllFTBQuests() {
+    public static List<FTBQuestsInterface> getAllFTBQuests() {
         List<FTBQuestsInterface> list = new ArrayList<>();
         for (Chapter chapter : ServerQuestFile.INSTANCE.chapters) {
             for (Quest quest : chapter.quests) {
@@ -43,5 +35,16 @@ public class FTBServerImpl extends ServerImpl {
             }
         }
         return list;
+    }
+
+    public static boolean isQuestId(String questId) {
+        int id;
+        try {
+            id = Integer.parseUnsignedInt(questId, 16);
+        } catch (NumberFormatException exception) {
+            Archipelago.LOGGER.error("Unable to parse quest: {}", questId);
+            return false;
+        }
+        return ServerQuestFile.INSTANCE.get(id) != null;
     }
 }

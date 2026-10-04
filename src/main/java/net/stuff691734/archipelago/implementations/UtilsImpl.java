@@ -10,9 +10,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImplMethods;
 import net.stuff691734.archipelago.mixin.DisplayInfoAccessor;
 import net.stuff691734.archipelagoLib.interfaces.AdvancementInterface;
 import net.stuff691734.archipelagoLib.interfaces.ServerInterface;
@@ -71,11 +73,15 @@ public class UtilsImpl implements UtilsInterface {
 
     @Override
     public boolean isQuestId(String s) {
+        if (Loader.isModLoaded("ftbquests")) {
+            return FTBQuestsImplMethods.isQuestId(s);
+        }
         return false;
     }
 
     @Override
     public boolean isBetterQuestingQuestId(String questName) {
+        // TODO: FIGURE THIS SHIT OUT
         return false;
     }
 

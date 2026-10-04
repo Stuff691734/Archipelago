@@ -8,6 +8,7 @@ import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPacketHandler;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.betterquesting.implementations.BetterQuestingImplMethods;
+import net.stuff691734.archipelago.ftbquests.implementations.FTBQuestsImplMethods;
 import net.stuff691734.archipelago.net.GetCheckPacket;
 import net.stuff691734.archipelago.net.StartSyncChecksPacket;
 import net.stuff691734.archipelago.net.SyncSlotDataPacket;
@@ -87,12 +88,17 @@ public class ServerImpl implements ServerInterface {
 
     @Override
     public Optional<FTBQuestsInterface> getFTBQuest(String questName) {
-        Archipelago.LOGGER.error("ran ServerImpl getFTBQuest, this should not happen.");
+        if (this.isModLoaded("ftbquests")) {
+            return FTBQuestsImplMethods.getFTBQuest(questName);
+        }
         return Optional.empty();
     }
 
     @Override
     public List<FTBQuestsInterface> getAllFTBQuests() {
+        if (this.isModLoaded("ftbquests")) {
+            return FTBQuestsImplMethods.getAllFTBQuests();
+        }
         return new ArrayList<>();
     }
 

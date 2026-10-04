@@ -1,12 +1,9 @@
 package net.stuff691734.archipelago.events.mod;
 
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.ArchipelagoPersistentState;
 import net.stuff691734.archipelago.commands.ArchipelagoCommands;
-import net.stuff691734.archipelago.ftbquests.implementations.FTBServerImpl;
-import net.stuff691734.archipelago.ftbquests.implementations.FTBUtilsImpl;
 import net.stuff691734.archipelago.implementations.ServerImpl;
 import net.stuff691734.archipelago.implementations.UtilsImpl;
 import net.stuff691734.archipelagoLib.Logic;
@@ -24,15 +21,8 @@ public class ServerStartingEvent {
         }
         Archipelago.logic = new Logic(state, Archipelago.slotData);
 
-        UtilsImpl utils;
-        ServerImpl server;
-        if (Loader.isModLoaded("ftbquests")) {
-            utils = new FTBUtilsImpl();
-            server = new FTBServerImpl(event.getServer());
-        } else {
-            utils = new UtilsImpl();
-            server = new ServerImpl(event.getServer());
-        }
+        UtilsImpl utils = new UtilsImpl();
+        ServerImpl server = new ServerImpl(event.getServer());
 
         Archipelago.client = new ArchipelagoClient(utils, server, state);
 
