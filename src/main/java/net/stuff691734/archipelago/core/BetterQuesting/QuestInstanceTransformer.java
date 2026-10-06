@@ -48,6 +48,10 @@ public class QuestInstanceTransformer implements IClassTransformer {
                 }
             }
 
+            if (method.name.equals("setComplete")) {
+                method.instructions.insert(sendCheck());
+            }
+
         });
 
         // cleanup
@@ -70,6 +74,15 @@ public class QuestInstanceTransformer implements IClassTransformer {
         InsnList instructions = new InsnList();
 
         instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "getResult", "(Lbetterquesting/api/enums/EnumLogic;II)Z", false));
+
+        return instructions;
+    }
+
+    public InsnList sendCheck() {
+        InsnList instructions = new InsnList();
+
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "sendCheck", "(Lbetterquesting/questing/QuestInstance;)V", false));
 
         return instructions;
     }
