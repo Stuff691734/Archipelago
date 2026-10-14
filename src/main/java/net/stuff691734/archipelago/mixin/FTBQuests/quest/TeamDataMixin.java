@@ -39,8 +39,13 @@ public class TeamDataMixin {
         }
     }
 
-    @Redirect(method = "checkDepsCached", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteMap;getOrDefault(JB)B"), remap = false)
+    @Redirect(method = "checkDepsCached", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteMap;getOrDefault(JB)B"), remap = false, require = 0)
     public byte removeCachingWhenCheckingCompletedQuests(Long2ByteMap instance, long key, byte defaultValue) {
         return defaultValue;
+    }
+    // ^^^ this is for newer versions of ftb quests vvv this is for older versions of ftb quests
+    @Redirect(method = "areDependenciesComplete", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/longs/Long2ByteOpenHashMap;get(J)B"), remap = false, require = 0)
+    public byte removeCachingWhenCheckingCompletedQuests(Long2ByteOpenHashMap instance, long k) {
+        return instance.defaultReturnValue();
     }
 }

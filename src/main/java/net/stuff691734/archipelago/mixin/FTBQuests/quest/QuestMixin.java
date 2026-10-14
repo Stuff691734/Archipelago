@@ -25,7 +25,7 @@ public abstract class QuestMixin implements QuestAccessor {
         return dependencyRequirement;
     }
 
-    @Shadow(remap = false)
+    @Shadow(aliases = "invisible", remap = false)
     private boolean invisibleUntilCompleted;
 
     @Override
