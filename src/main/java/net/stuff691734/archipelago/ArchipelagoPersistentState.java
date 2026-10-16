@@ -153,4 +153,9 @@ public class ArchipelagoPersistentState extends SavedData implements ServerStora
             });
         });
     }
+
+    @Override
+    public void setDirty() {
+        super.setDirty();
+    }
 }
