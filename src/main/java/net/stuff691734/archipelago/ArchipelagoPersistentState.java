@@ -151,4 +151,9 @@ public class ArchipelagoPersistentState extends WorldSavedData implements Server
             });
         });
     }
+
+    @Override
+    public void setDirty() {
+        super.setDirty();
+    }
 }
