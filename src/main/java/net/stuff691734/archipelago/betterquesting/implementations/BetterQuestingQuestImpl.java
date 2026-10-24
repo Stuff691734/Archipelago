@@ -6,6 +6,7 @@ import betterquesting.api.questing.IQuest;
 import betterquesting.api.questing.IQuestLine;
 import betterquesting.api.questing.IQuestLineEntry;
 import betterquesting.api2.storage.DBEntry;
+import betterquesting.api2.utils.QuestTranslation;
 import betterquesting.questing.QuestDatabase;
 import betterquesting.questing.QuestLineDatabase;
 import net.minecraftforge.fml.common.Loader;
@@ -90,7 +91,7 @@ public class BetterQuestingQuestImpl implements BetterQuestingInterface {
      */
     @Override
     public String getName() {
-        return this.quest.getProperty(NativeProps.NAME);
+        return QuestTranslation.translate(this.quest.getProperty(NativeProps.NAME));
     }
 
     /**
@@ -105,7 +106,7 @@ public class BetterQuestingQuestImpl implements BetterQuestingInterface {
         for (DBEntry<IQuestLine> questLine : QuestLineDatabase.INSTANCE.getEntries()) {
             for (DBEntry<IQuestLineEntry> questEntry : questLine.getValue().getEntries()) {
                 if (questEntry.getID() == id) {
-                    return QuestLineDatabase.INSTANCE.getValue(questLine.getID()).getProperty(NativeProps.NAME);
+                    return QuestTranslation.translate(QuestLineDatabase.INSTANCE.getValue(questLine.getID()).getProperty(NativeProps.NAME));
                 }
             }
         }
