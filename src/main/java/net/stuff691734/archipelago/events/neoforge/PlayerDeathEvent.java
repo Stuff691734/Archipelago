@@ -11,8 +11,7 @@ public class PlayerDeathEvent {
         if (event.getEntity() instanceof ServerPlayer) {
             if (event.getSource() != Archipelago.DeathLinkDamage) {
                 // no looping hopefully
-                Archipelago.client.sendDeathlink(
-                        Archipelago.client.getMyName(),
+                Archipelago.client.sendDeathLink(
                         event.getSource().getLocalizedDeathMessage(event.getEntity()).getString()
                 );
             }
