@@ -1,5 +1,6 @@
 package net.stuff691734.archipelago.ftbquests.implementations;
 
+import dev.ftb.mods.ftblibrary.util.ClientTextComponentUtils;
 import dev.ftb.mods.ftblibrary.util.StringUtils;
 import dev.ftb.mods.ftbquests.quest.Chapter;
 import dev.ftb.mods.ftbquests.quest.ChapterGroup;
@@ -70,7 +71,7 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
     @Override
     public String getChapterName() {
         if (!this.quest.chapter.title.isEmpty()) {
-            return this.quest.chapter.title;
+            return ClientTextComponentUtils.parse(this.quest.chapter.title).getString();
         }
         return new TranslationTextComponent("ftbquests.unnamed").getString();
     }
@@ -129,12 +130,12 @@ public class FTBQuestsImpl implements FTBQuestsInterface {
         // getAltTitle (used for default quest names) is client side only, so I have reimplemented them here *sigh*
         // This is mostly copy and pasted code from
         if (!this.quest.title.isEmpty()) {
-            return this.quest.title;
+            return ClientTextComponentUtils.parse(this.quest.title).getString();
         }
         if (!this.quest.tasks.isEmpty()) {
             Task task = this.quest.tasks.get(0);
             if (!task.title.isEmpty()) {
-                return task.title;
+                return ClientTextComponentUtils.parse(task.title).getString();
             }
             if (task.getType() == TaskTypes.ADVANCEMENT) {
                 AdvancementTask task1 = (AdvancementTask) task;
