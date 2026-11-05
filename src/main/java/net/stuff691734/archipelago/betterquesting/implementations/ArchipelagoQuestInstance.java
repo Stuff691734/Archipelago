@@ -54,7 +54,6 @@ public class ArchipelagoQuestInstance implements IQuest
 	public ArchipelagoQuestInstance()
 	{
 		this.setupProps();
-        Archipelago.LOGGER.info("new instance YIPPEE");
 	}
 
 	private void setupProps()
