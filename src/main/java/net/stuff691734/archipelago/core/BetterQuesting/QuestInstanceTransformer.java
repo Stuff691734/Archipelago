@@ -5,7 +5,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -13,11 +12,17 @@ import static org.objectweb.asm.Opcodes.*;
 public class QuestInstanceTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (basicClass == null || !transformedName.equals("betterquesting.questing.QuestInstance")) {
-            // not the class we are looking for, no changes.
-            return basicClass;
+        if (basicClass == null) {
+            return null;
         }
-        return transformClass(basicClass);
+        if (
+                transformedName.equals("betterquesting.client.importers.ImportedQuests") ||
+                transformedName.equals("betterquesting.legacy.v0.LegacyLoader_v0") ||
+                transformedName.equals("betterquesting.questing.QuestDatabase")
+        ) {
+            return transformClass(basicClass);
+        }
+        return basicClass;
     }
 
     public byte[] transformClass(byte[] basicClass) {
@@ -26,64 +31,28 @@ public class QuestInstanceTransformer implements IClassTransformer {
         classReader.accept(classNode, 0);
 
         classNode.methods.forEach((method) -> {
-            if (method.name.equals("isUnlocked")) {
-                ArrayList<AbstractInsnNode> targetNodes = new ArrayList<>();
-                AbstractInsnNode getResultTargetNode = null;
+            if (
+                    method.name.equals("createNew") || // QuestDatabase + ImportedQuests
+                    method.name.equals("readQuestDatabase") // LegacyLoader_v0
+            ) {
+                // modifying inline since not adding or subtracting nodes
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == IRETURN) {
-                        targetNodes.add(node);
+                    // replace `new QuestInstance()` with `new ArchipelagoQuestInstance()`
+                    if (node.getOpcode() == NEW && ((TypeInsnNode)node).desc.equals("betterquesting/questing/QuestInstance")) {
+                        ((TypeInsnNode)node).desc = "net/stuff691734/archipelago/betterquesting/implementations/ArchipelagoQuestInstance";
                     }
-                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals("getResult")) {
-                        getResultTargetNode = node;
+                    if (node.getOpcode() == INVOKESPECIAL && ((MethodInsnNode)node).owner.equals("betterquesting/questing/QuestInstance")) {
+                        ((MethodInsnNode)node).owner = "net/stuff691734/archipelago/betterquesting/implementations/ArchipelagoQuestInstance";
                     }
-                }
-                for (AbstractInsnNode node : targetNodes) {
-                    method.instructions.insertBefore(node, isUnlocked());
-                }
-                if (getResultTargetNode != null) {
-                    method.instructions.insert(getResultTargetNode, getResult());
-                    method.instructions.remove(getResultTargetNode);
                 }
             }
-
-            if (method.name.equals("setComplete")) {
-                method.instructions.insert(sendCheck());
-            }
-
         });
 
         // cleanup
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         return writer.toByteArray();
-    }
-
-    public InsnList isUnlocked() {
-        InsnList instructions = new InsnList();
-
-        instructions.add(new VarInsnNode(ALOAD, 0));
-        instructions.add(new InsnNode(SWAP));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "isUnlocked", "(Lbetterquesting/questing/QuestInstance;Z)Z", false));
-
-        return instructions;
-    }
-
-    public InsnList getResult() {
-        InsnList instructions = new InsnList();
-
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "getResult", "(Lbetterquesting/api/enums/EnumLogic;II)Z", false));
-
-        return instructions;
-    }
-
-    public InsnList sendCheck() {
-        InsnList instructions = new InsnList();
-
-        instructions.add(new VarInsnNode(ALOAD, 0));
-        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "sendCheck", "(Lbetterquesting/questing/QuestInstance;)V", false));
-
-        return instructions;
     }
 }

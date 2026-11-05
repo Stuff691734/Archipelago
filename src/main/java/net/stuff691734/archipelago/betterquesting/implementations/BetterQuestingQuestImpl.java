@@ -124,8 +124,6 @@ public class BetterQuestingQuestImpl implements BetterQuestingInterface {
             default:
                 return -1;
         }
-//        QuestInstance;
-//        EnumLogic;
     }
 
     /**
