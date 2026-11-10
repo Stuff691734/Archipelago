@@ -1,6 +1,7 @@
 package net.stuff691734.archipelago.core;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.stuff691734.archipelago.core.BetterQuesting.QuestInstanceTransformer;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -18,6 +19,8 @@ public class ArchipelagoCorePlugin implements IFMLLoadingPlugin {
                 GuiScreenAdvancementsTransformer.class.getName(),
                 DisplayInfoTransformer.class.getName(),
                 JsonToNBTTransformer.class.getName(),
+
+                QuestInstanceTransformer.class.getName(),
         };
     }
 

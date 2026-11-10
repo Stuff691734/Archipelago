@@ -45,6 +45,9 @@ dependencies {
 
     shadow ('io.github.archipelagomw:Java-Client:[0.2.1]')
 
+    implementation "curse.maven:better-questing-238856:2467353"
+    implementation "curse.maven:better-questing-standard-expansion-238857:2467361"
+
     implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
     shadow "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
 }
