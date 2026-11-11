@@ -149,6 +149,36 @@ public class QuestInstanceTransformer implements IClassTransformer {
                     method.instructions.insertBefore(node, canSubmit());
                 }
             }
+
+            if (method.name.equals("writeToJson_Progress")) {
+                AbstractInsnNode returnNode = null;
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode)node).name.equals("canSubmit")) {
+                        returnNode = node;
+                    }
+                }
+                if (returnNode != null) {
+                    method.instructions.insert(returnNode, writeClaimedProgress());
+                }
+            }
+
+            if (method.name.equals("readFromJson_Progress")) {
+                // insert at start after try catch block?
+                AbstractInsnNode startNode = null;
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == ALOAD) {
+                        startNode = node;
+                        break;
+                    }
+                }
+                if (startNode != null) {
+                    method.instructions.insert(startNode, readClaimedProgress());
+                }
+            }
         });
 
         classNode.methods.add(GetUserClaimedEntry());
@@ -265,6 +295,27 @@ public class QuestInstanceTransformer implements IClassTransformer {
         instructions.add(new InsnNode(SWAP));
         instructions.add(new VarInsnNode(ALOAD, 1));
         instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "canSubmit", "(Lbetterquesting/api/questing/IQuest;ZLnet/minecraft/entity/player/EntityPlayer;)Z", false));
+
+        return instructions;
+    }
+
+    public InsnList writeClaimedProgress() {
+        InsnList instructions = new InsnList();
+
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new FieldInsnNode(GETFIELD, "betterquesting/questing/QuestInstance", "claimedUsers", "Ljava/util/ArrayList;"));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "writeProgress", "(Lcom/google/gson/JsonObject;Ljava/util/ArrayList;)Lcom/google/gson/JsonObject;", false));
+
+        return instructions;
+    }
+
+    public InsnList readClaimedProgress() {
+        InsnList instructions = new InsnList();
+
+        instructions.add(new VarInsnNode(ALOAD, 1));
+        instructions.add(new VarInsnNode(ALOAD, 0));
+        instructions.add(new FieldInsnNode(GETFIELD, "betterquesting/questing/QuestInstance", "claimedUsers", "Ljava/util/ArrayList;"));
+        instructions.add(new MethodInsnNode(INVOKESTATIC, "net/stuff691734/archipelago/mixin/BetterQuestingMixinHelper", "readProgress", "(Lcom/google/gson/JsonObject;Ljava/util/ArrayList;)V", false));
 
         return instructions;
     }

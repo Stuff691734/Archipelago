@@ -5,13 +5,19 @@ import betterquesting.api.client.gui.controls.GuiButtonQuestInstance;
 import betterquesting.api.enums.EnumLogic;
 import betterquesting.api.enums.EnumQuestState;
 import betterquesting.api.questing.IQuest;
+import betterquesting.api.utils.JsonHelper;
+import betterquesting.core.BetterQuesting;
 import betterquesting.misc.UserEntry;
 import betterquesting.questing.QuestDatabase;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 import net.stuff691734.archipelago.Archipelago;
 import net.stuff691734.archipelago.betterquesting.implementations.BetterQuestingQuestImpl;
 import net.stuff691734.archipelagoLib.CheckType;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,5 +89,33 @@ public class BetterQuestingMixinHelper {
         }
 
         return null;
+    }
+
+    public static JsonObject writeProgress(JsonObject json, ArrayList<UserEntry> claimedUsers) {
+        JsonArray claimedJson = new JsonArray();
+        for(UserEntry entry : claimedUsers) {
+            claimedJson.add(entry.writeToJson(new JsonObject()));
+        }
+
+        json.add("claimed", claimedJson);
+
+        return json;
+    }
+
+    public static void readProgress(JsonObject json, ArrayList<UserEntry> claimedUsers) {
+        claimedUsers.clear();
+
+        for(JsonElement entry : JsonHelper.GetArray(json, "completed")) {
+            if (entry != null && entry.isJsonObject()) {
+                try {
+                    UUID uuid = UUID.fromString(JsonHelper.GetString(entry.getAsJsonObject(), "uuid", ""));
+                    UserEntry user = new UserEntry(uuid);
+                    user.readFromJson(entry.getAsJsonObject());
+                    claimedUsers.add(user);
+                } catch (Exception e) {
+                    BetterQuesting.logger.log(Level.ERROR, "Unable to load UUID for quest", e);
+                }
+            }
+        }
     }
 }
