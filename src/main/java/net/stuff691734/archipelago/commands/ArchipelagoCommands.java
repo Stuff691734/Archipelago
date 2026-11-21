@@ -19,7 +19,7 @@ public class ArchipelagoCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(literal("archipelago")
             .then(literal("connect")
-                .then(argument("Name", StringArgumentType.word())
+                .then(argument("Name", StringArgumentType.string())
                     .then(argument("WSAddress", StringArgumentType.greedyString())
                         .executes(ArchipelagoCommands::connectCommand)
                     )
