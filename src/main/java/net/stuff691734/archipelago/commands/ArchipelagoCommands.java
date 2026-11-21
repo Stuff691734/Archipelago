@@ -74,7 +74,7 @@ public class ArchipelagoCommands extends CommandBase {
     }
 
     public void addCommand(String[] args) {
-        Archipelago.client.parseItem(args[1], String.join(" ", Arrays.copyOfRange(args, 2, args.length)), null);
+        Archipelago.client.parseItem(args[1], CommandBase.buildString(args, 2), null);
     }
 
     public void generateCommand(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -97,16 +97,23 @@ public class ArchipelagoCommands extends CommandBase {
     }
 
     public void connectCommand(ICommandSender sender, String[] args) {
-        Archipelago.client.connectCommand(new ContextImpl(sender), args[1], args[2]);
+        String fullString = CommandBase.buildString(args, 1);
+        if (args[1].startsWith("\"") || args[1].startsWith("'")) {
+            char quoteChar = args[1].charAt(0);
+            String[] strings = fullString.split(String.valueOf(quoteChar), 3);
+            Archipelago.client.connectCommand(new ContextImpl(sender), strings[1], strings[2].startsWith(" ") ? strings[2].substring(1) : strings[2]);
+        } else {
+            Archipelago.client.connectCommand(new ContextImpl(sender), args[1], CommandBase.buildString(args, 2));
+        }
     }
 
     public void passwordCommand(ICommandSender sender, String[] args) {
-        Archipelago.client.setPasswordCommand(new ContextImpl(sender), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+        Archipelago.client.setPasswordCommand(new ContextImpl(sender), CommandBase.buildString(args, 1));
     }
 
     public void getCommand(ICommandSender sender, String[] args) {
         if (args.length >= 2) {
-            Archipelago.client.getSpecificCommand(new ContextImpl(sender), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+            Archipelago.client.getSpecificCommand(new ContextImpl(sender), CommandBase.buildString(args, 1));
         } else {
             Archipelago.client.getCommand(new ContextImpl(sender));
         }
