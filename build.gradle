@@ -71,6 +71,8 @@ dependencies {
     jarJar(implementation ('org.java-websocket:Java-WebSocket:1.5.6'))
     jarJar(implementation ('org.apache.httpcomponents.core5:httpcore5:5.4'))
 
+    implementation "curse.maven:better-advancements-272515:7365535"
+
     implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
     jarJar (implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}")
 }
