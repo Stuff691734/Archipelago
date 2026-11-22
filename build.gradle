@@ -75,6 +75,7 @@ dependencies {
     implementation "curse.maven:ftb-library-forge-404465:7718926"
     implementation "curse.maven:ftb-teams-forge-404468:7700339"
     implementation "curse.maven:architectury-api-419699:7339257"
+    implementation "curse.maven:better-advancements-272515:7831337"
 
     implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}"
     jarJar (implementation "com.github.Stuff691734:archipelago-lib:${archipelago_lib_version}")

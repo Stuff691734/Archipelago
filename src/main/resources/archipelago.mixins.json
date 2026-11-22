@@ -24,12 +24,14 @@
     "FTBQuests.quest.task.ObservationTaskAccessor",
     "FTBQuests.quest.task.StageTaskAccessor",
     "FTBQuests.quest.task.StatTaskAccessor",
-    "FTBQuests.quest.task.StructureTaskAccessor"
+    "FTBQuests.quest.task.StructureTaskAccessor",
+    "betteradvancements.BetterAdvancementWidgetMixin"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
     "AdvancementsScreenMixin",
-    "AdvancementWidgetMixin"
+    "AdvancementWidgetMixin",
+    "betteradvancements.BetterAdvancementsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
