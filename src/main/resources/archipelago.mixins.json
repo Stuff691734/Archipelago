@@ -7,12 +7,14 @@
     "AdvancementVisibilityEvaluatorMixin",
     "PlayerAdvancementAccessor",
     "PlayerAdvancementsMixin",
-    "PlayerAdvancementsMixin$DataMixin"
+    "PlayerAdvancementsMixin$DataMixin",
+    "betteradvancements.BetterAdvancementWidgetMixin"
   ],
   "plugin": "net.stuff691734.archipelago.mixin.ArchipelagoMixinConfig",
   "client": [
     "AdvancementsScreenMixin",
-    "AdvancementWidgetMixin"
+    "AdvancementWidgetMixin",
+    "betteradvancements.BetterAdvancementsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
