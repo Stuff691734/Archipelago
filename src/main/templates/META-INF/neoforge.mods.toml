@@ -35,3 +35,8 @@ type = "optional"
 versionRange = "${ftb_quests_version}"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "betteradvancements"
+type = "optional"
+side = "CLIENT"
